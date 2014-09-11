@@ -6,10 +6,15 @@
 bool is_prime(int n)
 {
   assert(n >= 0);
-  for (int i = n-1; i > 1; --i)
-    if (n % i == 0)
-      return false;
-  return true;
+  int i = 2;
+  while (1) {
+  	if (n % i == 0)
+		return false;
+	else if (i * i > n)
+		return true;
+	else
+		i = i + 1;
+  }
 }
 
 int main()
