@@ -137,7 +137,19 @@ primes.o: primes.cpp CS207/Util.hpp /usr/include//c++/4.8/iostream \
   /usr/bin/../lib/clang/3.4/include/emmintrin.h \
   /usr/include//c++/4.8/bits/random.tcc /usr/include//c++/4.8/numeric \
   /usr/include//c++/4.8/bits/stl_numeric.h /usr/include//c++/4.8/array \
-  /usr/include//c++/4.8/stdexcept
+  /usr/include//c++/4.8/stdexcept /usr/include//c++/4.8/forward_list \
+  /usr/include//c++/4.8/bits/forward_list.h /usr/include//c++/4.8/memory \
+  /usr/include//c++/4.8/bits/stl_tempbuf.h \
+  /usr/include//c++/4.8/bits/stl_raw_storage_iter.h \
+  /usr/include//c++/4.8/typeinfo /usr/include//c++/4.8/ext/concurrence.h \
+  /usr/include//c++/4.8/bits/uses_allocator.h \
+  /usr/include//c++/4.8/functional /usr/include//c++/4.8/tuple \
+  /usr/include//c++/4.8/utility /usr/include//c++/4.8/bits/stl_relops.h \
+  /usr/include//c++/4.8/bits/unique_ptr.h \
+  /usr/include//c++/4.8/bits/shared_ptr.h \
+  /usr/include//c++/4.8/bits/shared_ptr_base.h \
+  /usr/include//c++/4.8/backward/auto_ptr.h \
+  /usr/include//c++/4.8/bits/forward_list.tcc
 
 CS207/Util.hpp:
 
@@ -490,3 +502,37 @@ CS207/Util.hpp:
 /usr/include//c++/4.8/array:
 
 /usr/include//c++/4.8/stdexcept:
+
+/usr/include//c++/4.8/forward_list:
+
+/usr/include//c++/4.8/bits/forward_list.h:
+
+/usr/include//c++/4.8/memory:
+
+/usr/include//c++/4.8/bits/stl_tempbuf.h:
+
+/usr/include//c++/4.8/bits/stl_raw_storage_iter.h:
+
+/usr/include//c++/4.8/typeinfo:
+
+/usr/include//c++/4.8/ext/concurrence.h:
+
+/usr/include//c++/4.8/bits/uses_allocator.h:
+
+/usr/include//c++/4.8/functional:
+
+/usr/include//c++/4.8/tuple:
+
+/usr/include//c++/4.8/utility:
+
+/usr/include//c++/4.8/bits/stl_relops.h:
+
+/usr/include//c++/4.8/bits/unique_ptr.h:
+
+/usr/include//c++/4.8/bits/shared_ptr.h:
+
+/usr/include//c++/4.8/bits/shared_ptr_base.h:
+
+/usr/include//c++/4.8/backward/auto_ptr.h:
+
+/usr/include//c++/4.8/bits/forward_list.tcc:

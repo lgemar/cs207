@@ -1,4 +1,5 @@
 #include "CS207/Util.hpp"
+#include <forward_list>
 
 /** Return true iff @a n is prime.
  * @pre @a n >= 0
@@ -6,14 +7,27 @@
 bool is_prime(int n)
 {
   assert(n >= 0);
-  int i = 2;
+  static std::forward_list<int> known_primes = { 2 };
+  int latest_prime;
+  auto it = known_primes.begin();
+  latest_prime = *it;
   while (1) {
-  	if (n % i == 0)
-		return false;
-	else if (i * i > n)
+	if (latest_prime * latest_prime > n) {
+		known_primes.insert_after(it, n);
 		return true;
-	else
-		i = i + 1;
+	}
+  	else if (n % latest_prime == 0) {
+		return false;
+	}
+	else {
+		if (it != known_primes.end()) {
+			++it;
+			latest_prime = *it;
+		} 
+		else {
+			latest_prime = latest_prime + 1;
+		}
+	}
   }
 }
 
