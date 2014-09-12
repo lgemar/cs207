@@ -14,7 +14,7 @@ bool is_prime(int n)
   while (1) {
 	if (test_devisor * test_devisor > n) {
 		// Place the element at the end of the vector
-		known_primes.push_back(test_devisor);
+			known_primes.emplace_back(test_devisor);
 		return true;
 	}
   	else if (n % test_devisor == 0) {
