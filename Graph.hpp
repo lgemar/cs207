@@ -28,7 +28,6 @@ class Graph {
   // (As with all the "YOUR CODE HERE" markings, you may not actually NEED
   // code here. Just use the space if you need it.)
   struct node_element;
-  struct edge_element;
 
  public:
 
@@ -126,7 +125,7 @@ class Graph {
     /** Return this node's index, a number in the range [0, graph_size). */
     size_type index() const {
       // HW0: YOUR CODE HERE
-      for (size_type i = 0; i < graph_->size_nodes_(); ++i)
+      for (size_type i = 0; i < graph_->num_nodes(); ++i)
         if (graph_->graph_nodes_[i].uid == uid_)
           return size_type(i);
       return size_type(-1);
@@ -242,13 +241,13 @@ class Graph {
 		  }
 
 		  /** Return a node of this Edge */
-		  Node node1() const {
+		  Node nodea() const {
 				  // HW0: YOUR CODE HERE
 				  return Node();      // Invalid Node
 		  }
 
 		  /** Return the other node of this Edge */
-		  Node node2() const {
+		  Node nodeb() const {
 				  // HW0: YOUR CODE HERE
 				  return Node();      // Invalid Node
 		  }
@@ -265,7 +264,7 @@ class Graph {
       // return false;
 	  bool check_same1 = (node1 == x.node1 && node2 == x.node2);
 	  bool check_same2 = (node2 == x.node1 && node1 == x.node2);
-	  return (check_same1 || check_same2)
+	  return (check_same1 || check_same2);
     }
 
     /** Test whether this edge is less than @a x in the global order.
@@ -280,8 +279,8 @@ class Graph {
       // HW0: YOUR CODE HERE
       // (void) x;           // Quiet compiler warning
       // return false;
-	  size_type pair1_min;
-	  size_type pair2_min;
+	  Node pair1_min;
+	  Node pair2_min;
 	  if (node1 < node2) 
 	  	pair1_min = node1;
 	  else
@@ -303,7 +302,7 @@ class Graph {
 	Graph* graph_;
 	/** Private Constructor */
 	Edge(const Graph* graph, const Node& a, const Node& b)
-			: graph_(const_cast<Graph*>(graph)), node(a), node(b) {
+			: graph_(const_cast<Graph*>(graph)), node1(a), node2(b) {
 	}
   };
 
@@ -334,9 +333,9 @@ class Graph {
     // (void) a, (void) b;   // Quiet compiler warning
 	// return Edge();        // Invalid Edge
 	Edge temp = Edge(this, a, b);
-    for (size_type i = 0; i < graph_->size_edges_(); ++i)
+    for (size_type i = 0; i < num_nodes(); ++i)
       if (temp == graph_edges_[i])
-        return graph_edges_[i]
+        return graph_edges_[i];
   	graph_edges_.push_back(temp);
   	size_edges_++;
   	return temp;
