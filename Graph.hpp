@@ -118,12 +118,15 @@ class Graph {
     /** Return this node's position. */
     const Point& position() const {
       // HW0: YOUR CODE HERE
-      return Point();
+      return fetch().position;
     }
 
     /** Return this node's index, a number in the range [0, graph_size). */
     size_type index() const {
       // HW0: YOUR CODE HERE
+      for (size_type i = 0; i < graph_->size(); ++i)
+        if (graph_->elements_[i].uid == uid_)
+          return size_type(i);
       return size_type(-1);
     }
 
@@ -133,8 +136,10 @@ class Graph {
      */
     bool operator==(const Node& x) const {
       // HW0: YOUR CODE HERE
-      (void) x;          // Quiet compiler warning
-      return false;
+      // (void) x;          // Quiet compiler warning
+	  bool result;
+	  result = (index == x.index());
+	  return result;
     }
 
     /** Test whether this node is less than @a x in the global order.
@@ -147,22 +152,38 @@ class Graph {
      */
     bool operator<(const Node& x) const {
       // HW0: YOUR CODE HERE
-      (void) x;           // Quiet compiler warning
-      return false;
-    }
+      //(void) x;           // Quiet compiler warning
+	  bool result;
+	  result = index < x.index();
+	  return result;
+	}
 
    private:
-    // Allow Graph to access Node's private member data and functions.
-    friend class Graph;
-    // HW0: YOUR CODE HERE
-    // Use this space to declare private data members and methods for Node
-    // that will not be visible to users, but may be useful within Graph.
-    // i.e. Graph needs a way to construct valid Node objects
+	// Allow Graph to access Node's private member data and functions.
+	friend class Graph;
+	// HW0: YOUR CODE HERE
+	// Use this space to declare private data members and methods for Node
+	// that will not be visible to users, but may be useful within Graph.
+	// i.e. Graph needs a way to construct valid Node objects
+	// Pointer back to Graph
+	Graph* graph_;
+	// Identification Number for the Node
+	size_type uid_;
+	/** Private Constructor */
+	Node(const Graph* graph, size_type uid)
+			: graph_(const_cast<Graph*>(graph)), uid_(uid) {
+	}
+
+	/** Helper method that returns the corresponding element of Graph **/
+	internal_element& fetch() const {
+		size_type index = index();
+  		return graph_->elements_[index];
+	}
   };
 
   /** Synonym for size(). */
   size_type num_nodes() const {
-    return size();
+		  return size();
   }
 
   /** Add a node to the graph, returning the added node.
@@ -173,9 +194,9 @@ class Graph {
    * Complexity: O(1) amortized operations.
    */
   Node add_node(const Point& position) {
-    // HW0: YOUR CODE HERE
-    (void) position;      // Quiet compiler warning
-    return Node();        // Invalid node
+		  // HW0: YOUR CODE HERE
+		  // (void) position;      // Quiet compiler warning
+		  // return Node();        // Invalid node
   }
 
   /** Return the node with index @a i.
@@ -185,9 +206,9 @@ class Graph {
    * Complexity: O(1).
    */
   Node node(size_type i) const {
-    // HW0: YOUR CODE HERE
-    (void) i;             // Quiet compiler warning
-    return Node();        // Invalid node
+		  // HW0: YOUR CODE HERE
+		  (void) i;             // Quiet compiler warning
+		  return Node();        // Invalid node
   }
 
   /////////////////
@@ -201,23 +222,23 @@ class Graph {
    * are considered equal if they connect the same nodes, in either order.
    */
   class Edge {
-   public:
-    /** Construct an invalid Edge. */
-    Edge() {
-      // HW0: YOUR CODE HERE
-    }
+		  public:
+				  /** Construct an invalid Edge. */
+				  Edge() {
+						  // HW0: YOUR CODE HERE
+				  }
 
-    /** Return a node of this Edge */
-    Node node1() const {
-      // HW0: YOUR CODE HERE
-      return Node();      // Invalid Node
-    }
+				  /** Return a node of this Edge */
+				  Node node1() const {
+						  // HW0: YOUR CODE HERE
+						  return Node();      // Invalid Node
+				  }
 
-    /** Return the other node of this Edge */
-    Node node2() const {
-      // HW0: YOUR CODE HERE
-      return Node();      // Invalid Node
-    }
+				  /** Return the other node of this Edge */
+				  Node node2() const {
+						  // HW0: YOUR CODE HERE
+						  return Node();      // Invalid Node
+				  }
 
     /** Test whether this edge and @a x are equal.
      *

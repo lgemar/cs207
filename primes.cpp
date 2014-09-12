@@ -13,7 +13,6 @@ bool is_prime(int n)
   int test_devisor = FIRST_PRIME;
   while (1) {
 	if (test_devisor * test_devisor > n) {
-		// Place the element at the end of the vector
 		known_primes.push_back(n);
 		return true;
 	}
