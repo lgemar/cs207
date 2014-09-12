@@ -11,7 +11,7 @@ EXEC += viewer
 UNAME := $(shell uname)
 
 # Define the C++ compiler to use
-CXX := $(shell which clang++) -std=c++11
+CXX := $(shell which clang++) -std=c++11 -g
 
 # Dependency directory and flags
 DEPSDIR := $(shell mkdir -p .deps; echo .deps)
@@ -26,7 +26,9 @@ DEPSFLAGS = -MD -MF $(DEPSFILE) -MP
 INCLUDES += -I.
 
 # Define CXX compile flags
-CXXFLAGS += -O3 -funroll-loops -W -Wall -Wextra #-Wfatal-errors
+#CXXFLAGS += -O3 -funroll-loops -W -Wall -Wextra #-Wfatal-errors
+# Define CXX flags for using gdb
+CXXFLAGS += -funroll-loops -W -Wall -Wextra #-Wfatal-errors
 
 # Define any directories containing libraries
 #   To include directories use -Lpath/to/files

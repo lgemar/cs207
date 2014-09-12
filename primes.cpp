@@ -1,5 +1,6 @@
 #include "CS207/Util.hpp"
 #include <forward_list>
+#define FIRST_PRIME 2
 
 /** Return true iff @a n is prime.
  * @pre @a n >= 0
@@ -7,25 +8,26 @@
 bool is_prime(int n)
 {
   assert(n >= 0);
-  static std::forward_list<int> known_primes = { 2 };
-  int latest_prime;
+  static std::vector<int> known_primes = {FIRST_PRIME};
+  int test_devisor;
   auto it = known_primes.begin();
-  latest_prime = *it;
+  test_devisor = *it;
   while (1) {
-	if (latest_prime * latest_prime > n) {
-		known_primes.insert_after(it, n);
+	if (test_devisor * test_devisor > n) {
+		if (n > FIRST_PRIME)
+			known_primes.push_back(n);
 		return true;
 	}
-  	else if (n % latest_prime == 0) {
+  	else if (n % test_devisor == 0) {
 		return false;
 	}
 	else {
 		if (it != known_primes.end()) {
 			++it;
-			latest_prime = *it;
+			test_devisor = *it;
 		} 
 		else {
-			latest_prime = latest_prime + 1;
+			test_devisor = test_devisor + 1;
 		}
 	}
   }
