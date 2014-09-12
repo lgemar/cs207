@@ -252,8 +252,6 @@ class Graph {
 				  return Node();      // Invalid Node
 		  }
 
-		Node node1;
-		Node node2;
     /** Test whether this edge and @a x are equal.
      *
      * Equal edges are from the same graph and have the same nodes.
@@ -300,6 +298,8 @@ class Graph {
     // that will not be visible to users, but may be useful within Graph.
     // i.e. Graph needs a way to construct valid Edge objects
 	Graph* graph_;
+	Node node1;
+	Node node2;
 	/** Private Constructor */
 	Edge(const Graph* graph, const Node& a, const Node& b)
 			: graph_(const_cast<Graph*>(graph)), node1(a), node2(b) {
