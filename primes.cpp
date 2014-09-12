@@ -8,13 +8,14 @@
 bool is_prime(int n)
 {
   assert(n >= 0);
-  static std::vector<int> known_primes;
+  static std::vector<int> known_primes = {FIRST_PRIME};
   auto it = known_primes.begin();
-  int test_devisor = FIRST_PRIME;
+  int test_devisor = *it;
   while (1) {
 	if (test_devisor * test_devisor > n) {
 		// Place the element at the end of the vector
-		known_primes.push_back(test_devisor);
+		if (test_devisor > FIRST_PRIME)
+			known_primes.push_back(test_devisor);
 		return true;
 	}
   	else if (n % test_devisor == 0) {
