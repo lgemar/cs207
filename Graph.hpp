@@ -128,7 +128,7 @@ class Graph {
       for (size_type i = 0; i < graph_->num_nodes(); ++i)
         if (graph_->graph_nodes_[i].uid == uid_)
           return size_type(i);
-      return size_type(-1);
+		assert(false);
     }
 
     /** Test whether this node and @a x are equal.
