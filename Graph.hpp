@@ -27,13 +27,7 @@ class Graph {
   // later in the Graph's definition.
   // (As with all the "YOUR CODE HERE" markings, you may not actually NEED
   // code here. Just use the space if you need it.)
-  struct node_element {
-	size_type uid;
-	Point position;
-	Node* node_ptr;
-  }
-
- std::vector<node_element*> nodes_; 
+  struct node_element;
 
  public:
 
@@ -145,7 +139,7 @@ class Graph {
       // HW0: YOUR CODE HERE
       // (void) x;          // Quiet compiler warning
 	  bool result;
-	  result = (index == x.index());
+	  result = (index() == x.index());
 	  return result;
     }
 
@@ -161,7 +155,7 @@ class Graph {
       // HW0: YOUR CODE HERE
       //(void) x;           // Quiet compiler warning
 	  bool result;
-	  result = index < x.index();
+	  result = index() < x.index();
 	  return result;
 	}
 
@@ -183,8 +177,8 @@ class Graph {
 
 	/** Helper method that returns the corresponding element of Graph **/
 	node_element& fetch() const {
-		size_type index = index();
-  		return graph_->nodes_[index];
+		size_type idx = index();
+  		return graph_->nodes_[idx];
 	}
   };
 
@@ -209,7 +203,7 @@ class Graph {
 		  element.position = position;
 		  element.uid = uid();
 		  node = Node(this, element.uid);
-		  element.node_ptr = Node(this, node);
+		  element.node_ptr = &node;
 		  nodes_.push_back(element);
 		  size_++;
 		  return node;
@@ -340,7 +334,15 @@ class Graph {
 	return x;
   }
 
+  struct node_element {
+	size_type uid;
+	Point position;
+	Node* node_ptr;
+  };
+
   size_type size_ = 0;
+
+  std::vector<node_element> nodes_; 
 
 };
 
