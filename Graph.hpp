@@ -27,6 +27,13 @@ class Graph {
   // later in the Graph's definition.
   // (As with all the "YOUR CODE HERE" markings, you may not actually NEED
   // code here. Just use the space if you need it.)
+  struct node_element {
+	size_type uid;
+	Point position;
+	Node* node_ptr;
+  }
+
+ std::vector<node_element*> nodes_; 
 
  public:
 
@@ -73,7 +80,7 @@ class Graph {
    */
   size_type size() const {
     // HW0: YOUR CODE HERE
-    return 0;
+    return size_;
   }
 
   /** Remove all nodes and edges from this graph.
@@ -125,7 +132,7 @@ class Graph {
     size_type index() const {
       // HW0: YOUR CODE HERE
       for (size_type i = 0; i < graph_->size(); ++i)
-        if (graph_->elements_[i].uid == uid_)
+        if (graph_->nodes_[i].uid == uid_)
           return size_type(i);
       return size_type(-1);
     }
@@ -175,9 +182,9 @@ class Graph {
 	}
 
 	/** Helper method that returns the corresponding element of Graph **/
-	internal_element& fetch() const {
+	node_element& fetch() const {
 		size_type index = index();
-  		return graph_->elements_[index];
+  		return graph_->nodes_[index];
 	}
   };
 
@@ -197,6 +204,15 @@ class Graph {
 		  // HW0: YOUR CODE HERE
 		  // (void) position;      // Quiet compiler warning
 		  // return Node();        // Invalid node
+		  node_element element;
+		  Node node;
+		  element.position = position;
+		  element.uid = uid();
+		  node = Node(this, element.uid);
+		  element.node_ptr = Node(this, node);
+		  nodes_.push_back(element);
+		  size_++;
+		  return node;
   }
 
   /** Return the node with index @a i.
@@ -207,8 +223,10 @@ class Graph {
    */
   Node node(size_type i) const {
 		  // HW0: YOUR CODE HERE
-		  (void) i;             // Quiet compiler warning
-		  return Node();        // Invalid node
+		  // (void) i;             // Quiet compiler warning
+		  // return Node();        // Invalid node
+		  Node* node_ptr = nodes_[i].node_ptr;
+		  return *node_ptr;
   }
 
   /////////////////
@@ -316,6 +334,13 @@ class Graph {
   // HW0: YOUR CODE HERE
   // Use this space for your Graph class's internals:
   //   helper functions, data members, and so forth.
+  int uid() {
+  	static size_type x = size_type(0);
+	x++;
+	return x;
+  }
+
+  size_type size_ = 0;
 
 };
 
