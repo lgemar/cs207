@@ -126,7 +126,7 @@ class Graph {
     size_type index() const {
       // HW0: YOUR CODE HERE
       for (size_type i = 0; i < graph_->num_nodes(); ++i)
-        if (graph_->graph_nodes_[i].uid == uid_)
+        if (graph_->graph_nodes_.at(i).uid == uid_)
           return size_type(i);
 		assert(false);
     }
@@ -178,7 +178,7 @@ class Graph {
 	/** Helper method that returns the corresponding element of Graph **/
 	node_element& fetch() const {
 		size_type idx = index();
-  		return graph_->graph_nodes_[idx];
+  		return graph_->graph_nodes_.at(idx);
 	}
   };
 
@@ -199,14 +199,14 @@ class Graph {
 		  // (void) position;      // Quiet compiler warning
 		  // return Node();        // Invalid node
 		  node_element element;
-		  Node node;
+		  Node node_element;
 		  element.position = position;
 		  element.uid = uid();
-		  node = Node(this, element.uid);
-		  element.node_ptr = &node;
+		  node_element = Node(this, element.uid);
+		  element.node = node_element;
 		  graph_nodes_.push_back(element);
 		  size_nodes_++;
-		  return node;
+		  return node_element;
   }
 
   /** Return the node with index @a i.
@@ -219,8 +219,8 @@ class Graph {
 		  // HW0: YOUR CODE HERE
 		  // (void) i;             // Quiet compiler warning
 		  // return Node();        // Invalid node
-		  Node* node_ptr = graph_nodes_[i].node_ptr;
-		  return *node_ptr;
+		  Node node_element = graph_nodes_.at(i).node;
+		  return node_element;
   }
 
   /////////////////
@@ -241,13 +241,13 @@ class Graph {
 		  }
 
 		  /** Return a node of this Edge */
-		  Node nodea() const {
+		  Node node1() const {
 				  // HW0: YOUR CODE HERE
 				  return Node();      // Invalid Node
 		  }
 
 		  /** Return the other node of this Edge */
-		  Node nodeb() const {
+		  Node node2() const {
 				  // HW0: YOUR CODE HERE
 				  return Node();      // Invalid Node
 		  }
@@ -260,8 +260,8 @@ class Graph {
       // HW0: YOUR CODE HERE
       // (void) x;          // Quiet compiler warning
       // return false;
-	  bool check_same1 = (node1 == x.node1 && node2 == x.node2);
-	  bool check_same2 = (node2 == x.node1 && node1 == x.node2);
+	  bool check_same1 = (nodea == x.nodea && nodeb == x.nodeb);
+	  bool check_same2 = (nodeb == x.nodea && nodea == x.nodeb);
 	  return (check_same1 || check_same2);
     }
 
@@ -279,14 +279,14 @@ class Graph {
       // return false;
 	  Node pair1_min;
 	  Node pair2_min;
-	  if (node1 < node2) 
-	  	pair1_min = node1;
+	  if (nodea < nodeb) 
+	  	pair1_min = nodea;
 	  else
-	  	pair1_min = node2;
-	  if (x.node1 < x.node2)
-	  	pair2_min = x.node1;
+	  	pair1_min = nodeb;
+	  if (x.nodea < x.nodeb)
+	  	pair2_min = x.nodea;
 	  else
-	  	pair2_min = x.node2;
+	  	pair2_min = x.nodeb;
 	  return pair1_min < pair2_min;
     }
 
@@ -298,11 +298,11 @@ class Graph {
     // that will not be visible to users, but may be useful within Graph.
     // i.e. Graph needs a way to construct valid Edge objects
 	Graph* graph_;
-	Node node1;
-	Node node2;
+	Node nodea;
+	Node nodeb;
 	/** Private Constructor */
 	Edge(const Graph* graph, const Node& a, const Node& b)
-			: graph_(const_cast<Graph*>(graph)), node1(a), node2(b) {
+			: graph_(const_cast<Graph*>(graph)), nodea(a), nodeb(b) {
 	}
   };
 
@@ -332,13 +332,20 @@ class Graph {
     // HW0: YOUR CODE HERE
     // (void) a, (void) b;   // Quiet compiler warning
 	// return Edge();        // Invalid Edge
-	Edge temp = Edge(this, a, b);
-    for (size_type i = 0; i < num_nodes(); ++i)
-      if (temp == graph_edges_[i])
-        return graph_edges_[i];
-  	graph_edges_.push_back(temp);
-  	size_edges_++;
-  	return temp;
+    for (size_type i = 0; i < num_nodes(); ++i) {
+	  Edge x;
+	  x = edge(i);
+	  bool check_same1 = (a == x.nodea && b == x.nodeb);
+	  bool check_same2 = (b == x.nodea && a == x.nodeb);
+	  bool result = (check_same1 || check_same2);
+      if (result)
+        return graph_edges_.at(i);
+	  Edge temp = Edge(this, a, b);
+  	  graph_edges_.push_back(temp);
+  	  size_edges_++;
+  	  return temp;
+	}
+	return Edge();
   }
 
   /** Return the edge with index @a i.
@@ -350,7 +357,7 @@ class Graph {
     // HW0: YOUR CODE HERE
     // (void) i;             // Quiet compiler warning
     // return Edge();        // Invalid Edge
-	return graph_edges_[i];
+	return graph_edges_.at(i);
   }
 
  private:
@@ -367,7 +374,7 @@ class Graph {
   struct node_element {
 	size_type uid;
 	Point position;
-	Node* node_ptr;
+	Node node;
   };
 
   size_type size_nodes_ = 0;
