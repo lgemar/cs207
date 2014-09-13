@@ -340,12 +340,11 @@ class Graph {
 	  bool result = (check_same1 || check_same2);
       if (result)
         return graph_edges_.at(i);
-	  Edge temp = Edge(this, a, b);
-  	  graph_edges_.push_back(temp);
-  	  size_edges_++;
-  	  return temp;
 	}
-	return Edge();
+	Edge temp = Edge(this, a, b);
+	graph_edges_.push_back(temp);
+	size_edges_++;
+  	return temp;
   }
 
   /** Return the edge with index @a i.
