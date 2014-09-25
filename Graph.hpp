@@ -25,8 +25,6 @@ class Graph {
   // HW0: YOUR CODE HERE
   // Use this space for declarations of important internal types you need
   // later in the Graph's definition.
-  // (As with all the "YOUR CODE HERE" markings, you may not actually NEED
-  // code here. Just use the space if you need it.)
   struct node_element;
 
  public:
@@ -126,7 +124,9 @@ class Graph {
     size_type index() const {
       // HW0: YOUR CODE HERE
       for (size_type i = 0; i < graph_->num_nodes(); ++i)
-        if (graph_->graph_nodes_.at(i).uid == uid_)
+		Node anode_element;
+		anode_element = graph_->graph_nodes_.at(i);
+        if (anode_element.uid == uid_)
           return size_type(i);
 		assert(false);
     }
@@ -137,7 +137,6 @@ class Graph {
      */
     bool operator==(const Node& x) const {
       // HW0: YOUR CODE HERE
-      // (void) x;          // Quiet compiler warning
 	  bool result;
 	  result = (index() == x.index());
 	  return result;
@@ -153,7 +152,6 @@ class Graph {
      */
     bool operator<(const Node& x) const {
       // HW0: YOUR CODE HERE
-      //(void) x;           // Quiet compiler warning
 	  bool result;
 	  result = index() < x.index();
 	  return result;
@@ -178,7 +176,9 @@ class Graph {
 	/** Helper method that returns the corresponding element of Graph **/
 	node_element& fetch() const {
 		size_type idx = index();
-  		return graph_->graph_nodes_.at(idx);
+		node_element anode_element;
+		anode_element = *(graph_->graph_nodes_.at(idx));
+  		return anode_element;
 	}
   };
 
@@ -196,17 +196,15 @@ class Graph {
    */
   Node add_node(const Point& position) {
 		  // HW0: YOUR CODE HERE
-		  // (void) position;      // Quiet compiler warning
-		  // return Node();        // Invalid node
 		  node_element element;
-		  Node node_element;
+		  Node anode;
 		  element.position = position;
 		  element.uid = uid();
-		  node_element = Node(this, element.uid);
-		  element.node = node_element;
-		  graph_nodes_.push_back(element);
+		  anode = Node(this, element.uid);
+		  element.node = anode;
+		  graph_nodes_.push_back(&element);
 		  size_nodes_++;
-		  return node_element;
+		  return anode;
   }
 
   /** Return the node with index @a i.
@@ -219,7 +217,7 @@ class Graph {
 		  // HW0: YOUR CODE HERE
 		  // (void) i;             // Quiet compiler warning
 		  // return Node();        // Invalid node
-		  Node node_element = graph_nodes_.at(i).node;
+		  Node node_element = *(graph_nodes_.at(i)).node;
 		  return node_element;
   }
 
@@ -354,8 +352,6 @@ class Graph {
    */
   Edge edge(size_type i) const {
     // HW0: YOUR CODE HERE
-    // (void) i;             // Quiet compiler warning
-    // return Edge();        // Invalid Edge
 	return graph_edges_.at(i);
   }
 
@@ -379,7 +375,7 @@ class Graph {
   size_type size_nodes_ = 0;
   size_type size_edges_ = 0;
 
-  std::vector<node_element> graph_nodes_; 
+  std::vector<node_element*> graph_nodes_; 
   std::vector<Edge> graph_edges_;
 };
 
