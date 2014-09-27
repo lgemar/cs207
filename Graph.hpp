@@ -359,7 +359,7 @@ class Graph {
 
   /** @class Graph::NodeIterator
    * @brief Iterator class for nodes. A forward iterator. */
-  class NodeIterator {
+  class NodeIterator : private totally_ordered<NodeIterator> {
    public:
     // These type definitions help us use STL's iterator_traits.
     /** Element type. */
@@ -397,16 +397,15 @@ class Graph {
 	 * @returns true if the two iterators point to the same node
 	 */
 	bool operator==(const NodeIterator& it) const {
-		return (index == *it.index());
+		return (index_ == (*it).index());
 	}
 
    private:
     friend class Graph;
+	const Graph* graph_;
 	size_type index_;
-	Graph* graph_;
-  	NodeIterator(const Graph* graph, size_type index) : graph_(graph),
-														index_(index) {
-	}	
+  	NodeIterator(const Graph* graph, size_type index) : graph_(graph), index_(index) {
+	}
   };
 
   /** Returns a node_iterator pointing to the beginning of the node list
