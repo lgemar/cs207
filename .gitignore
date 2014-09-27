@@ -23,3 +23,9 @@
 # Other, custom
 *~
 .DS_Store
+
+# Vim swap files
+.*.swp
+
+# Any other wierd hidden files
+.*

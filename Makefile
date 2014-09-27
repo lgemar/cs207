@@ -26,7 +26,7 @@ DEPSFLAGS = -MD -MF $(DEPSFILE) -MP
 INCLUDES += -I.
 
 # Define CXX compile flags
-CXXFLAGS += -O3 -funroll-loops -W -Wall -Wextra #-Wfatal-errors
+CXXFLAGS += -O3 -g -funroll-loops -W -Wall -Wextra #-Wfatal-errors
 
 # Define any directories containing libraries
 #   To include directories use -Lpath/to/files

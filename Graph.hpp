@@ -142,7 +142,7 @@ class Graph {
     // Allow Graph to access Node's private member data and functions.
     friend class Graph;
 	const Graph* graph_;
-	size_type uid_;
+	size_type uid_ = 0;
 	// Construct a node as just a pointer to the graph and an id number
 	Node(const Graph* graph, size_type uid) : graph_(graph), uid_(uid) {
 	}
@@ -161,11 +161,10 @@ class Graph {
    * Complexity: O(1) amortized operations.
    */
   Node add_node(const Point& position) {
-	Node new_node;
-
 	nodes_.push_back(position);
-  	new_node = Node(this, num_nodes_);
+  	Node new_node = Node(this, num_nodes_);
 	++num_nodes_;
+	return new_node;
   }
 
   /** Return the node with index @a i.
@@ -197,14 +196,12 @@ class Graph {
 
     /** Return a node of this Edge */
     Node node1() const {
-      // HW0: YOUR CODE HERE
-      return Node();      // Invalid Node
+		return Node(graph_, graph_->edges_[index_].node1);
     }
 
     /** Return the other node of this Edge */
     Node node2() const {
-      // HW0: YOUR CODE HERE
-      return Node();      // Invalid Node
+		return Node(graph_, graph_->edges_[index_].node2);
     }
 
     /** Test whether this edge and @a x are equal.
@@ -212,9 +209,9 @@ class Graph {
      * Equal edges are from the same graph and have the same nodes.
      */
     bool operator==(const Edge& x) const {
-      // HW0: YOUR CODE HERE
-      (void) x;          // Quiet compiler warning
-      return false;
+		bool equal_check1 = (node1() == x.node1() && node2() == x.node2());
+		bool equal_check2 = (node2() == x.node1() && node1() == x.node2());
+		return (equal_check1 || equal_check2);
     }
 
     /** Test whether this edge is less than @a x in the global order.
@@ -226,18 +223,24 @@ class Graph {
      * and y, exactly one of x == y, x < y, and y < x is true.
      */
     bool operator<(const Edge& x) const {
-      // HW0: YOUR CODE HERE
-      (void) x;           // Quiet compiler warning
-      return false;
+		return (index() < x.index());
     }
+
+	size_type index() const {
+		return index_;
+	}
 
    private:
     // Allow Graph to access Edge's private member data and functions.
     friend class Graph;
-    // HW0: YOUR CODE HERE
-    // Use this space to declare private data members and methods for Edge
-    // that will not be visible to users, but may be useful within Graph.
-    // i.e. Graph needs a way to construct valid Edge objects
+	
+	// data members
+	const Graph* graph_;
+	size_type index_;
+
+	// Constructor available to the Graph class for constructing edges
+  	Edge(const Graph* graph, size_type index) : graph_(graph), index_(index) {
+	}
   };
 
   /** Return the total number of edges in the graph.
@@ -261,10 +264,39 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   Edge add_edge(const Node& a, const Node& b) {
-    // HW0: YOUR CODE HERE
-    (void) a, (void) b;   // Quiet compiler warning
-    return Edge();        // Invalid Edge
+  	edge_data new_edge;
+	size_type edge_index;
+
+	edge_index = has_edge(a, b);
+	if (edge_index == num_edges_) {
+		new_edge.node1 = a.index();
+		new_edge.node2 = b.index();
+		edges_.push_back(new_edge);
+		++num_edges_;
+	}
+	return Edge(this, edge_index);
   }
+
+  /** Check to see if there is an edge between nodes a and b
+   * @a a and @a b are distince valid nodes in the graph
+   * @return index of the edge if it exists, else return the number of edges
+   */
+   size_type has_edge(const Node& a, const Node& b) {
+	edge_data edge_of_interest;
+	bool equal_check1, equal_check2;
+	size_type i;
+   	for (i = 0; i < num_edges_; i++) {
+		edge_of_interest = edges_[i];
+		equal_check1 = (edge_of_interest.node1 == a.index() && 
+						edge_of_interest.node2 == b.index());
+		equal_check2 = (edge_of_interest.node2 == a.index() &&
+						edge_of_interest.node1 == b.index());
+		if (equal_check1 || equal_check2) {
+			return i;
+		}
+	}
+	return num_edges_; // if no edge matches the two nodes, then return false
+   }
 
   /** Return the edge with index @a i.
    * @pre 0 <= @a i < num_edges()
@@ -272,19 +304,17 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   Edge edge(size_type i) const {
-    // HW0: YOUR CODE HERE
-    (void) i;             // Quiet compiler warning
-    return Edge();
+    return Edge(this, i);
   }
 
  private:
 	typedef struct edge_data {
-		size_type uid1;
-		size_type uid2;
+		size_type node1;
+		size_type node2;
 	} edge_data;
 
-	size_type num_nodes_;
-	size_type num_edges_;
+	size_type num_nodes_ = 0;
+	size_type num_edges_ = 0;
  	std::vector<Point> nodes_;
 	std::vector<edge_data> edges_;
 };
