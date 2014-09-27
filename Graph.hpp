@@ -397,7 +397,7 @@ class Graph {
 	 * @returns true if the two iterators point to the same node
 	 */
 	bool operator==(const NodeIterator& it) const {
-		return (index_ == (*it).index());
+		return (Node(graph_, index_) == *it);
 	}
 
    private:
