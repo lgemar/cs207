@@ -19,6 +19,7 @@
  * Users can add and retrieve nodes and edges. Edges are unique (there is at
  * most one edge between any pair of distinct nodes).
  */
+template <typename V>
 class Graph {
  private:
 
@@ -28,6 +29,9 @@ class Graph {
   /////////////////////////////
   // PUBLIC TYPE DEFINITIONS //
   /////////////////////////////
+
+  /** Define the node value type in terms of template parameter */
+  typedef V node_value_type;
 
   /** Type of this graph. */
   typedef Graph graph_type;
@@ -125,8 +129,12 @@ class Graph {
 
     /** Return this node's position. */
     const Point& position() const {
-	  return graph_->nodes_[uid_];
+	  return graph_->nodes_[uid_].p;
     }
+
+	const node_value_type& value() const {
+		return graph_->nodes_[uid_].v;
+	}
 
     /** Return this node's index, a number in the range [0, graph_size). */
     size_type index() const {
@@ -183,8 +191,12 @@ class Graph {
    *
    * Complexity: O(1) amortized operations.
    */
-  Node add_node(const Point& position) {
-	nodes_.push_back(position);
+  Node add_node(const Point& position, const node_value_type& value = node_value_type()) {
+	node_data new_node_data;
+
+	new_node_data.p = position;
+	new_node_data.v = value;
+	nodes_.push_back(new_node_data);
   	Node new_node = Node(this, num_nodes_);
 	++num_nodes_;
 	return new_node;
@@ -365,21 +377,49 @@ class Graph {
     NodeIterator() {
     }
 
-    // HW1 #2: YOUR CODE HERE
-    // Supply definitions AND SPECIFICATIONS for:
-    // Node operator*() const
-    // NodeIterator& operator++()
-    // bool operator==(const NodeIterator&) const
+	/** Returns the node referenced by the iterator
+	 */
+	Node operator*() const{
+		return Node(graph_, index_);
+	}
+
+	/** Returns the node iterator that points to the next node in the graph
+	 */
+	NodeIterator& operator++() {
+		++index_;
+		return *this;
+	}
+
+	/** Returns true if this iterator points to the same element as the 
+	 * parameterized iterator
+	 * 
+	 * @param[in] @a it is another node iterator
+	 * @returns true if the two iterators point to the same node
+	 */
+	bool operator==(const NodeIterator& it) const {
+		return (index == *it.index());
+	}
 
    private:
     friend class Graph;
-    // HW1 #2: YOUR CODE HERE
+	size_type index_;
+	Graph* graph_;
+  	NodeIterator(const Graph* graph, size_type index) : graph_(graph),
+														index_(index) {
+	}	
   };
 
-  // HW1 #2: YOUR CODE HERE
-  // Supply definitions AND SPECIFICATIONS for:
-  // node_iterator node_begin() const
-  // node_iterator node_end() const
+  /** Returns a node_iterator pointing to the beginning of the node list
+   */
+  NodeIterator node_begin() const {
+  	return NodeIterator(this, 0);
+  }
+
+  /** Returns a node_iterator pointing to the end of the node list
+   */
+  NodeIterator node_end() const {
+  	return NodeIterator(this, num_nodes_);
+  }
 
   /** @class Graph::EdgeIterator
    * @brief Iterator class for edges. A forward iterator. */
@@ -455,9 +495,14 @@ class Graph {
 		size_type node2;
 	} edge_data;
 
+	typedef struct node_data {
+		Point p;
+		node_value_type v;
+	} node_data;
+
 	size_type num_nodes_ = 0;
 	size_type num_edges_ = 0;
- 	std::vector<Point> nodes_;
+ 	std::vector<node_data> nodes_;
 	std::vector<edge_data> edges_;
 };
 #endif

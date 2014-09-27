@@ -30,7 +30,7 @@ int main(int argc, char** argv)
   }
 
   // Construct a Graph
-  using GraphType = Graph;
+  using GraphType = Graph<double>;
   GraphType graph;
   std::vector<typename GraphType::node_type> nodes;
 
@@ -57,9 +57,9 @@ int main(int argc, char** argv)
   CS207::SDLViewer viewer;
   viewer.launch();
 
-  // Set the viewer
-  viewer.draw_graph(graph);
-  //viewer.draw_graph(graph);
+  // Add nodes to the viewer by using the node iterators
+  auto node_map = viewer.empty_node_map(graph);
+  viewer.add_nodes(graph.node_begin(), graph.node_end(), node_map);
   viewer.center_view();
 
   return 0;
