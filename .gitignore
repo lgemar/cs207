@@ -23,3 +23,6 @@
 # Other, custom
 *~
 .DS_Store
+
+# vim swp files
+.*.swp
