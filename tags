@@ -15,7 +15,11 @@ CS207_POINT_HPP	Point.hpp	2;"	d
 CS207_SDLVIEWER_HPP	CS207/SDLViewer.hpp	2;"	d
 CS207_UTIL_HPP	CS207/Util.hpp	2;"	d
 CXX	Examples/Makefile	/^CXX := $(shell which clang++) -std=c++11$/;"	m
+<<<<<<< HEAD
 CXX	Makefile	/^CXX := $(shell which clang++) -std=c++11 -g$/;"	m
+=======
+CXX	Makefile	/^CXX := $(shell which clang++) -std=c++11$/;"	m
+>>>>>>> hw0update
 Clock	CS207/Util.hpp	/^  Clock() : starttime_(clock::now()) {}$/;"	f	class:CS207::Clock
 Clock	CS207/Util.hpp	/^class Clock {$/;"	c	namespace:CS207
 Color	CS207/Color.hpp	/^  Color()$/;"	f	struct:CS207::Color
@@ -28,14 +32,23 @@ DEPSFILE	Examples/Makefile	/^DEPSFILE = $(DEPSDIR)\/$(notdir $*.d)$/;"	m
 DEPSFILE	Makefile	/^DEPSFILE = $(DEPSDIR)\/$(notdir $*.d)$/;"	m
 DEPSFLAGS	Examples/Makefile	/^DEPSFLAGS = -MD -MF $(DEPSFILE) -MP$/;"	m
 DEPSFLAGS	Makefile	/^DEPSFLAGS = -MD -MF $(DEPSFILE) -MP$/;"	m
+<<<<<<< HEAD
 Edge	Graph.hpp	/^				  Edge() {$/;"	f	class:Graph::Edge
 Edge	Graph.hpp	/^  class Edge {$/;"	c	class:Graph
 FIRST_PRIME	primes.cpp	3;"	d	file:
+=======
+Edge	Graph.hpp	/^    Edge() {$/;"	f	class:Graph::Edge
+Edge	Graph.hpp	/^  class Edge {$/;"	c	class:Graph
+>>>>>>> hw0update
 GLCamera	CS207/GLCamera.hpp	/^  GLCamera()$/;"	f	class:CS207::GLCamera
 GLCamera	CS207/GLCamera.hpp	/^class GLCamera {$/;"	c	namespace:CS207
 Graph	Graph.hpp	/^  Graph() {$/;"	f	class:Graph
 Graph	Graph.hpp	/^class Graph {$/;"	c
+<<<<<<< HEAD
 Node	Graph.hpp	/^	Node(const Graph* graph, size_type uid)$/;"	f	class:Graph::Node
+=======
+Node	Graph.hpp	/^	Node(const Graph* graph, size_type uid) : graph_(graph), uid_(uid) {$/;"	f	class:Graph::Node
+>>>>>>> hw0update
 Node	Graph.hpp	/^    Node() {$/;"	f	class:Graph::Node
 Node	Graph.hpp	/^  class Node {$/;"	c	class:Graph
 Point	Point.hpp	/^  Point() {$/;"	f	struct:Point
@@ -81,8 +94,15 @@ draw_graph	CS207/SDLViewer.hpp	/^  void draw_graph(const G& g) {$/;"	f	class:CS2
 draw_graph_nodes	CS207/SDLViewer.hpp	/^  void draw_graph_nodes(const G& g) {$/;"	f	class:CS207::SDLViewer
 duration	CS207/Util.hpp	/^  typedef typename clock::duration           duration;$/;"	t	class:CS207::Clock
 edge	Graph.hpp	/^  Edge edge(size_type i) const {$/;"	f	class:Graph
+<<<<<<< HEAD
 edge_type	Graph.hpp	/^  typedef Edge edge_type;$/;"	t	class:Graph
 edges_	CS207/SDLViewer.hpp	/^  std::vector<unsigned> edges_;$/;"	m	class:CS207::SDLViewer
+=======
+edge_data	Graph.hpp	/^	typedef struct edge_data {$/;"	s	class:Graph
+edge_type	Graph.hpp	/^  typedef Edge edge_type;$/;"	t	class:Graph
+edges_	CS207/SDLViewer.hpp	/^  std::vector<unsigned> edges_;$/;"	m	class:CS207::SDLViewer
+edges_	Graph.hpp	/^	std::vector<edge_data> edges_;$/;"	m	class:Graph
+>>>>>>> hw0update
 elapsed	CS207/Util.hpp	/^  duration elapsed() const {$/;"	f	class:CS207::Clock
 elem	Point.hpp	/^    double elem[3];$/;"	m	union:Point::__anon1
 elements_	Examples/proxy_example.cpp	/^  internal_element* elements_;$/;"	m	class:SimpleSet	file:
@@ -94,7 +114,10 @@ event_loop_wrapper	CS207/SDLViewer.hpp	/^  static int event_loop_wrapper(void* _
 event_thread_	CS207/SDLViewer.hpp	/^  SDL_Thread* event_thread_;$/;"	m	class:CS207::SDLViewer
 eyeV	CS207/GLCamera.hpp	/^  Point eyeV;$/;"	m	class:CS207::GLCamera
 fetch	Examples/proxy_example.cpp	/^    internal_element& fetch() const {$/;"	f	class:SimpleSet::SimpleElement	file:
+<<<<<<< HEAD
 fetch	Graph.hpp	/^	node_element& fetch() const {$/;"	f	class:Graph::Node
+=======
+>>>>>>> hw0update
 for_i	Point.hpp	11;"	d
 for_i	Point.hpp	234;"	d
 front	Point.hpp	/^  const_reference front() const { return elem[0]; }$/;"	f	struct:Point
@@ -132,19 +155,32 @@ make_rgb	CS207/Color.hpp	/^  static Color make_rgb(float r, float g, float b) {$
 max_size	Point.hpp	/^  static constexpr size_type max_size() { return 3; }$/;"	f	struct:Point
 next_uid_	Examples/proxy_example.cpp	/^  size_type next_uid_;$/;"	m	class:SimpleSet	file:
 node	Graph.hpp	/^  Node node(size_type i) const {$/;"	f	class:Graph
+<<<<<<< HEAD
 node1	Graph.hpp	/^				  Node node1() const {$/;"	f	class:Graph::Edge
 node2	Graph.hpp	/^				  Node node2() const {$/;"	f	class:Graph::Edge
 node_element	Graph.hpp	/^  struct node_element {$/;"	s	class:Graph
 node_ptr	Graph.hpp	/^	Node* node_ptr;$/;"	m	struct:Graph::node_element
 node_type	Graph.hpp	/^  typedef Node node_type;$/;"	t	class:Graph
 nodes_	Graph.hpp	/^ std::vector<node_element*> nodes_; $/;"	m	class:Graph	typeref:struct:Graph::node_element
+=======
+node1	Graph.hpp	/^    Node node1() const {$/;"	f	class:Graph::Edge
+node2	Graph.hpp	/^    Node node2() const {$/;"	f	class:Graph::Edge
+node_type	Graph.hpp	/^  typedef Node node_type;$/;"	t	class:Graph
+nodes_	Graph.hpp	/^ 	std::vector<Point> nodes_;$/;"	m	class:Graph
+>>>>>>> hw0update
 norm	Point.hpp	/^double norm(const Point& a) {$/;"	f
 normSq	Point.hpp	/^double normSq(const Point& a) {$/;"	f
 norm_1	Point.hpp	/^double norm_1(const Point& a) {$/;"	f
 norm_2	Point.hpp	/^double norm_2(const Point& a) {$/;"	f
 norm_inf	Point.hpp	/^double norm_inf(const Point& a) {$/;"	f
 num_edges	Graph.hpp	/^  size_type num_edges() const {$/;"	f	class:Graph
+<<<<<<< HEAD
 num_nodes	Graph.hpp	/^  size_type num_nodes() const {$/;"	f	class:Graph
+=======
+num_edges_	Graph.hpp	/^	size_type num_edges_;$/;"	m	class:Graph
+num_nodes	Graph.hpp	/^  size_type num_nodes() const {$/;"	f	class:Graph
+num_nodes_	Graph.hpp	/^	size_type num_nodes_;$/;"	t	class:Graph	typeref:struct:Graph::edge_data
+>>>>>>> hw0update
 ok_	CS207/SDLViewer.hpp	/^    bool ok_;$/;"	m	struct:CS207::SDLViewer::safe_lock
 operator !=	Point.hpp	/^  bool operator!=(const Point& b) const {$/;"	f	struct:Point
 operator *	Point.hpp	/^Point operator*(Point a, const Point& b) {$/;"	f
@@ -180,7 +216,10 @@ operator []	Point.hpp	/^  const_reference operator[](size_type i) const { return
 operator []	Point.hpp	/^  reference       operator[](size_type i)       { return elem[i]; }$/;"	f	struct:Point
 pan	CS207/GLCamera.hpp	/^  inline void pan(float x, float y, float z) {$/;"	f	class:CS207::GLCamera
 point	CS207/GLCamera.hpp	/^  Point point;$/;"	m	class:CS207::GLCamera
+<<<<<<< HEAD
 position	Graph.hpp	/^	Point position;$/;"	m	struct:Graph::node_element
+=======
+>>>>>>> hw0update
 position	Graph.hpp	/^    const Point& position() const {$/;"	f	class:Graph::Node
 push_back	Examples/proxy_example.cpp	/^  SimpleElement push_back(const std::string& text) {$/;"	f	class:SimpleSet
 r	CS207/Color.hpp	/^  value_type r, g, b;$/;"	m	struct:CS207::Color
@@ -210,7 +249,10 @@ size	Examples/proxy_example.cpp	/^  size_type size() const {$/;"	f	class:SimpleS
 size	Graph.hpp	/^  size_type size() const {$/;"	f	class:Graph
 size	Point.hpp	/^  static constexpr size_type     size() { return 3; }$/;"	f	struct:Point
 size_	Examples/proxy_example.cpp	/^  size_type size_;$/;"	m	class:SimpleSet	file:
+<<<<<<< HEAD
 size_	Graph.hpp	/^  size_type size_ = 0;$/;"	m	class:Graph
+=======
+>>>>>>> hw0update
 size_type	Examples/proxy_example.cpp	/^  typedef unsigned size_type;$/;"	t	class:SimpleSet	file:
 size_type	Graph.hpp	/^  typedef unsigned size_type;$/;"	t	class:Graph
 size_type	Point.hpp	/^  typedef std::size_t     size_type;$/;"	t	struct:Point
@@ -223,8 +265,13 @@ text	Examples/proxy_example.cpp	/^    std::string text;   \/\/ The text held by 
 tick_type	CS207/Util.hpp	/^  typedef typename duration::rep             tick_type;$/;"	t	class:CS207::Clock
 time_point	CS207/Util.hpp	/^  typedef typename clock::time_point         time_point;$/;"	t	class:CS207::Clock
 uid	Examples/proxy_example.cpp	/^    size_type uid;      \/\/ The unique identifcation for an element$/;"	m	struct:SimpleSet::internal_element	file:
+<<<<<<< HEAD
 uid	Graph.hpp	/^	size_type uid;$/;"	m	struct:Graph::node_element
 uid	Graph.hpp	/^  int uid() {$/;"	f	class:Graph
+=======
+uid1	Graph.hpp	/^		size_type uid1;$/;"	m	struct:Graph::edge_data
+uid2	Graph.hpp	/^		size_type uid2;$/;"	m	struct:Graph::edge_data
+>>>>>>> hw0update
 uid_	Examples/proxy_example.cpp	/^    size_type uid_;$/;"	m	class:SimpleSet::SimpleElement	file:
 uid_	Graph.hpp	/^	size_type uid_;$/;"	m	class:Graph::Node
 unlock	CS207/SDLViewer.hpp	/^    void unlock() {$/;"	f	struct:CS207::SDLViewer::safe_lock

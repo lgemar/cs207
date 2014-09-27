@@ -24,5 +24,13 @@
 *~
 .DS_Store
 
+<<<<<<< HEAD
 # vim swp files
 .*.swp
+=======
+# Vim swap files
+.*.swp
+
+# Any other wierd hidden files
+.*
+>>>>>>> hw0update

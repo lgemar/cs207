@@ -22,10 +22,6 @@
 class Graph {
  private:
 
-  // HW0: YOUR CODE HERE
-  // Use this space for declarations of important internal types you need
-  // later in the Graph's definition.
-  struct node_element;
 
  public:
 
@@ -71,8 +67,7 @@ class Graph {
    * Complexity: O(1).
    */
   size_type size() const {
-    // HW0: YOUR CODE HERE
-    return size_nodes_;
+  	return num_nodes_;
   }
 
   /** Remove all nodes and edges from this graph.
@@ -111,24 +106,16 @@ class Graph {
      * @endcode
      */
     Node() {
-      // HW0: YOUR CODE HERE
     }
 
     /** Return this node's position. */
     const Point& position() const {
-      // HW0: YOUR CODE HERE
-      return fetch().position;
+	  return graph_->nodes_[uid_];
     }
 
     /** Return this node's index, a number in the range [0, graph_size). */
     size_type index() const {
-      // HW0: YOUR CODE HERE
-      for (size_type i = 0; i < graph_->num_nodes(); ++i)
-		Node anode_element;
-		anode_element = graph_->graph_nodes_.at(i);
-        if (anode_element.uid == uid_)
-          return size_type(i);
-		assert(false);
+      return uid_;
     }
 
     /** Test whether this node and @a x are equal.
@@ -136,10 +123,7 @@ class Graph {
      * Equal nodes have the same graph and the same index.
      */
     bool operator==(const Node& x) const {
-      // HW0: YOUR CODE HERE
-	  bool result;
-	  result = (index() == x.index());
-	  return result;
+		return (uid_ == x.index());
     }
 
     /** Test whether this node is less than @a x in the global order.
@@ -151,34 +135,16 @@ class Graph {
      * and y, exactly one of x == y, x < y, and y < x is true.
      */
     bool operator<(const Node& x) const {
-      // HW0: YOUR CODE HERE
-	  bool result;
-	  result = index() < x.index();
-	  return result;
-	}
+		return (uid_ < x.index());
+    }
 
    private:
-	// Allow Graph to access Node's private member data and functions.
-	friend class Graph;
-	// HW0: YOUR CODE HERE
-	// Use this space to declare private data members and methods for Node
-	// that will not be visible to users, but may be useful within Graph.
-	// i.e. Graph needs a way to construct valid Node objects
-	// Pointer back to Graph
-	Graph* graph_;
-	// Identification Number for the Node
-	size_type uid_;
-	/** Private Constructor */
-	Node(const Graph* graph, size_type uid)
-			: graph_(const_cast<Graph*>(graph)), uid_(uid) {
-	}
-
-	/** Helper method that returns the corresponding element of Graph **/
-	node_element& fetch() const {
-		size_type idx = index();
-		node_element anode_element;
-		anode_element = *(graph_->graph_nodes_.at(idx));
-  		return anode_element;
+    // Allow Graph to access Node's private member data and functions.
+    friend class Graph;
+	const Graph* graph_;
+	size_type uid_ = 0;
+	// Construct a node as just a pointer to the graph and an id number
+	Node(const Graph* graph, size_type uid) : graph_(graph), uid_(uid) {
 	}
   };
 
@@ -195,16 +161,10 @@ class Graph {
    * Complexity: O(1) amortized operations.
    */
   Node add_node(const Point& position) {
-		  // HW0: YOUR CODE HERE
-		  node_element element;
-		  Node anode;
-		  element.position = position;
-		  element.uid = uid();
-		  anode = Node(this, element.uid);
-		  element.node = anode;
-		  graph_nodes_.push_back(&element);
-		  size_nodes_++;
-		  return anode;
+	nodes_.push_back(position);
+  	Node new_node = Node(this, num_nodes_);
+	++num_nodes_;
+	return new_node;
   }
 
   /** Return the node with index @a i.
@@ -214,11 +174,7 @@ class Graph {
    * Complexity: O(1).
    */
   Node node(size_type i) const {
-		  // HW0: YOUR CODE HERE
-		  // (void) i;             // Quiet compiler warning
-		  // return Node();        // Invalid node
-		  Node node_element = *(graph_nodes_.at(i)).node;
-		  return node_element;
+    return Node(this, i);
   }
 
   /////////////////
@@ -232,35 +188,30 @@ class Graph {
    * are considered equal if they connect the same nodes, in either order.
    */
   class Edge {
-  public:
-		  /** Construct an invalid Edge. */
-		  Edge() {
-				  // HW0: YOUR CODE HERE
-		  }
+   public:
+    /** Construct an invalid Edge. */
+    Edge() {
+      // HW0: YOUR CODE HERE
+    }
 
-		  /** Return a node of this Edge */
-		  Node node1() const {
-				  // HW0: YOUR CODE HERE
-				  return Node();      // Invalid Node
-		  }
+    /** Return a node of this Edge */
+    Node node1() const {
+		return Node(graph_, graph_->edges_[index_].node1);
+    }
 
-		  /** Return the other node of this Edge */
-		  Node node2() const {
-				  // HW0: YOUR CODE HERE
-				  return Node();      // Invalid Node
-		  }
+    /** Return the other node of this Edge */
+    Node node2() const {
+		return Node(graph_, graph_->edges_[index_].node2);
+    }
 
     /** Test whether this edge and @a x are equal.
      *
      * Equal edges are from the same graph and have the same nodes.
      */
     bool operator==(const Edge& x) const {
-      // HW0: YOUR CODE HERE
-      // (void) x;          // Quiet compiler warning
-      // return false;
-	  bool check_same1 = (nodea == x.nodea && nodeb == x.nodeb);
-	  bool check_same2 = (nodeb == x.nodea && nodea == x.nodeb);
-	  return (check_same1 || check_same2);
+		bool equal_check1 = (node1() == x.node1() && node2() == x.node2());
+		bool equal_check2 = (node2() == x.node1() && node1() == x.node2());
+		return (equal_check1 || equal_check2);
     }
 
     /** Test whether this edge is less than @a x in the global order.
@@ -272,35 +223,23 @@ class Graph {
      * and y, exactly one of x == y, x < y, and y < x is true.
      */
     bool operator<(const Edge& x) const {
-      // HW0: YOUR CODE HERE
-      // (void) x;           // Quiet compiler warning
-      // return false;
-	  Node pair1_min;
-	  Node pair2_min;
-	  if (nodea < nodeb) 
-	  	pair1_min = nodea;
-	  else
-	  	pair1_min = nodeb;
-	  if (x.nodea < x.nodeb)
-	  	pair2_min = x.nodea;
-	  else
-	  	pair2_min = x.nodeb;
-	  return pair1_min < pair2_min;
+		return (index() < x.index());
     }
+
+	size_type index() const {
+		return index_;
+	}
 
    private:
     // Allow Graph to access Edge's private member data and functions.
     friend class Graph;
-    // HW0: YOUR CODE HERE
-    // Use this space to declare private data members and methods for Edge
-    // that will not be visible to users, but may be useful within Graph.
-    // i.e. Graph needs a way to construct valid Edge objects
-	Graph* graph_;
-	Node nodea;
-	Node nodeb;
-	/** Private Constructor */
-	Edge(const Graph* graph, const Node& a, const Node& b)
-			: graph_(const_cast<Graph*>(graph)), nodea(a), nodeb(b) {
+	
+	// data members
+	const Graph* graph_;
+	size_type index_;
+
+	// Constructor available to the Graph class for constructing edges
+  	Edge(const Graph* graph, size_type index) : graph_(graph), index_(index) {
 	}
   };
 
@@ -309,9 +248,7 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   size_type num_edges() const {
-    // HW0: YOUR CODE HERE
-    // return 0;
-	return size_edges_;
+  	return num_edges_;
   }
 
   /** Add an edge to the graph, or return the current edge if it already exists.
@@ -327,23 +264,39 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   Edge add_edge(const Node& a, const Node& b) {
-    // HW0: YOUR CODE HERE
-    // (void) a, (void) b;   // Quiet compiler warning
-	// return Edge();        // Invalid Edge
-    for (size_type i = 0; i < num_nodes(); ++i) {
-	  Edge x;
-	  x = edge(i);
-	  bool check_same1 = (a == x.nodea && b == x.nodeb);
-	  bool check_same2 = (b == x.nodea && a == x.nodeb);
-	  bool result = (check_same1 || check_same2);
-      if (result)
-        return graph_edges_.at(i);
+  	edge_data new_edge;
+	size_type edge_index;
+
+	edge_index = has_edge(a, b);
+	if (edge_index == num_edges_) {
+		new_edge.node1 = a.index();
+		new_edge.node2 = b.index();
+		edges_.push_back(new_edge);
+		++num_edges_;
 	}
-	Edge temp = Edge(this, a, b);
-	graph_edges_.push_back(temp);
-	size_edges_++;
-  	return temp;
+	return Edge(this, edge_index);
   }
+
+  /** Check to see if there is an edge between nodes a and b
+   * @a a and @a b are distince valid nodes in the graph
+   * @return index of the edge if it exists, else return the number of edges
+   */
+   size_type has_edge(const Node& a, const Node& b) {
+	edge_data edge_of_interest;
+	bool equal_check1, equal_check2;
+	size_type i;
+   	for (i = 0; i < num_edges_; i++) {
+		edge_of_interest = edges_[i];
+		equal_check1 = (edge_of_interest.node1 == a.index() && 
+						edge_of_interest.node2 == b.index());
+		equal_check2 = (edge_of_interest.node2 == a.index() &&
+						edge_of_interest.node1 == b.index());
+		if (equal_check1 || equal_check2) {
+			return i;
+		}
+	}
+	return num_edges_; // if no edge matches the two nodes, then return false
+   }
 
   /** Return the edge with index @a i.
    * @pre 0 <= @a i < num_edges()
@@ -351,32 +304,18 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   Edge edge(size_type i) const {
-    // HW0: YOUR CODE HERE
-	return graph_edges_.at(i);
+    return Edge(this, i);
   }
 
  private:
+	typedef struct edge_data {
+		size_type node1;
+		size_type node2;
+	} edge_data;
 
-  // HW0: YOUR CODE HERE
-  // Use this space for your Graph class's internals:
-  //   helper functions, data members, and so forth.
-  int uid() {
-  	static size_type x = size_type(0);
-	x++;
-	return x;
-  }
-
-  struct node_element {
-	size_type uid;
-	Point position;
-	Node node;
-  };
-
-  size_type size_nodes_ = 0;
-  size_type size_edges_ = 0;
-
-  std::vector<node_element*> graph_nodes_; 
-  std::vector<Edge> graph_edges_;
+	size_type num_nodes_ = 0;
+	size_type num_edges_ = 0;
+ 	std::vector<Point> nodes_;
+	std::vector<edge_data> edges_;
 };
-
 #endif
