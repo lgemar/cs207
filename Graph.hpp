@@ -22,11 +22,6 @@
 class Graph {
  private:
 
-  // HW0: YOUR CODE HERE
-  // Use this space for declarations of important internal types you need
-  // later in the Graph's definition.
-  // (As with all the "YOUR CODE HERE" markings, you may not actually NEED
-  // code here. Just use the space if you need it.)
 
  public:
 
@@ -72,8 +67,7 @@ class Graph {
    * Complexity: O(1).
    */
   size_type size() const {
-    // HW0: YOUR CODE HERE
-    return 0;
+  	return num_nodes_;
   }
 
   /** Remove all nodes and edges from this graph.
@@ -112,19 +106,16 @@ class Graph {
      * @endcode
      */
     Node() {
-      // HW0: YOUR CODE HERE
     }
 
     /** Return this node's position. */
     const Point& position() const {
-      // HW0: YOUR CODE HERE
-      return Point();
+	  return graph_->nodes_[uid_];
     }
 
     /** Return this node's index, a number in the range [0, graph_size). */
     size_type index() const {
-      // HW0: YOUR CODE HERE
-      return size_type(-1);
+      return uid_;
     }
 
     /** Test whether this node and @a x are equal.
@@ -132,9 +123,7 @@ class Graph {
      * Equal nodes have the same graph and the same index.
      */
     bool operator==(const Node& x) const {
-      // HW0: YOUR CODE HERE
-      (void) x;          // Quiet compiler warning
-      return false;
+		return (uid_ == x.index());
     }
 
     /** Test whether this node is less than @a x in the global order.
@@ -146,18 +135,17 @@ class Graph {
      * and y, exactly one of x == y, x < y, and y < x is true.
      */
     bool operator<(const Node& x) const {
-      // HW0: YOUR CODE HERE
-      (void) x;           // Quiet compiler warning
-      return false;
+		return (uid_ < x.index());
     }
 
    private:
     // Allow Graph to access Node's private member data and functions.
     friend class Graph;
-    // HW0: YOUR CODE HERE
-    // Use this space to declare private data members and methods for Node
-    // that will not be visible to users, but may be useful within Graph.
-    // i.e. Graph needs a way to construct valid Node objects
+	const Graph* graph_;
+	size_type uid_;
+	// Construct a node as just a pointer to the graph and an id number
+	Node(const Graph* graph, size_type uid) : graph_(graph), uid_(uid) {
+	}
   };
 
   /** Synonym for size(). */
@@ -173,9 +161,11 @@ class Graph {
    * Complexity: O(1) amortized operations.
    */
   Node add_node(const Point& position) {
-    // HW0: YOUR CODE HERE
-    (void) position;      // Quiet compiler warning
-    return Node();        // Invalid node
+	Node new_node;
+
+	nodes_.push_back(position);
+  	new_node = Node(this, num_nodes_);
+	++num_nodes_;
   }
 
   /** Return the node with index @a i.
@@ -185,9 +175,7 @@ class Graph {
    * Complexity: O(1).
    */
   Node node(size_type i) const {
-    // HW0: YOUR CODE HERE
-    (void) i;             // Quiet compiler warning
-    return Node();        // Invalid node
+    return Node(this, i);
   }
 
   /////////////////
@@ -257,8 +245,7 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   size_type num_edges() const {
-    // HW0: YOUR CODE HERE
-    return 0;
+  	return num_edges_;
   }
 
   /** Add an edge to the graph, or return the current edge if it already exists.
@@ -287,15 +274,18 @@ class Graph {
   Edge edge(size_type i) const {
     // HW0: YOUR CODE HERE
     (void) i;             // Quiet compiler warning
-    return Edge();        // Invalid Edge
+    return Edge();
   }
 
  private:
+	typedef struct edge_data {
+		size_type uid1;
+		size_type uid2;
+	} edge_data;
 
-  // HW0: YOUR CODE HERE
-  // Use this space for your Graph class's internals:
-  //   helper functions, data members, and so forth.
-
+	size_type num_nodes_;
+	size_type num_edges_;
+ 	std::vector<Point> nodes_;
+	std::vector<edge_data> edges_;
 };
-
 #endif
