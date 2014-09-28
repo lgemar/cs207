@@ -30,6 +30,9 @@ class Graph {
   // PUBLIC TYPE DEFINITIONS //
   /////////////////////////////
 
+  /** Define uid_type */
+  typedef size_type uid_type;
+
   /** Define the node value type in terms of template parameter */
   typedef V node_value_type;
 
@@ -161,13 +164,30 @@ class Graph {
 		return (uid_ < x.index());
     }
 
-    // HW1: YOUR CODE HERE
-    // Supply definitions AND SPECIFICATIONS for:
-    // node_value_type& value();
-    // const node_value_type& value() const;
-    // size_type degree() const;
-    // incident_iterator edge_begin() const;
-    // incident_iterator edge_end() const;
+	/** Returns the node_value_type value associated with this Node */
+	node_value_type& value() {
+		return graph_->nodes_[i].v;
+	}
+
+	/** Returns the node_value_type value associated with this Node */
+	const node_value_type& value() const {
+		return graph_->nodes_[i].v;
+	}
+
+	/** Returns the number of edges associated with this Node */
+	size_type degree() const {
+		return graph_->nodes_[i].degree;
+	}
+
+   	/** Returns an iterator to beginning of incident iterator list */
+	IncidentIterator edge_begin() const {
+		return IncidentIterator(graph_, uid_);
+	}
+
+	/** Returns an iterator to the end of incident iterator list */
+	IncidentIterator edge_end() const {
+		return graph_->adj_[uid_].end();
+	}
 
    private:
     // Allow Graph to access Node's private member data and functions.
@@ -181,7 +201,7 @@ class Graph {
 
   /** Synonym for size(). */
   size_type num_nodes() const {
-		  return size();
+  	return size();
   }
 
   /** Add a node to the graph, returning the added node.
@@ -196,7 +216,10 @@ class Graph {
 
 	new_node_data.p = position;
 	new_node_data.v = value;
+	new_node_data.degree = 0;
 	nodes_.push_back(new_node_data);
+	adj_.push_back(std::vector<uid_type*>);
+
   	Node new_node = Node(this, num_nodes_);
 	++num_nodes_;
 	return new_node;
@@ -208,9 +231,7 @@ class Graph {
    * Complexity: O(1).
    */
   bool has_node(const Node& n) const {
-    // HW1: YOUR CODE HERE
-    (void) n;            // Quiet compiler warning
-    return false;
+  	return n.index() < num_nodes_;
   }
 
   /** Return the node with index @a i.
@@ -237,27 +258,23 @@ class Graph {
    public:
     /** Construct an invalid Edge. */
     Edge() {
-      // HW0: YOUR CODE HERE
     }
 
     /** Return a node of this Edge */
     Node node1() const {
-		return Node(graph_, graph_->edges_[index_].node1);
-    }
+		return Node(graph_, uid1_);
 
     /** Return the other node of this Edge */
     Node node2() const {
-		return Node(graph_, graph_->edges_[index_].node2);
+		return Node(graph_, uid2_);
     }
 
     /** Test whether this edge and @a x are equal.
-     *
+     * @pre RI for Edges must hold: uid1_ < uid2_
      * Equal edges are from the same graph and have the same nodes.
      */
     bool operator==(const Edge& x) const {
-		bool equal_check1 = (node1() == x.node1() && node2() == x.node2());
-		bool equal_check2 = (node2() == x.node1() && node1() == x.node2());
-		return (equal_check1 || equal_check2);
+		return (node1() == x.node1() && node2() == x.node2());
     }
 
     /** Test whether this edge is less than @a x in the global order.
@@ -269,12 +286,11 @@ class Graph {
      * and y, exactly one of x == y, x < y, and y < x is true.
      */
     bool operator<(const Edge& x) const {
-		return (index() < x.index());
+		if (node1() < x.node1())
+			return true;
+		else
+			return node2() < x.node2();
     }
-
-	size_type index() const {
-		return index_;
-	}
 
    private:
     // Allow Graph to access Edge's private member data and functions.
@@ -282,10 +298,25 @@ class Graph {
 	
 	// data members
 	const Graph* graph_;
-	size_type index_;
+
+	/** RI: uid1_ < uid2 */
+	uid_type uid1_;
+	uid_type uid2_;
 
 	// Constructor available to the Graph class for constructing edges
-  	Edge(const Graph* graph, size_type index) : graph_(graph), index_(index) {
+  	Edge(const Graph* graph, uid_type node1, uid_type node2) {
+		// Make sure that there are no self edges
+		assert(node1 != node2);
+		graph_ = graph;
+		// Enforce RI that uid1_ < uid2_
+		if (node1 < node2) {
+			uid1_ = node1;
+			uid2_ = node2;
+		}
+		else {
+			uid2_ = node1;
+			uid1_ = node2;
+		}
 	}
   };
 
@@ -310,38 +341,29 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   Edge add_edge(const Node& a, const Node& b) {
-  	edge_data new_edge;
-	size_type edge_index;
-
-	edge_index = has_edge(a, b);
-	if (edge_index == num_edges_) {
-		new_edge.node1 = a.index();
-		new_edge.node2 = b.index();
-		edges_.push_back(new_edge);
-		++num_edges_;
+	assert(a.index() == b.index());
+  	if (!has_edge(a, b)) {
+		adj_[a.index()].push_back(b.index());
+		adj_[b.index()].push_back(a.index());
 	}
-	return Edge(this, edge_index);
+	return Edge(this, a.index(), b.index());
   }
 
   /** Check to see if there is an edge between nodes a and b
    * @a a and @a b are distince valid nodes in the graph
-   * @return index of the edge if it exists, else return the number of edges
+   * @return true if it exists, else return the number of edges
    */
    size_type has_edge(const Node& a, const Node& b) {
-	edge_data edge_of_interest;
-	bool equal_check1, equal_check2;
-	size_type i;
-   	for (i = 0; i < num_edges_; i++) {
-		edge_of_interest = edges_[i];
-		equal_check1 = (edge_of_interest.node1 == a.index() && 
-						edge_of_interest.node2 == b.index());
-		equal_check2 = (edge_of_interest.node2 == a.index() &&
-						edge_of_interest.node1 == b.index());
-		if (equal_check1 || equal_check2) {
-			return i;
+	Edge test_edge = Edge(this, a.index(), b.index());
+   	IncidentIterator it = IncidentIterator(this, a.index());
+	for (size_type i = 0; i < num_nodes_; i++) {
+		for (it = it.edge_begin(); it != it.edge_end(); it++) {
+			if (test_edge == *it)
+				return true;
 		}
 	}
-	return num_edges_; // if no edge matches the two nodes, then return false
+	// If no equal equivalent edge is found, return false
+	return false;
    }
 
   /** Return the edge with index @a i.
@@ -350,7 +372,8 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   Edge edge(size_type i) const {
-    return Edge(this, i);
+  	size_type counter = 0;
+	// Use the edge iterator here
   }
 
   ///////////////
@@ -443,27 +466,40 @@ class Graph {
 	/** Returns the edge pointed to by the iterator
 	 */
 	Edge operator*() const{
-		return Edge(graph_, index_);
+		assert(uid_ < graph_->size());
+		return Edge(graph_, uid_, *it_);
 	}
 	
 	/** Returns an edge iterator that points to the next edge in the graph
 	 */
 	EdgeIterator& operator++() {
-		index_++;
-		return *this;
+		++it_;
+		fix();
 	}
 
 	/* Returns true if this iterator points to the same edge, false otherwise
 	 */
 	bool operator==(const EdgeIterator& it) const {
-		return (Edge(graph_, index_) == *it);
+		return uid_ == it.uid_;
 	}
 
    private:
     friend class Graph;
 	const Graph* graph_;
-	size_type index_;
-	EdgeIterator(const Graph* graph, size_type index) : graph_(graph), index_(index) {
+	uid_type uid_;
+	IncidentIterator it_;
+	EdgeIterator(const Graph* graph, uid_type i) : graph_(graph), uid_(i) {
+	}
+
+	/** Private function to maintain representation invariants */
+	void fix() {
+		Node incident_node = Node(graph_, uid_);
+		if (it_ == incident_node.edge_end()) {
+			++uid_;
+		}
+		if (uid_ < graph_->size()) {
+			it_ = IncidentIterator(graph_, uid_);
+		}
 	}
   };
 
@@ -499,31 +535,48 @@ class Graph {
     IncidentIterator() {
     }
 
-    // HW1 #5: YOUR CODE HERE
-    // Supply definitions AND SPECIFICATIONS for:
-    // Edge operator*() const
-    // IncidentIterator& operator++()
-    // bool operator==(const IncidentIterator&) const
+	/** Return the edge to which the iterator is pointing */
+	Edge operator*() const {
+		return Edge(graph_, uid_, *it_);
+	}
+
+	/** Return the iterator to the next element in the indicent list */
+	IncidentIterator& operator++() {
+		++it;
+		return *this;
+	}
+
+	/** Return true if two iterators point to the same element, else false */
+	bool operator==(const IncidentIterator& other) const {
+		return (Edge(graph_, uid_, *it_) == *other);
+	}
 
    private:
     friend class Graph;
-    // HW1 #5: YOUR CODE HERE
+	const Graph* graph_;
+
+	// Represenation of node
+	uid_type uid_;
+
+	// Index to box that contains uid of second node in edge
+	uid_type *it_;
+
+	IncidentIterator(const Graph* graph, uid_type uid) graph_(graph) uid_(uid) {
+		it = graph_->adj_[uid];
+	}
   };
 
- private:
-	typedef struct edge_data {
-		size_type node1;
-		size_type node2;
-	} edge_data;
 
+ private:
 	typedef struct node_data {
 		Point p;
 		node_value_type v;
+		size_type degree;
 	} node_data;
 
 	size_type num_nodes_ = 0;
 	size_type num_edges_ = 0;
  	std::vector<node_data> nodes_;
-	std::vector<edge_data> edges_;
+	std::vector<std::vector<uid_type*>> adj_;
 };
 #endif
