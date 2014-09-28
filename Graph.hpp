@@ -30,6 +30,7 @@ class Graph {
   // PUBLIC TYPE DEFINITIONS //
   /////////////////////////////
 
+
   /** Define the node value type in terms of template parameter */
   typedef V node_value_type;
 
@@ -68,6 +69,16 @@ class Graph {
   class IncidentIterator;
   /** Synonym for IncidentIterator */
   typedef IncidentIterator incident_iterator;
+
+	/** custom type to hold node data */
+	typedef struct node_data {
+		uid_type uid;
+		Point p;
+		node_value_type v;
+		size_type degree;
+		std::vector<uid_type> adj;
+	} node_data;
+
 
   ////////////////////////////////
   // CONSTRUCTOR AND DESTRUCTOR //
@@ -213,6 +224,7 @@ class Graph {
 	new_node_data.p = position;
 	new_node_data.v = value;
 	new_node_data.degree = 0;
+	new_node_data.uid = num_nodes_;
 	nodes_.push_back(new_node_data);
 
   	Node new_node = Node(this, num_nodes_);
@@ -376,7 +388,7 @@ class Graph {
   Edge edge(size_type i) const {
 	assert(i < size());
 	EdgeIterator it = edge_begin();
-	for (int counter = 0; counter < i; counter++) {
+	for (size_type counter = 0; counter < i; counter++) {
 		it++;
 	}
 	return *it;
@@ -470,17 +482,20 @@ class Graph {
     }
 
 	/** Returns the edge pointed to by the iterator
+	 * @pre this->it_nodes_ < nodes_end_
 	 */
 	Edge operator*() const {
-		assert(uid_ < graph_->size());
-		assert(it_ < Node(graph_, uid_).degree());
-		return Edge(graph_, uid_, graph_->nodes_[uid_].adj[it_]);
+		assert(outer_ < graph_->size());
+		assert(inner_ < graph_->nodes_[outer_].degree);
+		return Edge(graph_, 
+					graph_->nodes_[outer_].uid, 
+					graph_->nodes_[outer_].adj[inner_]);
 	}
 	
 	/** Returns an edge iterator that points to the next edge in the graph
 	 */
 	EdgeIterator& operator++() {
-		it_++;
+		++inner_;
 		fix();
 		return *this;
 	}
@@ -488,57 +503,69 @@ class Graph {
 	/* Returns true if this iterator points to the same edge, false otherwise
 	 */
 	bool operator==(const EdgeIterator& it) const {
-		return uid_ == it.uid_ && it_ == it.it_;
+		return outer_ == it.outer_ && inner_ == it.inner_;
 	}
 
    private:
     friend class Graph;
 	const Graph* graph_;
-	uid_type uid_;
-	size_type it_;
+
+	/** Define node iterator to loop over all nodes and edge iterator to 
+	 * iterate over adjacent nodes that form edges */
+	size_type outer_;
+	size_type inner_;
+
+	/** Initialize an edge iterator to point to the first valid edge 
+	 *
+	 * RI: this EdgeIterator object points at the first valid edge in graph
+	 * RI: edge_end_ points to end of nodes_ array
+	 * RI: nodes_end_ points to end of nodes_[0] array
+	 */
 	EdgeIterator(const Graph* graph) {
 		graph_ = graph;
-		uid_ = 0;
-		it_ = 0;
+		outer_ = 0;
+		inner_ = 0;
+		fix();
 	}
 
 	/** Private function to maintain representation invariants 
-	  * RI: uid_ <= graph_.size()
-	  * RI: *it_ is a value unless uid_ == graph_.size()
-	  * RI: The list pair (uid_, it_) must either be valid or the end
+	  * @pre All iterator_category iterators must point at valid node/edge
+	  * or the end of the vector
+	  * @post Iterator category iterator must point at a valid edge unless
+	  * it is pointing at the very end of the edge list
 	  */
 	void fix() {
-		while(uid_ < graph_->size() && !(Node(graph_, uid_).degree() > 0)) {
-			++uid_;
-		}
-		if (it_ >= Node(graph_, uid_).degree()) {
-			++uid_;
-			it_ = 0;
+		size_type degree;
+		assert(outer_ <= graph_->size());
+		while (!(outer_ == graph_->size()) && 
+				inner_ == (degree = graph_->nodes_[outer_].degree)) {
+			++outer_;
+			inner_ = 0;
 		}
 	}
 
 	EdgeIterator& begin() {
-		uid_ = 0;
-		it_ = 0;
+		outer_ = 0;
+		inner_ = 0;
+		fix();
 		return *this;
 	}
 
 	EdgeIterator& end() {
-		uid_ = graph_->size();
-		it_ = 0;
+		outer_ = graph_->size();
 		return *this;
 	}
   };
 
   /** Returns an iterator to the first edge in the graph
    */
-  EdgeIterator edge_begin() const {
+  EdgeIterator& edge_begin() const {
   	return EdgeIterator(this).begin();
   }
   
   /** Return an iterator to one past the last edge in the graph
    */
-  EdgeIterator edge_end() const {
+  EdgeIterator& edge_end() const {
   	return EdgeIterator(this).end();
   }
 
@@ -612,13 +639,6 @@ class Graph {
 
 
  private:
-	typedef struct node_data {
-		Point p;
-		node_value_type v;
-		size_type degree = 0;
-		std::vector<uid_type> adj;
-	} node_data;
-
 	size_type num_nodes_ = 0;
 	size_type num_edges_ = 0;
  	std::vector<node_data> nodes_;
