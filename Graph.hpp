@@ -176,12 +176,12 @@ class Graph {
 	}
 
    	/** Returns an iterator to beginning of incident iterator list */
-	IncidentIterator edge_begin() const {
+	IncidentIterator& edge_begin() const {
 		return IncidentIterator(graph_, uid_).begin();
 	}
 
 	/** Returns an iterator to the end of incident iterator list */
-	IncidentIterator edge_end() const {
+	IncidentIterator& edge_end() const {
 		return IncidentIterator(graph_, uid_).end();
 	}
 
@@ -350,9 +350,8 @@ class Graph {
    * @return true if it exists, else return the number of edges
    */
    size_type has_edge(const Node& a, const Node& b) {
-	IncidentIterator it;
 	Edge test_edge = Edge(this, a.index(), b.index());
-	for (it = a.edge_begin(); it != a.edge_end(); it++) {
+	for (auto it = a.edge_begin(); it != a.edge_end(); ++it) {
 		if (test_edge == *it)
 			return true;
 	}
@@ -536,19 +535,21 @@ class Graph {
     }
 
 	// Return iterator to front
-	IncidentIterator& begin() const {
+	IncidentIterator& begin() {
 		return *this;
 	}
 
 	// Return iterator to back
-	IncidentIterator& end() const {
-		it_ = end_;
+	IncidentIterator& end() {
+		it_ = node_.degree();
 		return *this;
 	}
 
 	/** Return the edge to which the iterator is pointing */
 	Edge operator*() const {
-		return Edge(graph_, uid_, *it_);
+		return Edge(graph_, 
+					node_.index(), 
+					graph_->nodes_[node_.index()].adj[it_]);
 	}
 
 	/** Return the iterator to the next element in the indicent list */
@@ -559,7 +560,7 @@ class Graph {
 
 	/** Return true if two iterators point to the same element, else false */
 	bool operator==(const IncidentIterator& other) const {
-		return (Edge(graph_, uid_, *it_) == *other);
+		return (node_ == other.node_ && it_ == other.it_);
 	}
 
    private:
@@ -567,19 +568,16 @@ class Graph {
 	const Graph* graph_;
 
 	// Represenation of node
-	uid_type uid_;
+	Node node_;
 
 	// Index to box that contains uid of second node in edge
-	iterator it_;
-	iterator end_;
+	size_type it_;
 
-	IncidentIterator(const Graph* graph, uid_type uid) : graph_(graph), 
-													     uid_(uid) {
-		it_ = graph_->nodes_[uid].adj.begin();
-		end_ = graph->nodes_[uid].adj.end();
-
+	IncidentIterator(const Graph* graph, uid_type uid) {
+		graph_ = graph;
+		node_ = Node(graph, uid);
+		it_ = 0;
 	}
-
   };
 
 

@@ -1,99 +1,22 @@
 In file included from viewer.cpp:21:
-./Graph.hpp:355:50: error: cannot increment value of type 'Graph<double>::IncidentIterator'
-        for (it = a.edge_begin(); it != a.edge_end(); it++) {
-                                                      ~~^
-./Graph.hpp:341:9: note: in instantiation of member function 'Graph<double>::has_edge' requested here
-        if (!has_edge(a, b)) {
-             ^
-viewer.cpp:51:15: note: in instantiation of member function 'Graph<double>::add_edge' requested here
-        graph.add_edge(nodes[t[i]], nodes[t[j]]);
-              ^
-In file included from viewer.cpp:21:
-./Graph.hpp:578:7: error: no viable overloaded '='
-                it_ = graph_->nodes_[uid].adj.begin();
-                ~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./Graph.hpp:180:10: note: in instantiation of member function 'Graph<double>::IncidentIterator::IncidentIterator' requested here
-                return IncidentIterator(graph_, uid_).begin();
-                       ^
-./Graph.hpp:355:14: note: in instantiation of member function 'Graph<double>::Node::edge_begin' requested here
-        for (it = a.edge_begin(); it != a.edge_end(); it++) {
-                    ^
-./Graph.hpp:341:9: note: in instantiation of member function 'Graph<double>::has_edge' requested here
-        if (!has_edge(a, b)) {
-             ^
-viewer.cpp:51:15: note: in instantiation of member function 'Graph<double>::add_edge' requested here
-        graph.add_edge(nodes[t[i]], nodes[t[j]]);
-              ^
-/usr/include//c++/4.8/bits/stl_iterator.h:708:11: note: candidate function (the implicit copy assignment operator) not viable: no known conversion from '__normal_iterator<const_pointer, [...]>' to 'const __normal_iterator<unsigned int *, [...]>' for 1st argument
-    class __normal_iterator
-          ^
-/usr/include//c++/4.8/bits/stl_iterator.h:708:11: note: candidate function (the implicit move assignment operator) not viable: no known conversion from '__normal_iterator<const_pointer, [...]>' to '__normal_iterator<unsigned int *, [...]>' for 1st argument
-    class __normal_iterator
-          ^
-In file included from viewer.cpp:21:
-./Graph.hpp:579:8: error: no viable overloaded '='
-                end_ = graph->nodes_[uid].adj.end();
-                ~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/usr/include//c++/4.8/bits/stl_iterator.h:708:11: note: candidate function (the implicit copy assignment operator) not viable: no known conversion from '__normal_iterator<const_pointer, [...]>' to 'const __normal_iterator<unsigned int *, [...]>' for 1st argument
-    class __normal_iterator
-          ^
-/usr/include//c++/4.8/bits/stl_iterator.h:708:11: note: candidate function (the implicit move assignment operator) not viable: no known conversion from '__normal_iterator<const_pointer, [...]>' to '__normal_iterator<unsigned int *, [...]>' for 1st argument
-    class __normal_iterator
-          ^
-In file included from viewer.cpp:21:
-./Graph.hpp:540:10: error: binding of reference to type 'Graph<double>::IncidentIterator' to a value of type 'const Graph<double>::IncidentIterator' drops qualifiers
-                return *this;
-                       ^~~~~
-./Graph.hpp:180:41: note: in instantiation of member function 'Graph<double>::IncidentIterator::begin' requested here
-                return IncidentIterator(graph_, uid_).begin();
-                                                      ^
-./Graph.hpp:355:14: note: in instantiation of member function 'Graph<double>::Node::edge_begin' requested here
-        for (it = a.edge_begin(); it != a.edge_end(); it++) {
-                    ^
-./Graph.hpp:341:9: note: in instantiation of member function 'Graph<double>::has_edge' requested here
-        if (!has_edge(a, b)) {
-             ^
-viewer.cpp:51:15: note: in instantiation of member function 'Graph<double>::add_edge' requested here
-        graph.add_edge(nodes[t[i]], nodes[t[j]]);
-              ^
-In file included from viewer.cpp:21:
-./Graph.hpp:185:10: error: no matching constructor for initialization of 'Graph<double>::IncidentIterator'
-                return IncidentIterator(graph_, uid_).end();
-                       ^                ~~~~~~~~~~~~
-./Graph.hpp:355:36: note: in instantiation of member function 'Graph<double>::Node::edge_end' requested here
-        for (it = a.edge_begin(); it != a.edge_end(); it++) {
-                                          ^
-./Graph.hpp:341:9: note: in instantiation of member function 'Graph<double>::has_edge' requested here
-        if (!has_edge(a, b)) {
-             ^
-viewer.cpp:51:15: note: in instantiation of member function 'Graph<double>::add_edge' requested here
-        graph.add_edge(nodes[t[i]], nodes[t[j]]);
-              ^
-./Graph.hpp:535:5: note: candidate constructor not viable: requires 0 arguments, but 2 were provided
-    IncidentIterator() {
-    ^
-./Graph.hpp:518:9: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 2 were provided
-  class IncidentIterator : private totally_ordered<IncidentIterator> {
+./Graph.hpp:475:2: warning: control reaches end of non-void function [-Wreturn-type]
+        }
         ^
-./Graph.hpp:518:9: note: candidate constructor (the implicit move constructor) not viable: requires 1 argument, but 2 were provided
-./Graph.hpp:499:10: error: no matching constructor for initialization of 'Graph<double>::IncidentIterator'
-                        it_ = IncidentIterator(graph_, uid_);
-                              ^                ~~~~~~~~~~~~
-./Graph.hpp:475:3: note: in instantiation of member function 'Graph<double>::EdgeIterator::fix' requested here
-                fix();
-                ^
-./CS207/SDLViewer.hpp:344:29: note: in instantiation of member function 'Graph<double>::EdgeIterator::operator++' requested here
+./CS207/SDLViewer.hpp:344:29: note: in instantiation of member function 'Graph<int>::EdgeIterator::operator++' requested here
       for (; first != last; ++first) {
                             ^
-viewer.cpp:63:10: note: in instantiation of function template specialization 'CS207::SDLViewer::add_edges<Graph<double>::EdgeIterator, std::map<Graph<double>::Node, unsigned int, std::less<Graph<double>::Node>, std::allocator<std::pair<const Graph<double>::Node, unsigned int> > > >' requested here
+viewer.cpp:63:10: note: in instantiation of function template specialization 'CS207::SDLViewer::add_edges<Graph<int>::EdgeIterator, std::map<Graph<int>::Node, unsigned int, std::less<Graph<int>::Node>, std::allocator<std::pair<const Graph<int>::Node, unsigned int> > > >' requested here
   viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
          ^
-./Graph.hpp:535:5: note: candidate constructor not viable: requires 0 arguments, but 2 were provided
-    IncidentIterator() {
-    ^
-./Graph.hpp:518:9: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 2 were provided
-  class IncidentIterator : private totally_ordered<IncidentIterator> {
+1 warning generated.
+In file included from subgraph.cpp:17:
+./Graph.hpp:475:2: warning: control reaches end of non-void function [-Wreturn-type]
+        }
         ^
-./Graph.hpp:518:9: note: candidate constructor (the implicit move constructor) not viable: requires 1 argument, but 2 were provided
-6 errors generated.
-make: *** [viewer.o] Error 1
+./CS207/SDLViewer.hpp:344:29: note: in instantiation of member function 'Graph<int>::EdgeIterator::operator++' requested here
+      for (; first != last; ++first) {
+                            ^
+subgraph.cpp:153:10: note: in instantiation of function template specialization 'CS207::SDLViewer::add_edges<Graph<int>::EdgeIterator, std::map<Graph<int>::Node, unsigned int, std::less<Graph<int>::Node>, std::allocator<std::pair<const Graph<int>::Node, unsigned int> > > >' requested here
+  viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
+         ^
+1 warning generated.
