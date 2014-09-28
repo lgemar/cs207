@@ -302,16 +302,20 @@ class Graph {
 	// Constructor available to the Graph class for constructing edges
   	Edge(const Graph* graph, uid_type node1, uid_type node2) {
 		// Make sure that there are no self edges
-		assert(node1 != node2);
-		graph_ = graph;
-		// Enforce RI that uid1_ < uid2_
-		if (node1 < node2) {
-			uid1_ = node1;
-			uid2_ = node2;
+		if (node1 != node2) {
+			// do nothing
 		}
 		else {
-			uid2_ = node1;
-			uid1_ = node2;
+			graph_ = graph;
+			// Enforce RI that uid1_ < uid2_
+			if (node1 < node2) {
+				uid1_ = node1;
+				uid2_ = node2;
+			}
+			else {
+				uid2_ = node1;
+				uid1_ = node2;
+			}
 		}
 	}
   };
@@ -341,6 +345,9 @@ class Graph {
   	if (!has_edge(a, b)) {
 		nodes_[a.index()].adj.push_back(b.index());
 		nodes_[b.index()].adj.push_back(a.index());
+		// Add one to the degree of the edges
+		nodes_[a.index()].degree++;
+		nodes_[b.index()].degree++;
 	}
 	return Edge(this, a.index(), b.index());
   }
@@ -464,13 +471,14 @@ class Graph {
 	 */
 	Edge operator*() const {
 		assert(uid_ < graph_->size());
+		assert(it_ < Node(graph_, uid_).degree());
 		return Edge(graph_, uid_, graph_->nodes_[uid_].adj[it_]);
 	}
 	
 	/** Returns an edge iterator that points to the next edge in the graph
 	 */
 	EdgeIterator& operator++() {
-		++it_;
+		it_++;
 		fix();
 		return *this;
 	}
@@ -478,7 +486,7 @@ class Graph {
 	/* Returns true if this iterator points to the same edge, false otherwise
 	 */
 	bool operator==(const EdgeIterator& it) const {
-		return uid_ == it.uid_;
+		return uid_ == it.uid_ && it_ == it.it_;
 	}
 
    private:
@@ -486,33 +494,50 @@ class Graph {
 	const Graph* graph_;
 	uid_type uid_;
 	size_type it_;
-	EdgeIterator(const Graph* graph, uid_type i) : graph_(graph), uid_(i) {
+	EdgeIterator(const Graph* graph) {
+		graph_ = graph;
+		uid_ = 0;
 		it_ = 0;
 	}
 
 	/** Private function to maintain representation invariants 
 	  * RI: uid_ <= graph_.size()
 	  * RI: *it_ is a value unless uid_ == graph_.size()
+	  * RI: The list pair (uid_, it_) must either be valid or the end
 	  */
 	void fix() {
-		Node incident_node = Node(graph_, uid_);
-		if (it_ == incident_node.degree()) {
+		while(uid_ < graph_->size() && !(Node(graph_, uid_).degree() > 0)) {
+			++uid_;
+		}
+		if (it_ >= Node(graph_, uid_).degree()) {
 			++uid_;
 			it_ = 0;
 		}
+	}
+
+	EdgeIterator& begin() {
+		uid_ = 0;
+		it_ = 0;
+		return *this;
+	}
+
+	EdgeIterator& end() {
+		uid_ = graph_->size();
+		it_ = 0;
+		return *this;
 	}
   };
 
   /** Returns an iterator to the first edge in the graph
    */
   EdgeIterator edge_begin() const {
-  	return EdgeIterator(this, 0);
+  	return EdgeIterator(this).begin();
   }
   
   /** Return an iterator to one past the last edge in the graph
    */
   EdgeIterator edge_end() const {
-  	return EdgeIterator(this, num_nodes_);
+  	return EdgeIterator(this).end();
   }
 
   /** @class Graph::IncidentIterator
@@ -588,7 +613,7 @@ class Graph {
 	typedef struct node_data {
 		Point p;
 		node_value_type v;
-		size_type degree;
+		size_type degree = 0;
 		std::vector<uid_type> adj;
 	} node_data;
 
