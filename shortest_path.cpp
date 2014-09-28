@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <fstream>
+#include <math.h>
 
 #include "CS207/SDLViewer.hpp"
 #include "CS207/Util.hpp"
@@ -28,12 +29,39 @@ struct MyComparator {
    template <typename NODE>
    // Return true if node1 is closer to p than node2
    bool operator()(const NODE& node1, const NODE& node2) const {
-	double dist1 = sqrt(pow(node1.position().x, 2), pow(node1.position().y, 2));
-	double dist2 = sqrt(pow(node2.position().x, 2), pow(node2.position().y, 2));
-	return dist1 < dist2;
+		double dist1 = sqrt(pow(node1.position().x, 2) + pow(node1.position().y, 2));
+		double dist2 = sqrt(pow(node2.position().x, 2) + pow(node2.position().y, 2));
+		return dist1 < dist2;
    }
 };
 
+
+int breadth_search(Graph<int>& g, Graph<int>::node_type& node) {
+	Graph<int>::node_type adjacent_node;
+	int max = 0;
+	for (auto it = node.edge_begin(); it != node.edge_end(); ++it) {
+		adjacent_node = (*it).node2();
+		if (node < adjacent_node) {
+			double real_distance = sqrt(pow(node.position().x, 2) + 
+									   pow(adjacent_node.position().y, 2));
+			int integer_distance = (int) real_distance;
+			adjacent_node.value() = integer_distance + node.value();
+			if (adjacent_node.value() > max) {
+				max = adjacent_node.value();
+			}
+		}
+	}
+	for (auto it = node.edge_begin(); it != node.edge_end(); ++it) {
+		adjacent_node = (*it).node2();
+		if (node < adjacent_node) {
+			int temp_max = breadth_search(g, adjacent_node);
+			if (temp_max > max) {
+				max = temp_max;
+			}
+		}
+	}
+	return max;
+}
 
 /** Calculate shortest path lengths in @a g from the nearest node to @a point.
  * @param[in,out] g Input graph
@@ -51,41 +79,18 @@ struct MyComparator {
  * the root have value() -1.
  */
 int shortest_path_lengths(Graph<int>& g, const Point& point) {
-	auto first = g.edge_begin();
-	auto last = g.edge_end();
-	auto closest = std::min_element(first, last, MyComparator());
-	node_value_type closest_value = (*closest).value();
+	int longest_path;
+	auto first = g.node_begin();
+	auto last = g.node_end();
+	auto closest = std::min_element(first, last, MyComparator(point));
+	Graph<int>::node_type closest_node = *closest;
+	Graph<int>::node_value_type closest_value = closest_node.value();
+	// Set the root value to 0
 	closest_value = 0;
-	breadth_search(g, *closest);
+	longest_path = breadth_search(g, closest_node);
+	return longest_path;
 }
 
-void breadth_search(Graph<int>& g, Graph::node_type& node) {
-	Graph::node_type adjacent_node;
-	Graph::node_value_type temp;
-	int max = 0;
-	for (auto it = node.edge_begin(); it != node.edge_end(); it++) {
-		adjacent_node = (*it).node2();
-		if (node < adjacent_node) {
-			temp = adjacent_node.value();
-			int integer_distance = (int) sqrt(pow(node.position(), 2) + 
-											  pow(adjacent_node.position(), 2))
-			temp = integer_distance + node.value();
-			if (temp > max) {
-				max = temp;
-			}
-		}
-	}
-	for (auto it = node.edge_begin(); it != node.edge_end(); it++) {
-		adjacent_node = (*it).node2();
-		if (node < adjacent_node) {
-			int temp_max = breadth_search(g, (*it).node2());	
-			if (temp_max > max) {
-				max = temp_max;
-			}
-		}
-	}
-	return max;
-}
 
 int main(int argc, char** argv)
 {

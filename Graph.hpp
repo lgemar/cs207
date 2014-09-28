@@ -70,14 +70,14 @@ class Graph {
   /** Synonym for IncidentIterator */
   typedef IncidentIterator incident_iterator;
 
-	/** custom type to hold node data */
-	typedef struct node_data {
-		uid_type uid;
-		Point p;
-		node_value_type v;
-		size_type degree;
-		std::vector<uid_type> adj;
-	} node_data;
+  /** custom type to hold node data */
+  typedef struct node_data {
+  	uid_type uid;
+	Point p;
+	node_value_type v;
+	size_type degree;
+	std::vector<uid_type> adj;
+  } node_data;
 
 
   ////////////////////////////////
