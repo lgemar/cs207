@@ -44,8 +44,7 @@ int breadth_search(Graph<int>& g, Graph<int>::node_type& node) {
 		if (node < adjacent_node) {
 			double real_distance = sqrt(pow(node.position().x, 2) + 
 									   pow(adjacent_node.position().y, 2));
-			Graph<int>::node_value_type integer_distance = 
-							(Graph<int>::node_value_type) real_distance;
+			int integer_distance = (int) real_distance;
 			adjacent_node.value() = integer_distance + node.value();
 			if (adjacent_node.value() > max) {
 				max = adjacent_node.value();
@@ -129,8 +128,17 @@ int main(int argc, char** argv)
   CS207::SDLViewer viewer;
   viewer.launch();
 
-  // HW1 #4: YOUR CODE HERE
+  // Create empty node map
+  auto node_map = viewer.empty_node_map(graph);
+
   // Use shortest_path_lengths to set the node values to the path lengths
+  // shortest_path_lengths(graph, Point(-1, 0, 1));
+
   // Construct a Color functor and view with the SDLViewer
+  /**
+  auto first = graph.node_begin();
+  auto last = graph.node_end();
+  viewer.add_nodes(first, last, Color::make_rgb, node_map);
+  */
   return 0;
 }
