@@ -39,16 +39,36 @@ class filter_iterator
   // Constructor
   filter_iterator(const Pred& p, const It& first, const It& last)
       : p_(p), it_(first), end_(last) {
-    // HW1 #4: YOUR CODE HERE
+    fix(); // Make sure that the invariants are true of the new object
   }
 
-  // HW1 #4: YOUR CODE HERE
-  // Supply definitions AND SPECIFICATIONS for:
-  // value_type operator*() const;
-  // self_type& operator++();
-  // bool operator==(const self_type&) const;
+  /** Returns the element to which the iterator is pointing */
+  value_type operator*() const {
+  	return *it_;
+  }
+
+  /** Fast-forwards the iterator to the next element satisfying the pred */
+  self_type& operator++() {
+  	++it_;
+	fix();
+	return *this;
+  }
+
+  /** Returns true if the iterators point at the same element */
+  bool operator==(const self_type& other) const {
+  	return (it_ == other.it_);
+  }
 
  private:
+  /** Advances it_ until the Representation invariants are satisfied
+      RI: (it_ == end_) || pred(*it)
+	  @post RIs are all satisfied
+	*/
+  void fix() {
+  	while (it_ != end_ && !p_(*it_)) {
+		++it_;
+	}
+  }
   Pred p_;
   It it_;
   It end_;
@@ -117,8 +137,15 @@ int main(int argc, char** argv)
   CS207::SDLViewer viewer;
   viewer.launch();
 
-  // HW1 #4: YOUR CODE HERE
   // Use the filter_iterator to plot an induced subgraph.
-
+  auto node_map = viewer.empty_node_map(graph);
+  auto first = make_filtered(graph.node_begin(), 
+  							 graph.node_end(), 
+							 SlicePredicate());
+  auto last = make_filtered(graph.node_end(), 
+  							 graph.node_end(), 
+							 SlicePredicate());
+  viewer.add_nodes(first, last, node_map);
+  viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
   return 0;
 }
