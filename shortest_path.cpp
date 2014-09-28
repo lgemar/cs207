@@ -44,7 +44,8 @@ int breadth_search(Graph<int>& g, Graph<int>::node_type& node) {
 		if (node < adjacent_node) {
 			double real_distance = sqrt(pow(node.position().x, 2) + 
 									   pow(adjacent_node.position().y, 2));
-			int integer_distance = (int) real_distance;
+			Graph<int>::node_value_type integer_distance = 
+							(Graph<int>::node_value_type) real_distance;
 			adjacent_node.value() = integer_distance + node.value();
 			if (adjacent_node.value() > max) {
 				max = adjacent_node.value();
