@@ -553,6 +553,7 @@ class Graph {
 
 	EdgeIterator& end() {
 		outer_ = graph_->size();
+		inner_ = 0;
 		return *this;
 	}
   };
