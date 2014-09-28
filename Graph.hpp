@@ -348,6 +348,8 @@ class Graph {
 		// Add one to the degree of the edges
 		nodes_[a.index()].degree++;
 		nodes_[b.index()].degree++;
+		// Increment the number of edges by one
+		num_edges_++;
 	}
 	return Edge(this, a.index(), b.index());
   }

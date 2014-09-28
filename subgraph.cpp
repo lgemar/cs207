@@ -145,10 +145,10 @@ int main(int argc, char** argv)
   auto node_map = viewer.empty_node_map(graph);
   auto first = make_filtered(graph.node_begin(), 
   							 graph.node_end(), 
-							 CentroidPredicate());
+							 SlicePredicate());
   auto last = make_filtered(graph.node_end(), 
   							 graph.node_end(), 
-							 CentroidPredicate());
+							 SlicePredicate());
   viewer.add_nodes(first, last, node_map);
   viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
   return 0;
