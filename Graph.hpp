@@ -337,7 +337,7 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   Edge add_edge(const Node& a, const Node& b) {
-	assert(a.index() == b.index());
+	assert(a.index() != b.index());
   	if (!has_edge(a, b)) {
 		nodes_[a.index()].adj.push_back(b.index());
 		nodes_[b.index()].adj.push_back(a.index());
@@ -464,7 +464,7 @@ class Graph {
 	 */
 	Edge operator*() const {
 		assert(uid_ < graph_->size());
-		return *it_;
+		return Edge(graph_, uid_, graph_->nodes_[uid_].adj[it_]);
 	}
 	
 	/** Returns an edge iterator that points to the next edge in the graph
@@ -472,6 +472,7 @@ class Graph {
 	EdgeIterator& operator++() {
 		++it_;
 		fix();
+		return *this;
 	}
 
 	/* Returns true if this iterator points to the same edge, false otherwise
@@ -484,18 +485,20 @@ class Graph {
     friend class Graph;
 	const Graph* graph_;
 	uid_type uid_;
-	IncidentIterator it_;
+	size_type it_;
 	EdgeIterator(const Graph* graph, uid_type i) : graph_(graph), uid_(i) {
+		it_ = 0;
 	}
 
-	/** Private function to maintain representation invariants */
+	/** Private function to maintain representation invariants 
+	  * RI: uid_ <= graph_.size()
+	  * RI: *it_ is a value unless uid_ == graph_.size()
+	  */
 	void fix() {
 		Node incident_node = Node(graph_, uid_);
-		if (it_ == incident_node.edge_end()) {
+		if (it_ == incident_node.degree()) {
 			++uid_;
-		}
-		if (uid_ < graph_->size()) {
-			it_ = IncidentIterator(graph_, uid_);
+			it_ = 0;
 		}
 	}
   };
