@@ -422,7 +422,7 @@ class Graph {
 
   /** @class Graph::EdgeIterator
    * @brief Iterator class for edges. A forward iterator. */
-  class EdgeIterator {
+  class EdgeIterator : private totally_ordered<EdgeIterator> {
    public:
     // These type definitions help us use STL's iterator_traits.
     /** Element type. */
@@ -440,22 +440,44 @@ class Graph {
     EdgeIterator() {
     }
 
-    // HW1 #3: YOUR CODE HERE
-    // Supply definitions AND SPECIFICATIONS for:
-    // Edge operator*() const
-    // EdgeIterator& operator++()
-    // bool operator==(const EdgeIterator&) const
+	/** Returns the edge pointed to by the iterator
+	 */
+	Edge operator*() const{
+		return Edge(graph_, index_);
+	}
+	
+	/** Returns an edge iterator that points to the next edge in the graph
+	 */
+	EdgeIterator& operator++() {
+		index_++;
+		return *this;
+	}
+
+	/* Returns true if this iterator points to the same edge, false otherwise
+	 */
+	bool operator==(const EdgeIterator& it) const {
+		return (Edge(graph_, index_) == *it);
+	}
 
    private:
     friend class Graph;
-    // HW1 #3: YOUR CODE HERE
+	const Graph* graph_;
+	size_type index_;
+	EdgeIterator(const Graph* graph, size_type index) : graph_(graph), index_(index) {
+	}
   };
 
-  // HW1 #3: YOUR CODE HERE
-  // Supply definitions AND SPECIFICATIONS for:
-  // edge_iterator edge_begin() const
-  // edge_iterator edge_end() const
-
+  /** Returns an iterator to the first edge in the graph
+   */
+  EdgeIterator edge_begin() const {
+  	return EdgeIterator(this, 0);
+  }
+  
+  /** Return an iterator to one past the last edge in the graph
+   */
+  EdgeIterator edge_end() const {
+  	return EdgeIterator(this, num_edges_);
+  }
 
   /** @class Graph::IncidentIterator
    * @brief Iterator class for edges incident to a node. A forward iterator. */

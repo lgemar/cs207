@@ -60,6 +60,7 @@ int main(int argc, char** argv)
   // Add nodes to the viewer by using the node iterators
   auto node_map = viewer.empty_node_map(graph);
   viewer.add_nodes(graph.node_begin(), graph.node_end(), node_map);
+  viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
   viewer.center_view();
 
   return 0;
