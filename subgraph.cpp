@@ -87,10 +87,14 @@ filter_iterator<Pred,Iter> make_filtered(const Iter& it, const Iter& end,
   return filter_iterator<Pred,Iter>(p, it, end);
 }
 
-// HW1 #4: YOUR CODE HERE
-// Specify and write an interesting predicate on the nodes.
-// Explain what your predicate is intended to do and test it.
-// If you'd like you may create new nodes and tets files.
+/** This predicate returns true if the position of the node is within 0.5
+ * units of the center of the graph. */
+struct CentroidPredicate {
+  template <typename NODE>
+  bool operator()(const NODE& n) {
+    return sqrt(pow(n.position().x, 2) + pow(n.position().y,2)) < 0.5;
+  }
+};
 
 /** Test predicate for HW1 #4 */
 struct SlicePredicate {
@@ -141,10 +145,10 @@ int main(int argc, char** argv)
   auto node_map = viewer.empty_node_map(graph);
   auto first = make_filtered(graph.node_begin(), 
   							 graph.node_end(), 
-							 SlicePredicate());
+							 CentroidPredicate());
   auto last = make_filtered(graph.node_end(), 
   							 graph.node_end(), 
-							 SlicePredicate());
+							 CentroidPredicate());
   viewer.add_nodes(first, last, node_map);
   viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
   return 0;
