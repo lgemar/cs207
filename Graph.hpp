@@ -30,9 +30,6 @@ class Graph {
   // PUBLIC TYPE DEFINITIONS //
   /////////////////////////////
 
-  /** Define uid_type */
-  typedef size_type uid_type;
-
   /** Define the node value type in terms of template parameter */
   typedef V node_value_type;
 
@@ -53,6 +50,9 @@ class Graph {
       Return type of Graph::Node::index(), Graph::num_nodes(),
       Graph::num_edges(), and argument type of Graph::node(size_type) */
   typedef unsigned size_type;
+
+  /** Define uid_type */
+  typedef size_type uid_type;
 
   /** Type of node iterators, which iterate over all graph nodes. */
   class NodeIterator;
@@ -135,10 +135,6 @@ class Graph {
 	  return graph_->nodes_[uid_].p;
     }
 
-	const node_value_type& value() const {
-		return graph_->nodes_[uid_].v;
-	}
-
     /** Return this node's index, a number in the range [0, graph_size). */
     size_type index() const {
       return uid_;
@@ -166,27 +162,27 @@ class Graph {
 
 	/** Returns the node_value_type value associated with this Node */
 	node_value_type& value() {
-		return graph_->nodes_[i].v;
+		return graph_->nodes_[uid_].v;
 	}
 
 	/** Returns the node_value_type value associated with this Node */
 	const node_value_type& value() const {
-		return graph_->nodes_[i].v;
+		return graph_->nodes_[uid_].v;
 	}
 
 	/** Returns the number of edges associated with this Node */
 	size_type degree() const {
-		return graph_->nodes_[i].degree;
+		return graph_->nodes_[uid_].degree;
 	}
 
    	/** Returns an iterator to beginning of incident iterator list */
 	IncidentIterator edge_begin() const {
-		return IncidentIterator(graph_, uid_);
+		return IncidentIterator(graph_, uid_).begin();
 	}
 
 	/** Returns an iterator to the end of incident iterator list */
 	IncidentIterator edge_end() const {
-		return graph_->adj_[uid_].end();
+		return IncidentIterator(graph_, uid_).end();
 	}
 
    private:
@@ -218,7 +214,6 @@ class Graph {
 	new_node_data.v = value;
 	new_node_data.degree = 0;
 	nodes_.push_back(new_node_data);
-	adj_.push_back(std::vector<uid_type*>);
 
   	Node new_node = Node(this, num_nodes_);
 	++num_nodes_;
@@ -263,6 +258,7 @@ class Graph {
     /** Return a node of this Edge */
     Node node1() const {
 		return Node(graph_, uid1_);
+	}
 
     /** Return the other node of this Edge */
     Node node2() const {
@@ -343,8 +339,8 @@ class Graph {
   Edge add_edge(const Node& a, const Node& b) {
 	assert(a.index() == b.index());
   	if (!has_edge(a, b)) {
-		adj_[a.index()].push_back(b.index());
-		adj_[b.index()].push_back(a.index());
+		nodes_[a.index()].adj.push_back(b.index());
+		nodes_[b.index()].adj.push_back(a.index());
 	}
 	return Edge(this, a.index(), b.index());
   }
@@ -354,13 +350,11 @@ class Graph {
    * @return true if it exists, else return the number of edges
    */
    size_type has_edge(const Node& a, const Node& b) {
+	IncidentIterator it;
 	Edge test_edge = Edge(this, a.index(), b.index());
-   	IncidentIterator it = IncidentIterator(this, a.index());
-	for (size_type i = 0; i < num_nodes_; i++) {
-		for (it = it.edge_begin(); it != it.edge_end(); it++) {
-			if (test_edge == *it)
-				return true;
-		}
+	for (it = a.edge_begin(); it != a.edge_end(); it++) {
+		if (test_edge == *it)
+			return true;
 	}
 	// If no equal equivalent edge is found, return false
 	return false;
@@ -372,8 +366,12 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   Edge edge(size_type i) const {
-  	size_type counter = 0;
-	// Use the edge iterator here
+	assert(i < size());
+	EdgeIterator it = edge_begin();
+	for (int counter = 0; counter < i; counter++) {
+		it++;
+	}
+	return *it;
   }
 
   ///////////////
@@ -465,9 +463,9 @@ class Graph {
 
 	/** Returns the edge pointed to by the iterator
 	 */
-	Edge operator*() const{
+	Edge operator*() const {
 		assert(uid_ < graph_->size());
-		return Edge(graph_, uid_, *it_);
+		return *it_;
 	}
 	
 	/** Returns an edge iterator that points to the next edge in the graph
@@ -512,12 +510,12 @@ class Graph {
   /** Return an iterator to one past the last edge in the graph
    */
   EdgeIterator edge_end() const {
-  	return EdgeIterator(this, num_edges_);
+  	return EdgeIterator(this, num_nodes_);
   }
 
   /** @class Graph::IncidentIterator
    * @brief Iterator class for edges incident to a node. A forward iterator. */
-  class IncidentIterator {
+  class IncidentIterator : private totally_ordered<IncidentIterator> {
    public:
     // These type definitions help us use STL's iterator_traits.
     /** Element type. */
@@ -530,10 +528,23 @@ class Graph {
     typedef std::input_iterator_tag iterator_category;
     /** Difference between iterators */
     typedef std::ptrdiff_t difference_type;
+	/** Iterator type */
+	typedef std::vector<uid_type>::iterator iterator;
 
     /** Construct an invalid IncidentIterator. */
     IncidentIterator() {
     }
+
+	// Return iterator to front
+	IncidentIterator& begin() const {
+		return *this;
+	}
+
+	// Return iterator to back
+	IncidentIterator& end() const {
+		it_ = end_;
+		return *this;
+	}
 
 	/** Return the edge to which the iterator is pointing */
 	Edge operator*() const {
@@ -542,7 +553,7 @@ class Graph {
 
 	/** Return the iterator to the next element in the indicent list */
 	IncidentIterator& operator++() {
-		++it;
+		it_++;
 		return *this;
 	}
 
@@ -559,11 +570,16 @@ class Graph {
 	uid_type uid_;
 
 	// Index to box that contains uid of second node in edge
-	uid_type *it_;
+	iterator it_;
+	iterator end_;
 
-	IncidentIterator(const Graph* graph, uid_type uid) graph_(graph) uid_(uid) {
-		it = graph_->adj_[uid];
+	IncidentIterator(const Graph* graph, uid_type uid) : graph_(graph), 
+													     uid_(uid) {
+		it_ = graph_->nodes_[uid].adj.begin();
+		end_ = graph->nodes_[uid].adj.end();
+
 	}
+
   };
 
 
@@ -572,11 +588,11 @@ class Graph {
 		Point p;
 		node_value_type v;
 		size_type degree;
+		std::vector<uid_type> adj;
 	} node_data;
 
 	size_type num_nodes_ = 0;
 	size_type num_edges_ = 0;
  	std::vector<node_data> nodes_;
-	std::vector<std::vector<uid_type*>> adj_;
 };
 #endif
