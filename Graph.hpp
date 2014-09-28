@@ -282,7 +282,8 @@ class Graph {
      * Equal edges are from the same graph and have the same nodes.
      */
     bool operator==(const Edge& x) const {
-		return (node1() == x.node1() && node2() == x.node2());
+		return ((node1() == x.node1() && node2() == x.node2()) ||
+				(node2() == x.node1() && node1() == x.node2()));
     }
 
     /** Test whether this edge is less than @a x in the global order.
@@ -294,10 +295,18 @@ class Graph {
      * and y, exactly one of x == y, x < y, and y < x is true.
      */
     bool operator<(const Edge& x) const {
-		if (node1() < x.node1())
-			return true;
+		bool result; 
+		if (node1() < node2())
+			if (x.node1() < x.node2())
+				result = (node1() < x.node1() || node2() < x.node2());
+			else
+				result = (node1() < x.node2() || node2() < x.node1());
 		else
-			return node2() < x.node2();
+			if (x.node1() < x.node2())
+				result = (node2() < x.node1() || node1() < x.node2());
+			else
+				result = (node2() < x.node2() || node1() < x.node1());
+		return result;
     }
 
    private:
@@ -317,18 +326,9 @@ class Graph {
 		if (node1 != node2) {
 			// do nothing
 		}
-		else {
-			graph_ = graph;
-			// Enforce RI that uid1_ < uid2_
-			if (node1 < node2) {
-				uid1_ = node1;
-				uid2_ = node2;
-			}
-			else {
-				uid2_ = node1;
-				uid1_ = node2;
-			}
-		}
+		graph_ = graph;
+		uid1_ = node1;
+		uid2_ = node2;
 	}
   };
 
@@ -367,7 +367,7 @@ class Graph {
   }
 
   /** Check to see if there is an edge between nodes a and b
-   * @a a and @a b are distince valid nodes in the graph
+   * @a a and @a b are distinct valid nodes in the graph
    * @return true if it exists, else return the number of edges
    */
    size_type has_edge(const Node& a, const Node& b) {
@@ -495,7 +495,7 @@ class Graph {
 	/** Returns an edge iterator that points to the next edge in the graph
 	 */
 	EdgeIterator& operator++() {
-		++inner_;
+		next();
 		fix();
 		return *this;
 	}
@@ -503,7 +503,7 @@ class Graph {
 	/* Returns true if this iterator points to the same edge, false otherwise
 	 */
 	bool operator==(const EdgeIterator& it) const {
-		return outer_ == it.outer_ && inner_ == it.inner_;
+		return (outer_ == it.outer_ && inner_ == it.inner_);
 	}
 
    private:
@@ -533,13 +533,26 @@ class Graph {
 	  * or the end of the vector
 	  * @post Iterator category iterator must point at a valid edge unless
 	  * it is pointing at the very end of the edge list
+	  * @post outer_ == graph_->size() || 
+	  * 	  outer_ < graph_->nodes_[outer_].adj[inner_];
 	  */
 	void fix() {
-		size_type degree;
 		assert(outer_ <= graph_->size());
-		while (!(outer_ == graph_->size()) && 
-				inner_ == (degree = graph_->nodes_[outer_].degree)) {
-			++outer_;
+		while (outer_ != graph_->size() &&
+			   outer_ > graph_->nodes_[outer_].adj[inner_]) {
+			next();
+		}
+	}
+
+	/** @post inner_ =< graph_->node_[outer_].degree 
+	  * @post inner_ = inner_ + 1 || inner_ = 0 
+	  */
+	void next() {
+		size_type degree;
+		degree = graph_->nodes_[outer_].degree;
+		inner_++;
+		if (!(inner_ < degree)) {
+			outer_++;
 			inner_ = 0;
 		}
 	}
