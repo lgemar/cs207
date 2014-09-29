@@ -32,8 +32,7 @@ struct MyColorFunc {
 	template <typename NODE>
 	// Return a color object to color the graph
 	CS207::Color operator()(const NODE& node) {
-		// return CS207::Color::make_heat((float)node.value() / lp_);
-		return CS207::Color::make_heat(0.5);
+		return CS207::Color::make_heat((float)node.value() / lp_);
 	}
 };
 
@@ -55,39 +54,6 @@ struct MyComparator {
    }
 };
 
-template <typename NODE>
-int breadth_search(Graph<int>& g, 
-				   Graph<int>::node_type& node, 
-				   std::set<NODE> visited) {
-	Graph<int>::node_type adjacent_node;
-	std::queue<NODE> to_visit;
-	int max = 0;
-	for (auto it = node.edge_begin(); it != node.edge_end(); ++it) {
-		adjacent_node = (*it).node2();
-		if (visited.find(adjacent_node) == visited.end()) {
-			double real_distance = sqrt(pow(node.position().x, 2) + 
-									   pow(adjacent_node.position().y, 2));
-			int integer_distance = (int) (real_distance * 10);
-			adjacent_node.value() = integer_distance + node.value();
-			if (adjacent_node.value() > max) {
-				max = adjacent_node.value();
-			}
-			visited.insert(adjacent_node);
-			to_visit.push(adjacent_node);
-		}
-	}
-	while (!to_visit.empty()) {
-		adjacent_node = to_visit.front();
-		int temp_max = breadth_search(g, adjacent_node, visited);
-		if (temp_max > max) {
-			max = temp_max;
-		}
-		to_visit.pop();
-	}
-	std::cout << "max: " << max << std::endl;
-	return max;
-}
-
 /** Calculate shortest path lengths in @a g from the nearest node to @a point.
  * @param[in,out] g Input graph
  * @param[in] point Point to find the nearest node to.
@@ -104,17 +70,44 @@ int breadth_search(Graph<int>& g,
  * the root have value() -1.
  */
 int shortest_path_lengths(Graph<int>& g, const Point& point) {
-	int longest_path;
-	std::set<Graph<int>::node_type> visited;
+	typedef Graph<int>::node_type NODE;
+	int longest_path = 0;
+	NODE current_node;
+	NODE adjacent_node;
+	// Visited list
+	std::set<NODE> visited;
+	// Queue of nodes yet to visit
+	std::queue<NODE> to_visit;
+	// Find closest current_node to the given point
 	auto closest = std::min_element(g.node_begin(), 
 									g.node_end(), MyComparator(point));
 	Graph<int>::node_type closest_node = *closest;
 	// Set the root value to 0
 	closest_node.value() = 0;
-	// Put the root in the "visited" list
+	// Put the root in the "visited" list and to the front of the queue
 	visited.insert(closest_node);
-	// Recursively search all of the roots nodes
-	longest_path = breadth_search(g, closest_node, visited);
+	to_visit.push(closest_node);
+	while (!to_visit.empty()) {
+		current_node = to_visit.front();
+		for (auto it = current_node.edge_begin(); it != current_node.edge_end(); ++it) {
+			adjacent_node = (*it).node2();
+			if (visited.find(adjacent_node) == visited.end()) {
+				double real_distance = sqrt(pow(current_node.position().x, 2) + 
+										   pow(adjacent_node.position().y, 2));
+				int integer_distance = (int) (real_distance * 100);
+				adjacent_node.value() = integer_distance + current_node.value();
+				if (adjacent_node.value() > longest_path) {
+					longest_path = adjacent_node.value();
+				}
+				visited.insert(adjacent_node);
+				to_visit.push(adjacent_node);
+			}
+		}
+		to_visit.pop(); // remote the current current_node from the queue
+		// Debug to see the percentage complete
+		std::cout << "Percentage complete: " << 
+						(float) visited.size() / g.size() << std::endl;
+	}
 	return longest_path;
 }
 
