@@ -30,7 +30,8 @@ struct MyColorFunc {
 	template <typename NODE>
 	// Return a color object to color the graph
 	CS207::Color operator()(const NODE& node) {
-		return CS207::Color::make_heat((float)node.value() / lp_);
+		// return CS207::Color::make_heat((float)node.value() / lp_);
+		return CS207::Color::make_heat(0.5);
 	}
 };
 
@@ -44,8 +45,10 @@ struct MyComparator {
    template <typename NODE>
    // Return true if node1 is closer to p than node2
    bool operator()(const NODE& node1, const NODE& node2) const {
-		double dist1 = sqrt(pow(node1.position().x, 2) + pow(node1.position().y, 2));
-		double dist2 = sqrt(pow(node2.position().x, 2) + pow(node2.position().y, 2));
+		double dist1 = sqrt(pow(node1.position().x, 2) + 
+									pow(node1.position().y, 2));
+		double dist2 = sqrt(pow(node2.position().x, 2) + 
+									pow(node2.position().y, 2));
 		return dist1 < dist2;
    }
 };
@@ -59,7 +62,7 @@ int breadth_search(Graph<int>& g, Graph<int>::node_type& node) {
 		if (node < adjacent_node) {
 			double real_distance = sqrt(pow(node.position().x, 2) + 
 									   pow(adjacent_node.position().y, 2));
-			int integer_distance = (int) (real_distance * 100);
+			int integer_distance = (int) (real_distance * 10);
 			adjacent_node.value() = integer_distance + node.value();
 			if (adjacent_node.value() > max) {
 				max = adjacent_node.value();
