@@ -21,6 +21,11 @@
 #include "Graph.hpp"
 
 
+/** Helper function that returns the distance between two points */
+float distance(const Point& a, const Point& b) {
+	return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2) + pow(a.z - b.z, 2));
+}
+
 /** Define custom operator to return a color object for a node */
 struct MyColorFunc {
 	int lp_;
@@ -46,10 +51,8 @@ struct MyComparator {
    template <typename NODE>
    // Return true if node1 is closer to p than node2
    bool operator()(const NODE& node1, const NODE& node2) const {
-		double dist1 = sqrt(pow(node1.position().x, 2) 
-									+ pow(node1.position().y, 2));
-		double dist2 = sqrt(pow(node2.position().x, 2) 
-									+ pow(node2.position().y, 2));
+		double dist1 = distance(p_, node1.position());
+		double dist2 = distance(p_, node2.position());
 		return dist1 < dist2;
    }
 };
@@ -92,8 +95,8 @@ int shortest_path_lengths(Graph<int>& g, const Point& point) {
 		for (auto it = current_node.edge_begin(); it != current_node.edge_end(); ++it) {
 			adjacent_node = (*it).node2();
 			if (visited.find(adjacent_node) == visited.end()) {
-				double real_distance = sqrt(pow(current_node.position().x, 2) + 
-										   pow(adjacent_node.position().y, 2));
+				double real_distance = distance(current_node.position(), 
+												adjacent_node.position());
 				int integer_distance = (int) (real_distance * 100);
 				adjacent_node.value() = integer_distance + current_node.value();
 				if (adjacent_node.value() > longest_path) {
@@ -105,11 +108,12 @@ int shortest_path_lengths(Graph<int>& g, const Point& point) {
 		}
 		to_visit.pop(); // remote the current current_node from the queue
 		// Debug to see the percentage complete
-		std::cout << "Percentage complete: " << 
-						(float) visited.size() / g.size() << std::endl;
+		// std::cout << "Percentage complete: " << 
+		//					(float) visited.size() / g.size() << std::endl;
 	}
 	return longest_path;
 }
+
 
 
 int main(int argc, char** argv)
