@@ -19,6 +19,21 @@
 #include "Graph.hpp"
 
 
+/** Define custom operator to return a color object for a node */
+struct MyColorFunc {
+	int lp_;
+
+	/** Constructor */
+	MyColorFunc(int longest_path) : lp_(longest_path) {
+	}
+
+	template <typename NODE>
+	// Return a color object to color the graph
+	CS207::Color operator()(const NODE& node) {
+		return CS207::Color::make_heat((float)node.value() / lp_);
+	}
+};
+
 /** Comparator that compares the distance from a given point p.
  */
 struct MyComparator {
@@ -44,7 +59,7 @@ int breadth_search(Graph<int>& g, Graph<int>::node_type& node) {
 		if (node < adjacent_node) {
 			double real_distance = sqrt(pow(node.position().x, 2) + 
 									   pow(adjacent_node.position().y, 2));
-			int integer_distance = (int) real_distance;
+			int integer_distance = (int) (real_distance * 100);
 			adjacent_node.value() = integer_distance + node.value();
 			if (adjacent_node.value() > max) {
 				max = adjacent_node.value();
@@ -84,9 +99,8 @@ int shortest_path_lengths(Graph<int>& g, const Point& point) {
 	auto last = g.node_end();
 	auto closest = std::min_element(first, last, MyComparator(point));
 	Graph<int>::node_type closest_node = *closest;
-	Graph<int>::node_value_type closest_value = closest_node.value();
 	// Set the root value to 0
-	closest_value = 0;
+	closest_node.value() = 0;
 	longest_path = breadth_search(g, closest_node);
 	return longest_path;
 }
@@ -132,13 +146,14 @@ int main(int argc, char** argv)
   auto node_map = viewer.empty_node_map(graph);
 
   // Use shortest_path_lengths to set the node values to the path lengths
-  // shortest_path_lengths(graph, Point(-1, 0, 1));
+  int longest_path = shortest_path_lengths(graph, Point(-1, 0, 1));
 
   // Construct a Color functor and view with the SDLViewer
-  /**
-  auto first = graph.node_begin();
-  auto last = graph.node_end();
-  viewer.add_nodes(first, last, Color::make_rgb, node_map);
-  */
+  viewer.add_nodes(graph.node_begin(), 
+  				   graph.node_end(), 
+				   MyColorFunc(longest_path), 
+				   node_map);
+  viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
+  viewer.center_view();
   return 0;
 }

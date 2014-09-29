@@ -14,7 +14,7 @@ struct Color {
   value_type r, g, b;
 
   /** Construct the color black. */
-  Color()
+  Color() 
       : r(0), g(0), b(0) {
   }
   /** Construct a shade of grey.
