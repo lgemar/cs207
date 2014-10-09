@@ -19,7 +19,8 @@
 
 
 // Define "value_type" of Point to be a scalar
-typedef value_type scalar;
+typedef Point::value_type scalar;
+
 // Gravity in meters/sec^2
 static constexpr double grav = 9.81;
 
@@ -92,9 +93,10 @@ struct Problem1Force {
    */
   Point operator()(Node n, double t) {
 	// Initialize variables
+	(void) t;//suppress compiler warning
 	Node adjacent_node;
   	scalar K = 100.0; // Spring constant
-	saclar L; // Spring rest-length
+	scalar L = 1; // Spring rest-length
 	scalar displacement; // displacement from spring rest-length
 	Point direction; // direction of the force
 	Point total_force;
@@ -156,6 +158,13 @@ int main(int argc, char** argv) {
 
   // HW2 #1 YOUR CODE HERE
   // Set initial conditions for your nodes, if necessary.
+  for( auto it = graph.node_begin(); it != graph.node_end(); ++it ) {
+  	// Initialize velocities
+	(*it).value().velocity = Point(0, 0, 0);
+	// Initialize mass
+	(*it).value().mass = (scalar) 1 / graph.size();
+	// Initialize edge lengths
+  }
   // Construct Forces/Constraints
 
   // Print out the stats
