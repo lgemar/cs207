@@ -73,7 +73,7 @@ class Graph {
   /** custom type to hold node data */
   typedef struct node_data {
   	uid_type uid;
-	Point p;
+	mutable Point p;
 	mutable node_value_type v;
 	size_type degree;
 	std::vector<uid_type> adj;
@@ -145,6 +145,11 @@ class Graph {
     const Point& position() const {
 	  return graph_->nodes_[uid_].p;
     }
+
+	/** Return this nodes position as a modifiable reference */
+	Point& position() {
+		return graph_->nodes_[uid_].p;
+	}
 
     /** Return this node's index, a number in the range [0, graph_size). */
     size_type index() const {

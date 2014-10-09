@@ -18,6 +18,8 @@
 #include "Point.hpp"
 
 
+// Define "value_type" of Point to be a scalar
+typedef value_type scalar;
 // Gravity in meters/sec^2
 static constexpr double grav = 9.81;
 
@@ -75,11 +77,43 @@ struct Problem1Force {
    *
    * For HW2 #1, this is a combination of mass-spring force and gravity,
    * except that points at (0, 0, 0) and (1, 0, 0) never move. We can
-   * model that by returning a zero-valued force. */
+   * model that by returning a zero-valued force. 
+   * The force on a given node is computed by adding the forces on it from 
+   * all its connected nodes. Represent the node adjacency list by A. Then, 
+   * the force on a given node n is given by the sum of forces from nodes
+   * n0, n1, ..., ni, ..., nm in the node adjacency list. To calculate the 
+   * force from any given node, use the spring equation. This is given simply
+   * as F = -kx, where k is the spring constant and x the displacement. The
+   * displacement is a vector. Its direction is computed by finding the vector
+   * difference between @a n and node xi in the adjacency list. The magnitude
+   * is calculated by finding the Euclidean distance between the nodes in the 
+   * adjacency list and the spring length, L. 
+   * @returns a Point that represents the force vector
+   */
   Point operator()(Node n, double t) {
-    // HW2 #1: YOUR CODE HERE
-    (void) n; (void) t;     // silence compiler warnings
-    return Point();
+	// Initialize variables
+	Node adjacent_node;
+  	scalar K = 100.0; // Spring constant
+	saclar L; // Spring rest-length
+	scalar displacement; // displacement from spring rest-length
+	Point direction; // direction of the force
+	Point total_force;
+	Point xi, xj; // xi: position of node n; xj position of adjacent node
+
+	// Calculate force on node
+  	if (n.position() == Point(0, 0, 0) || n.position() == Point(1, 0, 0)) {
+		return Point(0, 0, 0);
+	}
+	total_force = Point(0, 0, 0); // return total force to nothing
+	xi = n.position();
+	for (auto it = n.edge_begin(); it != n.edge_end(); ++it) {
+		adjacent_node = (*it).node2();
+		xj = adjacent_node.position();
+		displacement = distance(xi, xj) - L;
+		direction = (xi - xj) / distance(xi, xj);
+		total_force += -K * displacement * direction;
+	}
+	return total_force;
   }
 };
 

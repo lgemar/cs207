@@ -20,12 +20,6 @@
 
 #include "Graph.hpp"
 
-
-/** Helper function that returns the distance between two points */
-float distance(const Point& a, const Point& b) {
-	return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2) + pow(a.z - b.z, 2));
-}
-
 /** Define custom operator to return a color object for a node */
 struct MyColorFunc {
 	int lp_;

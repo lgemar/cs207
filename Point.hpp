@@ -231,6 +231,11 @@ double norm_inf(const Point& a) {
   return v;
 }
 
+/** Custom helper function to return distance between points */
+float distance(const Point& a, const Point& b) {
+	return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2) + pow(a.z - b.z, 2));
+}
+
 #undef for_i
 
 #endif
