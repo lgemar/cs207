@@ -31,6 +31,9 @@ class Graph {
   /////////////////////////////
 
 
+  /** define a scalar type */
+  typedef double scalar;
+
   /** Define the node value type in terms of template parameter */
   typedef V node_value_type;
 
@@ -39,6 +42,7 @@ class Graph {
 
   /** Predeclaration of Node type. */
   class Node;
+
   /** Synonym for Node (following STL conventions). */
   typedef Node node_type;
 
@@ -73,12 +77,12 @@ class Graph {
   /** custom type to hold node data */
   typedef struct node_data {
   	uid_type uid;
+	Point p_orig;
 	mutable Point p;
 	mutable node_value_type v;
 	size_type degree;
 	std::vector<uid_type> adj;
   } node_data;
-
 
   ////////////////////////////////
   // CONSTRUCTOR AND DESTRUCTOR //
@@ -227,6 +231,7 @@ class Graph {
 	node_data new_node_data;
 
 	new_node_data.p = position;
+	new_node_data.p_orig = position;
 	new_node_data.v = value;
 	new_node_data.degree = 0;
 	new_node_data.uid = num_nodes_;
@@ -282,6 +287,10 @@ class Graph {
 		return Node(graph_, uid2_);
     }
 
+	scalar length() const {
+		return distance(graph_->nodes_[uid1_].p_orig, 
+								graph_->nodes_[uid2_].p_orig);
+	}
     /** Test whether this edge and @a x are equal.
      * @pre RI for Edges must hold: uid1_ < uid2_
      * Equal edges are from the same graph and have the same nodes.
@@ -360,6 +369,7 @@ class Graph {
   Edge add_edge(const Node& a, const Node& b) {
 	assert(a.index() != b.index());
   	if (!has_edge(a, b)) {
+		// Add adjacency structs to the adjacent edge lists for the nodes
 		nodes_[a.index()].adj.push_back(b.index());
 		nodes_[b.index()].adj.push_back(a.index());
 		// Add one to the degree of the edges

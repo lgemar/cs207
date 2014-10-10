@@ -128,7 +128,7 @@ int main(int argc, char** argv)
   // Interpret each line of the nodes_file as a 3D Point and add to the Graph
   Point p;
   while (CS207::getline_parsed(nodes_file, p))
-    nodes.push_back(graph.add_node(p));
+    nodes.push_back(graph.add_node(p, 0));
 
   // Create a tets_file from the second input argument
   std::ifstream tets_file(argv[2]);
