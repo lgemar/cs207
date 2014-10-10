@@ -1,0 +1,87 @@
+viewer.cpp:67:2: error: expected '}'
+}
+ ^
+./Graph.hpp:25:13: note: to match this '{'
+class Graph {
+            ^
+./Graph.hpp:123:11: error: use of undeclared identifier 'num_nodes_'; did you mean 'num_nodes'?
+        return num_nodes_;
+               ^~~~~~~~~~
+               num_nodes
+./Graph.hpp:240:13: note: 'num_nodes' declared here
+  size_type num_nodes() const {
+            ^
+./Graph.hpp:256:16: error: use of undeclared identifier 'imap_'
+        if ( size() < imap_.size() ) {
+                      ^
+./Graph.hpp:259:27: error: use of undeclared identifier 'imap_'
+                uid_type reusable_uid = imap_[size()].uid;
+                                        ^
+./Graph.hpp:260:3: error: use of undeclared identifier 'nodes_'; did you mean 'node'?
+                nodes_[reusable_uid].p = position;
+                ^~~~~~
+                node
+./Graph.hpp:311:8: note: 'node' declared here
+  Node node(idx_type i) const {
+       ^
+./Graph.hpp:260:3: error: reference to non-static member function must be called
+                nodes_[reusable_uid].p = position;
+                ^~~~~~
+./Graph.hpp:261:3: error: use of undeclared identifier 'nodes_'; did you mean 'node'?
+                nodes_[reusable_uid].p_orig = position;
+                ^~~~~~
+                node
+./Graph.hpp:311:8: note: 'node' declared here
+  Node node(idx_type i) const {
+       ^
+./Graph.hpp:261:3: error: reference to non-static member function must be called
+                nodes_[reusable_uid].p_orig = position;
+                ^~~~~~
+./Graph.hpp:262:3: error: use of undeclared identifier 'nodes_'; did you mean 'node'?
+                nodes_[reusable_uid].v = value;
+                ^~~~~~
+                node
+./Graph.hpp:311:8: note: 'node' declared here
+  Node node(idx_type i) const {
+       ^
+./Graph.hpp:262:3: error: reference to non-static member function must be called
+                nodes_[reusable_uid].v = value;
+                ^~~~~~
+./Graph.hpp:263:3: error: use of undeclared identifier 'nodes_'; did you mean 'node'?
+                nodes_[reusable_uid].imap_idx = size();
+                ^~~~~~
+                node
+./Graph.hpp:311:8: note: 'node' declared here
+  Node node(idx_type i) const {
+       ^
+./Graph.hpp:263:3: error: reference to non-static member function must be called
+                nodes_[reusable_uid].imap_idx = size();
+                ^~~~~~
+./Graph.hpp:265:3: error: use of undeclared identifier 'imap_'
+                imap_[size()].idx = size();
+                ^
+./Graph.hpp:266:3: error: use of undeclared identifier 'imap_'
+                imap_[size()].edge_idx = -1; // -1 represents no edge
+                ^
+./Graph.hpp:268:3: error: use of undeclared identifier 'indices_'
+                indices_[size()] = size();
+                ^
+./Graph.hpp:280:3: error: use of undeclared identifier 'nodes_'; did you mean 'node'?
+                nodes_.push_back(temp_node_data);
+                ^~~~~~
+                node
+./Graph.hpp:311:8: note: 'node' declared here
+  Node node(idx_type i) const {
+       ^
+./Graph.hpp:280:3: error: reference to non-static member function must be called
+                nodes_.push_back(temp_node_data);
+                ^~~~~~
+./Graph.hpp:285:3: error: use of undeclared identifier 'imap_'
+                imap_.push_back(temp_imap_data);
+                ^
+./Graph.hpp:287:3: error: use of undeclared identifier 'indices_'
+                indices_.push_back(size());
+                ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
+make: *** [viewer.o] Error 1
