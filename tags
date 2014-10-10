@@ -37,12 +37,12 @@ DefaultColor	CS207/SDLViewer.hpp	/^struct DefaultColor {$/;"	s	namespace:CS207
 DefaultPosition	CS207/SDLViewer.hpp	/^struct DefaultPosition {$/;"	s	namespace:CS207
 Distance	Examples/Metrics.hpp	/^typedef Unit<0, 1,  0, double>  Distance;$/;"	t	namespace:Metrics
 Distance3	Examples/Metrics.hpp	/^typedef Unit<0, 1,  0, Point>   Distance3;$/;"	t	namespace:Metrics
-Edge	Graph.hpp	/^  	Edge(const Graph* graph, uid_type node1, uid_type node2) {$/;"	f	class:Graph::Edge
+Edge	Graph.hpp	/^  	Edge(const Graph* graph, idx_type idx1, idx_type idx2) {$/;"	f	class:Graph::Edge
 Edge	Graph.hpp	/^    Edge() {$/;"	f	class:Graph::Edge
 Edge	Graph.hpp	/^  class Edge {$/;"	c	class:Graph
 Edge	mass_spring.cpp	/^typedef typename GraphType::edge_type Edge;$/;"	t	file:
 Edge	test_edges.cpp	/^typedef GraphType::edge_type Edge;$/;"	t	file:
-EdgeIterator	Graph.hpp	/^	EdgeIterator(const Graph* graph) {$/;"	f	class:Graph::EdgeIterator
+EdgeIterator	Graph.hpp	/^	EdgeIterator(Graph* graph, idx_type index) {$/;"	f	class:Graph::EdgeIterator
 EdgeIterator	Graph.hpp	/^    EdgeIterator() {$/;"	f	class:Graph::EdgeIterator
 EdgeIterator	Graph.hpp	/^  class EdgeIterator : private totally_ordered<EdgeIterator> {$/;"	c	class:Graph
 FIRST_PRIME	primes.cpp	3;"	d	file:
@@ -71,7 +71,7 @@ Node	mass_spring.cpp	/^typedef typename GraphType::node_type Node;$/;"	t	file:
 Node	test_edges.cpp	/^typedef GraphType::node_type Node;$/;"	t	file:
 Node	test_nodes.cpp	/^typedef GraphType::node_type Node;$/;"	t	file:
 NodeData	mass_spring.cpp	/^struct NodeData {$/;"	s	file:
-NodeIterator	Graph.hpp	/^  	NodeIterator(const Graph* graph, size_type index) : graph_(graph), index_(index) {$/;"	f	class:Graph::NodeIterator
+NodeIterator	Graph.hpp	/^  	NodeIterator(Graph* graph, idx_type index) {$/;"	f	class:Graph::NodeIterator
 NodeIterator	Graph.hpp	/^    NodeIterator() {$/;"	f	class:Graph::NodeIterator
 NodeIterator	Graph.hpp	/^  class NodeIterator : private totally_ordered<NodeIterator> {$/;"	c	class:Graph
 Point	Point.hpp	/^  Point() {$/;"	f	struct:Point
@@ -102,13 +102,11 @@ _s	Examples/Metrics.hpp	/^constexpr Time operator"" _s(long double v) {$/;"	f	na
 _s	Examples/Metrics.hpp	/^constexpr Time operator"" _s(unsigned long long v) {$/;"	f	namespace:Metrics
 add_edge	Graph.hpp	/^  Edge add_edge(const Node& a, const Node& b) {$/;"	f	class:Graph
 add_edges	CS207/SDLViewer.hpp	/^  void add_edges(InputIterator first, InputIterator last, const Map& node_map) {$/;"	f	class:CS207::SDLViewer
-add_node	Graph.hpp	/^  Node add_node(const Point& position, const node_value_type& value = node_value_type()) {$/;"	f	class:Graph
+add_node	Graph.hpp	/^  Node add_node(const Point& position, $/;"	f	class:Graph
 add_nodes	CS207/SDLViewer.hpp	/^  void add_nodes(InputIterator first, InputIterator last,$/;"	f	class:CS207::SDLViewer
-adj	Graph.hpp	/^	std::vector<uid_type> adj;$/;"	m	struct:Graph::node_data
 b	CS207/Color.hpp	/^  value_type r, g, b;$/;"	m	struct:CS207::Color
 back	Point.hpp	/^  const_reference back()  const { return elem[2]; }$/;"	f	struct:Point
 back	Point.hpp	/^  reference       back()        { return elem[2]; }$/;"	f	struct:Point
-begin	Graph.hpp	/^	EdgeIterator& begin() {$/;"	f	class:Graph::EdgeIterator
 begin	Graph.hpp	/^	IncidentIterator& begin() {$/;"	f	class:Graph::IncidentIterator
 begin	Point.hpp	/^  const_iterator  begin() const { return elem; }$/;"	f	struct:Point
 begin	Point.hpp	/^  iterator        begin()       { return elem; }$/;"	f	struct:Point
@@ -136,28 +134,29 @@ difference_type	Graph.hpp	/^    typedef std::ptrdiff_t difference_type;$/;"	t	cl
 difference_type	Point.hpp	/^  typedef std::ptrdiff_t  difference_type;$/;"	t	struct:Point
 difference_type	subgraph.cpp	/^  typedef typename std::iterator_traits<It>::difference_type   difference_type;$/;"	t	class:filter_iterator	file:
 dist	CS207/GLCamera.hpp	/^  float dist;$/;"	m	class:CS207::GLCamera
-distance	shortest_path.cpp	/^float distance(const Point& a, const Point& b) {$/;"	f
+distance	Point.hpp	/^float distance(const Point& a, const Point& b) {$/;"	f
 dot	Point.hpp	/^double dot(const Point& a, const Point& b) {$/;"	f
 draw_graph	CS207/SDLViewer.hpp	/^  void draw_graph(const G& g) {$/;"	f	class:CS207::SDLViewer
 draw_graph_nodes	CS207/SDLViewer.hpp	/^  void draw_graph_nodes(const G& g) {$/;"	f	class:CS207::SDLViewer
 duration	CS207/Util.hpp	/^  typedef typename clock::duration           duration;$/;"	t	class:CS207::Clock
 edge	Graph.hpp	/^  Edge edge(size_type i) const {$/;"	f	class:Graph
 edge_begin	Graph.hpp	/^	IncidentIterator& edge_begin() const {$/;"	f	class:Graph::Node
-edge_begin	Graph.hpp	/^  EdgeIterator& edge_begin() const {$/;"	f	class:Graph
+edge_begin	Graph.hpp	/^  EdgeIterator edge_begin() {$/;"	f	class:Graph
 edge_end	Graph.hpp	/^	IncidentIterator& edge_end() const {$/;"	f	class:Graph::Node
-edge_end	Graph.hpp	/^  EdgeIterator& edge_end() const {$/;"	f	class:Graph
+edge_end	Graph.hpp	/^  EdgeIterator edge_end() {$/;"	f	class:Graph
 edge_iterator	Graph.hpp	/^  typedef EdgeIterator edge_iterator;$/;"	t	class:Graph
 edge_type	Graph.hpp	/^  typedef Edge edge_type;$/;"	t	class:Graph
 edges_	CS207/SDLViewer.hpp	/^  std::vector<unsigned> edges_;$/;"	m	class:CS207::SDLViewer
+edges_	Graph.hpp	/^	std::vector<std::set<uid_type>> edges_;$/;"	m	class:Graph
 elapsed	CS207/Util.hpp	/^  duration elapsed() const {$/;"	f	class:CS207::Clock
 elem	Point.hpp	/^    double elem[3];$/;"	m	union:Point::__anon1
 elements_	Examples/proxy_example.cpp	/^  internal_element* elements_;$/;"	m	class:SimpleSet	file:
 empty	Point.hpp	/^  static constexpr bool         empty() { return false; }$/;"	f	struct:Point
 empty_node_map	CS207/SDLViewer.hpp	/^  std::map<typename G::node_type, unsigned> empty_node_map(const G&) const {$/;"	f	class:CS207::SDLViewer
-end	Graph.hpp	/^	EdgeIterator& end() {$/;"	f	class:Graph::EdgeIterator
 end	Graph.hpp	/^	IncidentIterator& end() {$/;"	f	class:Graph::IncidentIterator
 end	Point.hpp	/^  const_iterator    end() const { return elem+3; }$/;"	f	struct:Point
 end	Point.hpp	/^  iterator          end()       { return elem+3; }$/;"	f	struct:Point
+end_	Graph.hpp	/^	std::vector<idx_type>::iterator end_;$/;"	m	class:Graph::EdgeIterator
 end_	subgraph.cpp	/^  It end_;$/;"	m	class:filter_iterator	file:
 equality_comparable	CS207/Util.hpp	/^struct equality_comparable {$/;"	s
 event_loop	CS207/SDLViewer.hpp	/^  void event_loop() {$/;"	f	class:CS207::SDLViewer
@@ -173,7 +172,7 @@ filter_iterator	subgraph.cpp	/^class filter_iterator$/;"	c	file:
 fix	Graph.hpp	/^	void fix() {$/;"	f	class:Graph::EdgeIterator
 fix	subgraph.cpp	/^  void fix() {$/;"	f	class:filter_iterator	file:
 for_i	Point.hpp	11;"	d
-for_i	Point.hpp	234;"	d
+for_i	Point.hpp	239;"	d
 front	Point.hpp	/^  const_reference front() const { return elem[0]; }$/;"	f	struct:Point
 front	Point.hpp	/^  reference       front()       { return elem[0]; }$/;"	f	struct:Point
 g	CS207/Color.hpp	/^  value_type r, g, b;$/;"	m	struct:CS207::Color
@@ -196,17 +195,26 @@ graph_	Graph.hpp	/^	const Graph* graph_;$/;"	m	class:Graph::NodeIterator
 graph_type	Graph.hpp	/^  typedef Graph graph_type;$/;"	t	class:Graph
 grav	mass_spring.cpp	/^static constexpr double grav = 9.81;$/;"	v	file:
 handle_event	CS207/SDLViewer.hpp	/^  void handle_event(SDL_Event event) {$/;"	f	class:CS207::SDLViewer
-has_edge	Graph.hpp	/^   size_type has_edge(const Node& a, const Node& b) {$/;"	f	class:Graph
+has_edge	Graph.hpp	/^   bool has_edge(const Node& a, const Node& b) {$/;"	f	class:Graph
 has_node	Graph.hpp	/^  bool has_node(const Node& n) const {$/;"	f	class:Graph
+i2u_	Graph.hpp	/^	uid_type i2u_(idx_type index) const {$/;"	f	class:Graph
+idx	Graph.hpp	/^	size_type idx;$/;"	m	struct:Graph::imap_data
+idx_type	Graph.hpp	/^  typedef unsigned idx_type;$/;"	t	class:Graph
+imap_	Graph.hpp	/^	std::vector<imap_data> imap_;$/;"	m	class:Graph
+imap_data	Graph.hpp	/^  typedef struct imap_data {$/;"	s	class:Graph
+imap_data	Graph.hpp	/^  } imap_data;$/;"	t	class:Graph	typeref:struct:Graph::imap_data
+imap_idx	Graph.hpp	/^	imap_idx_type imap_idx;$/;"	m	struct:Graph::node_data
+imap_idx_type	Graph.hpp	/^  typedef unsigned imap_idx_type;$/;"	t	class:Graph
 incident_iterator	Graph.hpp	/^  typedef IncidentIterator incident_iterator;$/;"	t	class:Graph
-index	Graph.hpp	/^    size_type index() const {$/;"	f	class:Graph::Node
-index_	Graph.hpp	/^	size_type index_;$/;"	m	class:Graph::NodeIterator
+index	Graph.hpp	/^    idx_type index() const {$/;"	f	class:Graph::Node
+indices_	Graph.hpp	/^	std::vector<imap_idx_type> indices_;$/;"	m	class:Graph
 init	CS207/SDLViewer.hpp	/^  void init() {$/;"	f	class:CS207::SDLViewer
-inner_	Graph.hpp	/^	size_type inner_;$/;"	m	class:Graph::EdgeIterator
+inner_	Graph.hpp	/^	std::set<uid_type>::iterator inner_;$/;"	m	class:Graph::EdgeIterator
 inner_prod	Point.hpp	/^double inner_prod(const Point& a, const Point& b) {$/;"	f
 internal_element	Examples/proxy_example.cpp	/^  struct internal_element {$/;"	s	class:SimpleSet	file:
 is_prime	primes.cpp	/^bool is_prime(int n)$/;"	f
-it_	Graph.hpp	/^	size_type it_;$/;"	m	class:Graph::IncidentIterator
+it_	Graph.hpp	/^	std::set<uid_type>::iterator it_;$/;"	m	class:Graph::IncidentIterator
+it_	Graph.hpp	/^	std::vector<idx_type>::iterator it_;$/;"	m	class:Graph::NodeIterator
 it_	subgraph.cpp	/^  It it_;$/;"	m	class:filter_iterator	file:
 iterator	Graph.hpp	/^	typedef std::vector<uid_type>::iterator iterator;$/;"	t	class:Graph::IncidentIterator
 iterator	Point.hpp	/^  typedef double*         iterator;$/;"	t	struct:Point
@@ -216,6 +224,7 @@ iterator_category	Graph.hpp	/^    typedef std::input_iterator_tag iterator_categ
 iterator_category	subgraph.cpp	/^  typedef typename std::input_iterator_tag                     iterator_category;$/;"	t	class:filter_iterator	file:
 label_	CS207/SDLViewer.hpp	/^  std::string label_;$/;"	m	class:CS207::SDLViewer
 launch	CS207/SDLViewer.hpp	/^  void launch() {$/;"	f	class:CS207::SDLViewer
+length	Graph.hpp	/^	scalar length() const {$/;"	f	class:Graph::Edge
 less_than_comparable	CS207/Util.hpp	/^struct less_than_comparable {$/;"	s
 lock_	CS207/SDLViewer.hpp	/^  SDL_mutex* lock_;$/;"	m	class:CS207::SDLViewer
 lower_bound	Examples/func_params.cpp	/^int lower_bound(const T* a, int low, int high, const T& v, Comp comp = Comp()) {$/;"	f
@@ -239,14 +248,13 @@ mass	mass_spring.cpp	/^  double mass;     \/\/< Node mass$/;"	m	struct:NodeData	
 max_size	Point.hpp	/^  static constexpr size_type max_size() { return 3; }$/;"	f	struct:Point
 next	Graph.hpp	/^	void next() {$/;"	f	class:Graph::EdgeIterator
 next_uid_	Examples/proxy_example.cpp	/^  size_type next_uid_;$/;"	m	class:SimpleSet	file:
-node	Graph.hpp	/^  Node node(size_type i) const {$/;"	f	class:Graph
+node	Graph.hpp	/^  Node node(idx_type i) const {$/;"	f	class:Graph
 node1	Graph.hpp	/^    Node node1() const {$/;"	f	class:Graph::Edge
 node2	Graph.hpp	/^    Node node2() const {$/;"	f	class:Graph::Edge
-node_	Graph.hpp	/^	Node node_;$/;"	m	class:Graph::IncidentIterator
-node_begin	Graph.hpp	/^  NodeIterator node_begin() const {$/;"	f	class:Graph
+node_begin	Graph.hpp	/^  NodeIterator node_begin() {$/;"	f	class:Graph
 node_data	Graph.hpp	/^  typedef struct node_data {$/;"	s	class:Graph
 node_data	Graph.hpp	/^  } node_data;$/;"	t	class:Graph	typeref:struct:Graph::node_data
-node_end	Graph.hpp	/^  NodeIterator node_end() const {$/;"	f	class:Graph
+node_end	Graph.hpp	/^  NodeIterator node_end() {$/;"	f	class:Graph
 node_iterator	Graph.hpp	/^  typedef NodeIterator node_iterator;$/;"	t	class:Graph
 node_type	Graph.hpp	/^  typedef Node node_type;$/;"	t	class:Graph
 node_value_type	Graph.hpp	/^  typedef V node_value_type;$/;"	t	class:Graph
@@ -329,10 +337,11 @@ operator >>	CS207/Util.hpp	/^std::istream& operator>>(std::istream& s, std::arra
 operator >>	Point.hpp	/^std::istream& operator>>(std::istream& s, Point& a) {$/;"	f
 operator []	Point.hpp	/^  const_reference operator[](size_type i) const { return elem[i]; }$/;"	f	struct:Point
 operator []	Point.hpp	/^  reference       operator[](size_type i)       { return elem[i]; }$/;"	f	struct:Point
-outer_	Graph.hpp	/^	size_type outer_;$/;"	m	class:Graph::EdgeIterator
+outer_	Graph.hpp	/^	std::vector<idx_type>::iterator outer_;$/;"	m	class:Graph::EdgeIterator
 p	Graph.hpp	/^	mutable Point p;$/;"	m	struct:Graph::node_data
 p_	shortest_path.cpp	/^   Point p_;$/;"	m	struct:MyComparator	file:
 p_	subgraph.cpp	/^  Pred p_;$/;"	m	class:filter_iterator	file:
+p_orig	Graph.hpp	/^	Point p_orig;$/;"	m	struct:Graph::node_data
 pan	CS207/GLCamera.hpp	/^  inline void pan(float x, float y, float z) {$/;"	f	class:CS207::GLCamera
 point	CS207/GLCamera.hpp	/^  Point point;$/;"	m	class:CS207::GLCamera
 pointer	Graph.hpp	/^    typedef Edge* pointer;$/;"	t	class:Graph::EdgeIterator
@@ -362,6 +371,8 @@ rotate_y	CS207/GLCamera.hpp	/^  inline void rotate_y(float angle) {$/;"	f	class:
 s_greater	Examples/func_params.cpp	/^struct s_greater {$/;"	s	file:
 safe_lock	CS207/SDLViewer.hpp	/^    safe_lock(SDLViewer* v)$/;"	f	struct:CS207::SDLViewer::safe_lock
 safe_lock	CS207/SDLViewer.hpp	/^  struct safe_lock {$/;"	s	class:CS207::SDLViewer
+scalar	Graph.hpp	/^  typedef double scalar;$/;"	t	class:Graph
+scalar	mass_spring.cpp	/^typedef Point::value_type scalar;$/;"	t	file:
 seconds	CS207/Util.hpp	/^  double seconds() const {$/;"	f	class:CS207::Clock
 self_type	subgraph.cpp	/^  typedef filter_iterator<Pred,It> self_type;$/;"	t	class:filter_iterator	file:
 set_	Examples/proxy_example.cpp	/^    SimpleSet* set_;$/;"	m	class:SimpleSet::SimpleElement	file:
@@ -393,13 +404,15 @@ text	Examples/proxy_example.cpp	/^    std::string text;   \/\/ The text held by 
 tick_type	CS207/Util.hpp	/^  typedef typename duration::rep             tick_type;$/;"	t	class:CS207::Clock
 time_point	CS207/Util.hpp	/^  typedef typename clock::time_point         time_point;$/;"	t	class:CS207::Clock
 totally_ordered	CS207/Util.hpp	/^struct totally_ordered$/;"	s
+u2i_	Graph.hpp	/^	idx_type u2i_(uid_type u) const {$/;"	f	class:Graph
 uid	Examples/proxy_example.cpp	/^    size_type uid;      \/\/ The unique identifcation for an element$/;"	m	struct:SimpleSet::internal_element	file:
-uid	Graph.hpp	/^  	uid_type uid;$/;"	m	struct:Graph::node_data
+uid	Graph.hpp	/^  	uid_type uid;$/;"	m	struct:Graph::imap_data
 uid1_	Graph.hpp	/^	uid_type uid1_;$/;"	m	class:Graph::Edge
 uid2_	Graph.hpp	/^	uid_type uid2_;$/;"	m	class:Graph::Edge
 uid_	Examples/proxy_example.cpp	/^    size_type uid_;$/;"	m	class:SimpleSet::SimpleElement	file:
-uid_	Graph.hpp	/^	size_type uid_ = 0;$/;"	m	class:Graph::Node
-uid_type	Graph.hpp	/^  typedef size_type uid_type;$/;"	t	class:Graph
+uid_	Graph.hpp	/^	uid_type uid_ = 0;$/;"	m	class:Graph::Node
+uid_	Graph.hpp	/^	uid_type uid_;$/;"	m	class:Graph::IncidentIterator
+uid_type	Graph.hpp	/^  typedef unsigned uid_type;$/;"	t	class:Graph
 unlock	CS207/SDLViewer.hpp	/^    void unlock() {$/;"	f	struct:CS207::SDLViewer::safe_lock
 upV	CS207/GLCamera.hpp	/^  Point upV;$/;"	m	class:CS207::GLCamera
 v	Graph.hpp	/^	mutable node_value_type v;$/;"	m	struct:Graph::node_data

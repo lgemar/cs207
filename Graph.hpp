@@ -260,6 +260,7 @@ class Graph {
 		nodes_[reusable_uid].p_orig = position;
 		nodes_[reusable_uid].v = value;
 		nodes_[reusable_uid].degree = 0;
+		nodes_[reusable_uid].imap_idx = size();
 		// Update the index of the node
 		imap_[size()].idx = size();
 		// Update the index of the indices vector point back to this imap entry
@@ -275,6 +276,7 @@ class Graph {
 		temp_node_data.p_orig = position;
 		temp_node_data.v = value;
 		temp_node_data.degree = 0;
+		temp_node_data.imap_idx = size();
 		nodes_.push_back(temp_node_data);
 		// Set all the data fields of the new imap data structure
 		temp_imap_data.uid = size();
@@ -408,13 +410,17 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   Edge add_edge(const Node& a, const Node& b) {
-	assert(a.index() != b.index()); // no self edges
+	assert(a.index() != b.index());
 	// Compute the corresponding uid's of a and b
-   	uid_type uid_a = i2u_( a.index() );
+	uid_type uid_a = i2u_( a.index() );
 	uid_type uid_b = i2u_( b.index() );
 	// Insert a and b into each others adjacency lists
-	edges_[uid_a].insert(uid_b);
-	edges_[uid_b].insert(uid_a);
+	std::set<uid_type> edge_set_a;
+	std::set<uid_type> edge_set_b;
+	edge_set_a.insert(uid_b);
+	edge_set_b.insert(uid_a);
+	edges_[uid_a] = edge_set_a;
+	edges_[uid_b] = edge_set_b;
 	// Add one to the degree of the edges
 	nodes_[uid_a].degree++;
 	nodes_[uid_b].degree++;
@@ -494,8 +500,7 @@ class Graph {
 	 * @returns true if the two iterators point to the same node
 	 */
 	bool operator==(const NodeIterator& it) const {
-		idx_type this_index = *it_;
-		return (Node(graph_, graph_->i2u_(this_index)) == *it);
+		return it_ == it.it_;
 	}
 
    private:
