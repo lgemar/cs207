@@ -57,7 +57,13 @@ class Graph {
   typedef unsigned size_type;
 
   /** Define uid_type */
-  typedef size_type uid_type;
+  typedef unsigned uid_type;
+
+  /** Define idx type */
+  typedef unsigned idx_type;
+
+  /** Define imap index type */
+  typedef unsigned imap_idx_type;
 
   /** Type of node iterators, which iterate over all graph nodes. */
   class NodeIterator;
@@ -71,18 +77,23 @@ class Graph {
 
   /** Type of incident iterators, which iterate incident edges to a node. */
   class IncidentIterator;
+
   /** Synonym for IncidentIterator */
   typedef IncidentIterator incident_iterator;
 
   /** custom type to hold node data */
   typedef struct node_data {
-  	uid_type uid;
+	size_type degree;
+	imap_idx_type imap_idx;
 	Point p_orig;
 	mutable Point p;
 	mutable node_value_type v;
-	size_type degree;
-	std::vector<uid_type> adj;
   } node_data;
+
+  typedef struct imap_data {
+  	uid_type uid;
+	size_type idx;
+  } imap_data;
 
   ////////////////////////////////
   // CONSTRUCTOR AND DESTRUCTOR //
@@ -155,9 +166,14 @@ class Graph {
 		return graph_->nodes_[uid_].p;
 	}
 
-    /** Return this node's index, a number in the range [0, graph_size). */
-    size_type index() const {
-      return uid_;
+    /** Return this node's index, a number in the range [0, graph_size).
+	 * @pre The node represented by this uid must be a valid node
+	 * 		If this precondition is not met, the behavior is undefined. 
+	 * 		The assert may fail, or the function could return a valid, 
+	 *		incorrect index.
+	 */
+    idx_type index() const {
+		return graph_->u2i_(uid_);
     }
 
     /** Test whether this node and @a x are equal.
@@ -165,7 +181,7 @@ class Graph {
      * Equal nodes have the same graph and the same index.
      */
     bool operator==(const Node& x) const {
-		return (uid_ == x.index());
+		return (index() == x.index());
     }
 
     /** Test whether this node is less than @a x in the global order.
@@ -177,7 +193,7 @@ class Graph {
      * and y, exactly one of x == y, x < y, and y < x is true.
      */
     bool operator<(const Node& x) const {
-		return (uid_ < x.index());
+		return (index() < x.index());
     }
 
 	/** Returns the node_value_type value associated with this Node */
@@ -196,11 +212,13 @@ class Graph {
 	}
 
    	/** Returns an iterator to beginning of incident iterator list */
+	// TODO: fix this once IncidentIterator is updated with new representation
 	IncidentIterator& edge_begin() const {
 		return IncidentIterator(graph_, uid_).begin();
 	}
 
 	/** Returns an iterator to the end of incident iterator list */
+	// TODO: fix this once IncidentIterator is updated with new representation
 	IncidentIterator& edge_end() const {
 		return IncidentIterator(graph_, uid_).end();
 	}
@@ -209,7 +227,7 @@ class Graph {
     // Allow Graph to access Node's private member data and functions.
     friend class Graph;
 	const Graph* graph_;
-	size_type uid_ = 0;
+	uid_type uid_ = 0;
 	// Construct a node as just a pointer to the graph and an id number
 	Node(const Graph* graph, size_type uid) : graph_(graph), uid_(uid) {
 	}
@@ -227,18 +245,46 @@ class Graph {
    *
    * Complexity: O(1) amortized operations.
    */
-  Node add_node(const Point& position, const node_value_type& value = node_value_type()) {
-	node_data new_node_data;
+  Node add_node(const Point& position, 
+  					const node_value_type& value = node_value_type()) {
+	node_data temp_node_data;
+	imap_data temp_imap_data;
+  	Node new_node;
+	if ( size() < imap_.size() ) {
+		// First case: there have been deleted nodes and we can reuse uids
+		// Set all the data fields of the node data structure in nodes
+		uid_type reusable_uid = imap_[size()].uid;
+		nodes_[reusable_uid].p = position;
+		nodes_[reusable_uid].p_orig = position;
+		nodes_[reusable_uid].v = value;
+		nodes_[reusable_uid].degree = 0;
+		// Update the index of the node
+		imap_[size()].idx = size();
+		// Update the index of the indices vector point back to this imap entry
+		indices_[size()] = size();
+		// Make new node using the reusable uid
+		new_node = Node(this, reusable_uid);
+	}
+	else {
+		/** Second case: all uids are valid and we must push back nodes_, 
+		 * imap_, and indices_ */
+		// Set all the data fields of the new node data structure
+		temp_node_data.p = position;
+		temp_node_data.p_orig = position;
+		temp_node_data.v = value;
+		temp_node_data.degree = 0;
+		nodes_.push_back(temp_node_data);
+		// Set all the data fields of the new imap data structure
+		temp_imap_data.uid = size();
+		temp_imap_data.idx = size();
+		imap_.push_back(temp_imap_data);
+		// Push the new imap index onto the back indices
+		indices_.push_back(size());
+		// Create new node off of the given uid
+		new_node = Node(this, size());
+	}
 
-	new_node_data.p = position;
-	new_node_data.p_orig = position;
-	new_node_data.v = value;
-	new_node_data.degree = 0;
-	new_node_data.uid = num_nodes_;
-	nodes_.push_back(new_node_data);
-
-  	Node new_node = Node(this, num_nodes_);
-	++num_nodes_;
+	++num_nodes_; //new size() = old size() + 1
 	return new_node;
   }
 
@@ -248,7 +294,7 @@ class Graph {
    * Complexity: O(1).
    */
   bool has_node(const Node& n) const {
-  	return n.index() < num_nodes_;
+  	return n.index() < size();
   }
 
   /** Return the node with index @a i.
@@ -257,8 +303,9 @@ class Graph {
    *
    * Complexity: O(1).
    */
-  Node node(size_type i) const {
-    return Node(this, i);
+  Node node(idx_type i) const {
+	assert( i < size() );
+    return Node(this, i2u_(i));
   }
 
   /////////////////
@@ -288,8 +335,8 @@ class Graph {
     }
 
 	scalar length() const {
-		return distance(graph_->nodes_[uid1_].p_orig, 
-								graph_->nodes_[uid2_].p_orig);
+		return distance(graph_->nodes_[ uid1_ ].p_orig, 
+								graph_->nodes_[ uid2_ ].p_orig);
 	}
     /** Test whether this edge and @a x are equal.
      * @pre RI for Edges must hold: uid1_ < uid2_
@@ -326,23 +373,15 @@ class Graph {
    private:
     // Allow Graph to access Edge's private member data and functions.
     friend class Graph;
-	
 	// data members
 	const Graph* graph_;
-
-	/** RI: uid1_ < uid2 */
 	uid_type uid1_;
 	uid_type uid2_;
-
 	// Constructor available to the Graph class for constructing edges
-  	Edge(const Graph* graph, uid_type node1, uid_type node2) {
-		// Make sure that there are no self edges
-		if (node1 != node2) {
-			// do nothing
-		}
+  	Edge(const Graph* graph, idx_type idx1, idx_type idx2) {
 		graph_ = graph;
-		uid1_ = node1;
-		uid2_ = node2;
+		uid1_ = graph->i2u_(idx1);
+		uid2_ = graph->i2u_(idx2);
 	}
   };
 
@@ -668,8 +707,24 @@ class Graph {
 
 
  private:
+	friend class Node, Edge, EdgeIterator, IncidentIterator;
+	// Utility functions that maps an indices to uids and vice versa
+	uid_type i2u_(idx_type index) {
+		return imap_[ indices_[index] ].uid;
+	}
+	idx_type u2i_(uid_type u) {
+		return imap_[ nodes_[u].imap_idx ].idx;
+	}
+	// Keep track of the number of nodes and edges in the graph
 	size_type num_nodes_ = 0;
 	size_type num_edges_ = 0;
+	// Stores the mapping between uids and indices
+	std::vector<imap_data> imap_;
+	// Maps between the uid's and imap nodes
  	std::vector<node_data> nodes_;
+	// Maps from indices to imap nodes
+	std::vector<imap_idx_type> indices_;
+	// Maps from uids to sets of uids that represent adjacency lists
+	std::vector<std::set<uid_type>> edges_;
 };
 #endif
