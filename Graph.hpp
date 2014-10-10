@@ -213,17 +213,21 @@ class Graph {
 
 	/** Returns the number of edges associated with this Node */
 	size_type degree() const {
-		return graph_->nodes_[uid_].degree;
+		edge_idx_type i = graph_->imap_[ graph_->u2imap_(uid_) ];
+		if (i < 0)
+			return 0;
+		else
+			return graph_->edges[ i ].size();
 	}
 
    	/** Returns an iterator to beginning of incident iterator list */
-	IncidentIterator& edge_begin() const {
-		return graph_->edge_begin(uid_);
+	IncidentIterator edge_begin() const {
+		return IncidentIterator(graph_, uid_);
 	}
 
 	/** Returns an iterator to the end of incident iterator list */
-	IncidentIterator& edge_end() const {
-		return graph_->edge_end(uid_);
+	IncidentIterator edge_end() const {
+		return IncidentIterator(graph_, uid_).to_end_();
 	}
 
    private:
@@ -579,7 +583,10 @@ class Graph {
 	/* Returns true if this iterator points to the same edge, false otherwise
 	 */
 	bool operator==(const EdgeIterator& it) const {
-		return (outer_ == it.outer_ && inner_ == it.inner_);
+		if (outer_ == end_) 
+			return (outer_ == it.outer_ && end_ == it.end_)
+		else
+			return (outer_ == it.outer_ && inner_ == it.inner_);
 	}
 
    private:
@@ -596,7 +603,8 @@ class Graph {
 		outer_ = graph->indices_.begin() + index;
 		end_ = graph->indices_.begin() + graph->size();
 		if (outer_ != end_) 
-			inner_ = graph->edges_[ graph_->i2u_(index) ].begin();
+			inner_ = 
+			graph->edges_[graph->imap_[graph->i2imap_(index)].edge_idx].begin();
 		fix();
 	}
 
@@ -614,11 +622,11 @@ class Graph {
 
 	void next() {
 		++inner_;
-		uid_type this_uid = graph_->imap_[ *outer_ ].uid;
-		if (inner_ == graph_->edges_[ this_uid ].end()) {
+		edge_idx_type this_edge_idx = graph_->imap_[ *outer_ ].edge_idx;
+		if (inner_ == graph_->edges_[ this_edge_idx ].end()) {
 			++outer_;
-			uid_type next_uid = graph_->imap_[ *outer_ ].uid;
-			inner_ = graph_->edges_[ next_uid ].begin();
+			edge_idx_type next_edge_idx = graph_->imap_[ *outer_ ].edge_idx;
+			inner_ = graph_->edges_[ next_edge_idx ].begin();
 		}
 	}
   };
@@ -676,6 +684,12 @@ class Graph {
 				uid_ == other.uid_ && it_ == other.it_);
 	}
 
+	// Return iterator to back
+	IncidentIterator& to_end_() {
+		it_ = graph_->edges_[ edge_idx_ ].end();
+		return *this;
+	}
+
    private:
     friend class Graph;
 	const Graph* graph_;
@@ -691,31 +705,19 @@ class Graph {
 		// Set private variables
 		graph_ = graph;
 		uid_ = uid;
-		edge_idx_ = graph->imap_[ u2imap_( uid ) ].edge_idx;
+		edge_idx_ = graph->imap_[ graph->u2imap_( uid ) ].edge_idx;
 		// Set the iterator to the beginning of the adjacency list by default
 		it_ = graph->edges_[ edge_idx_ ].begin();
 	}
 
-	// Return iterator to back
-	IncidentIterator& to_end_() {
-		it_ = graph_->edges_[ edge_idx_ ].end();
-		return *this;
-	}
   };
-
-  IncidentIterator edge_begin(uid_type u) {
-  	return IncidentIterator(this, u);
-  }
-
-  IncidentIterator edge_end(uid_type u) {
-  	return IncidentIterator(this, u).to_end_();
-  }
 
  private:
 	// Utility functions that maps an indices to uids and vice versa
 	uid_type i2u_(idx_type index) const { return imap_[indices_[index]].uid; };
 	idx_type u2i_(uid_type u) const {return imap_[nodes_[u].imap_idx].idx;}
 	imap_idx_type u2imap_(uid_type u) const {return nodes_[u].imap_idx;};
+	imap_idx_type i2imap_(idx_type i) const {return indices_[i];};
 	// Keep track of the number of nodes and edges in the graph
 	size_type num_nodes_ = 0;
 	size_type num_edges_ = 0;
