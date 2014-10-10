@@ -7,7 +7,9 @@
 
 #include <algorithm>
 #include <vector>
+#include <set>
 #include <cassert>
+#include <iterator>
 
 #include "CS207/Util.hpp"
 #include "Point.hpp"
@@ -406,17 +408,18 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   Edge add_edge(const Node& a, const Node& b) {
-	assert(a.index() != b.index());
-  	if (!has_edge(a, b)) {
-		// Add adjacency structs to the adjacent edge lists for the nodes
-		nodes_[a.index()].adj.push_back(b.index());
-		nodes_[b.index()].adj.push_back(a.index());
-		// Add one to the degree of the edges
-		nodes_[a.index()].degree++;
-		nodes_[b.index()].degree++;
-		// Increment the number of edges by one
-		num_edges_++;
-	}
+	assert(a.index() != b.index()); // no self edges
+	// Compute the corresponding uid's of a and b
+   	uid_type uid_a = i2u_( a.index() );
+	uid_type uid_b = i2u_( b.index() );
+	// Insert a and b into each others adjacency lists
+	edges_[uid_a].insert(uid_b);
+	edges_[uid_b].insert(uid_a);
+	// Add one to the degree of the edges
+	nodes_[uid_a].degree++;
+	nodes_[uid_b].degree++;
+	// Increment the number of edges by one
+	num_edges_++;
 	return Edge(this, a.index(), b.index());
   }
 
@@ -424,14 +427,12 @@ class Graph {
    * @a a and @a b are distinct valid nodes in the graph
    * @return true if it exists, else return the number of edges
    */
-   size_type has_edge(const Node& a, const Node& b) {
-	Edge test_edge = Edge(this, a.index(), b.index());
-	for (auto it = a.edge_begin(); it != a.edge_end(); ++it) {
-		if (test_edge == *it)
-			return true;
-	}
-	// If no equal equivalent edge is found, return false
-	return false;
+   bool has_edge(const Node& a, const Node& b) {
+   	uid_type uid_a = i2u_( a.index() );
+	uid_type uid_b = i2u_( b.index() );
+	/** RI: a must be in the adjacency list of b and vice versa
+	 * so just check one case: is a in the adjacency list of b */
+	return !(edges_[uid_a].find( uid_b ) == edges_[uid_a].end());
    }
 
   /** Return the edge with index @a i.
@@ -475,13 +476,14 @@ class Graph {
 	/** Returns the node referenced by the iterator
 	 */
 	Node operator*() const{
-		return Node(graph_, index_);
+		idx_type this_index = *it_;
+		return Node(graph_, graph_->i2u_(this_index));
 	}
 
 	/** Returns the node iterator that points to the next node in the graph
 	 */
 	NodeIterator& operator++() {
-		++index_;
+		++it_;
 		return *this;
 	}
 
@@ -492,27 +494,32 @@ class Graph {
 	 * @returns true if the two iterators point to the same node
 	 */
 	bool operator==(const NodeIterator& it) const {
-		return (Node(graph_, index_) == *it);
+		idx_type this_index = *it_;
+		return (Node(graph_, graph_->i2u_(this_index)) == *it);
 	}
 
    private:
     friend class Graph;
 	const Graph* graph_;
-	size_type index_;
-  	NodeIterator(const Graph* graph, size_type index) : graph_(graph), index_(index) {
+	std::vector<idx_type>::iterator it_;
+  	NodeIterator(Graph* graph, idx_type index) {
+		graph_ = graph;
+		it_ = graph->indices_.begin() + index;
 	}
   };
 
   /** Returns a node_iterator pointing to the beginning of the node list
    */
-  NodeIterator node_begin() const {
+  NodeIterator node_begin() {
+	// Return an node iterator into the graph at the specified index
   	return NodeIterator(this, 0);
   }
 
   /** Returns a node_iterator pointing to the end of the node list
    */
-  NodeIterator node_end() const {
-  	return NodeIterator(this, num_nodes_);
+  NodeIterator node_end() {
+	// Return an node iterator into the graph at the specified index
+  	return NodeIterator(this, size());
   }
 
   /** @class Graph::EdgeIterator
@@ -539,11 +546,7 @@ class Graph {
 	 * @pre this->it_nodes_ < nodes_end_
 	 */
 	Edge operator*() const {
-		assert(outer_ < graph_->size());
-		assert(inner_ < graph_->nodes_[outer_].degree);
-		return Edge(graph_, 
-					graph_->nodes_[outer_].uid, 
-					graph_->nodes_[outer_].adj[inner_]);
+		return Edge(graph_, *outer_, graph_->u2i_( *inner_ ));
 	}
 	
 	/** Returns an edge iterator that points to the next edge in the graph
@@ -563,22 +566,18 @@ class Graph {
    private:
     friend class Graph;
 	const Graph* graph_;
-
 	/** Define node iterator to loop over all nodes and edge iterator to 
 	 * iterate over adjacent nodes that form edges */
-	size_type outer_;
-	size_type inner_;
-
-	/** Initialize an edge iterator to point to the first valid edge 
-	 *
-	 * RI: this EdgeIterator object points at the first valid edge in graph
-	 * RI: edge_end_ points to end of nodes_ array
-	 * RI: nodes_end_ points to end of nodes_[0] array
-	 */
-	EdgeIterator(const Graph* graph) {
+	std::vector<idx_type>::iterator outer_;
+	std::set<uid_type>::iterator inner_;
+	std::vector<idx_type>::iterator end_;
+	/** Initialize an edge iterator to point to the first valid edge */
+	EdgeIterator(Graph* graph, idx_type index) {
 		graph_ = graph;
-		outer_ = 0;
-		inner_ = 0;
+		outer_ = graph->indices_.begin() + index;
+		end_ = graph->indices_.begin() + graph->size();
+		if (outer_ != end_) 
+			inner_ = graph->edges_[ graph_->i2u_(index) ].begin();
 		fix();
 	}
 
@@ -587,54 +586,34 @@ class Graph {
 	  * or the end of the vector
 	  * @post Iterator category iterator must point at a valid edge unless
 	  * it is pointing at the very end of the edge list
-	  * @post outer_ == graph_->size() || 
-	  * 	  outer_ < graph_->nodes_[outer_].adj[inner_];
 	  */
 	void fix() {
-		assert(outer_ <= graph_->size());
-		while (outer_ != graph_->size() &&
-			   outer_ > graph_->nodes_[outer_].adj[inner_]) {
+		while ((outer_ != end_) && (graph_->imap_[ *outer_ ].uid > *inner_)) {
 			next();
 		}
 	}
 
-	/** @post inner_ =< graph_->node_[outer_].degree 
-	  * @post inner_ = inner_ + 1 || inner_ = 0 
-	  */
 	void next() {
-		size_type degree;
-		degree = graph_->nodes_[outer_].degree;
-		inner_++;
-		if (!(inner_ < degree)) {
-			outer_++;
-			inner_ = 0;
+		++inner_;
+		uid_type this_uid = graph_->imap_[ *outer_ ].uid;
+		if (inner_ == graph_->edges_[ this_uid ].end()) {
+			++outer_;
+			uid_type next_uid = graph_->imap_[ *outer_ ].uid;
+			inner_ = graph_->edges_[ next_uid ].begin();
 		}
-	}
-
-	EdgeIterator& begin() {
-		outer_ = 0;
-		inner_ = 0;
-		fix();
-		return *this;
-	}
-
-	EdgeIterator& end() {
-		outer_ = graph_->size();
-		inner_ = 0;
-		return *this;
 	}
   };
 
   /** Returns an iterator to the first edge in the graph
    */
-  EdgeIterator& edge_begin() const {
-  	return EdgeIterator(this).begin();
+  EdgeIterator edge_begin() {
+  	return EdgeIterator(this, 0);
   }
   
   /** Return an iterator to one past the last edge in the graph
    */
-  EdgeIterator& edge_end() const {
-  	return EdgeIterator(this).end();
+  EdgeIterator edge_end() {
+  	return EdgeIterator(this, size());
   }
 
   /** @class Graph::IncidentIterator
@@ -666,53 +645,55 @@ class Graph {
 
 	// Return iterator to back
 	IncidentIterator& end() {
-		it_ = node_.degree();
+		it_ = graph_->edges_[ uid_ ].end();
 		return *this;
 	}
 
 	/** Return the edge to which the iterator is pointing */
 	Edge operator*() const {
 		return Edge(graph_, 
-					node_.index(), 
-					graph_->nodes_[node_.index()].adj[it_]);
+					graph_->u2i_( uid_ ), 
+					graph_->u2i_( *it_ ));
 	}
 
 	/** Return the iterator to the next element in the indicent list */
 	IncidentIterator& operator++() {
-		it_++;
+		++it_;
 		return *this;
 	}
 
 	/** Return true if two iterators point to the same element, else false */
 	bool operator==(const IncidentIterator& other) const {
-		return (node_ == other.node_ && it_ == other.it_);
+		return (graph_ == other.graph_ && 
+				uid_ == other.uid_ && it_ == other.it_);
 	}
 
    private:
     friend class Graph;
 	const Graph* graph_;
 
-	// Represenation of node
-	Node node_;
+	// UID of this node
+	uid_type uid_;
 
 	// Index to box that contains uid of second node in edge
-	size_type it_;
+	std::set<uid_type>::iterator it_;
 
 	IncidentIterator(const Graph* graph, uid_type uid) {
+		// Set private variables
 		graph_ = graph;
-		node_ = Node(graph, uid);
-		it_ = 0;
+		uid_ = uid;
+		// Set the iterator to the beginning of the adjacency list by default
+		it_ = graph->edges_[ uid ].begin();
 	}
   };
 
 
  private:
-	friend class Node, Edge, EdgeIterator, IncidentIterator;
 	// Utility functions that maps an indices to uids and vice versa
-	uid_type i2u_(idx_type index) {
+	uid_type i2u_(idx_type index) const {
 		return imap_[ indices_[index] ].uid;
 	}
-	idx_type u2i_(uid_type u) {
+	idx_type u2i_(uid_type u) const {
 		return imap_[ nodes_[u].imap_idx ].idx;
 	}
 	// Keep track of the number of nodes and edges in the graph
