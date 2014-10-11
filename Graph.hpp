@@ -180,7 +180,6 @@ class Graph {
 	 *		incorrect index.
 	 */
     idx_type index() const {
-		std::cout << uid_ << std::endl;
 		return graph_->u2i_(uid_);
     }
 
@@ -570,6 +569,7 @@ class Graph {
 	Edge operator*() const {
 		Node node1 = *outer_pos_;
 		Node node2 = (*inner_pos_).node2(); // node 2 is the adjacent node
+		std::cout << "This edge is: " << "(" << node1.index() << "," << node2.index() << ")" << std::endl;
 		return Edge(graph_, node1, node2);
 	}
 	
@@ -616,12 +616,15 @@ class Graph {
 	  */
 	void fix() {
 		while(!outer_end_()) {
-			if (!inner_end_() && !((*outer_pos_) < (*inner_pos_).node2())) {
-				++inner_pos_;
+			if(!inner_end_() && !outer_end_()) {
+				if((*outer_pos_) < (*inner_pos_).node2())
+					break; // both inner and outer are valid
+				else
+					++inner_pos_;
 			}
-			else {
+			else if(inner_end_() && !outer_end_()) {
 				++outer_pos_;
-				if( !outer_end_() )
+				if(!outer_end_())
 					inner_pos_ = (*outer_pos_).edge_begin();	
 			}
 		}
