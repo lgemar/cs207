@@ -490,29 +490,41 @@ class Graph {
   	return remove_edge(e.node1(), e.node2());
   }
 
-  // Remove the nodes' uids from each other's adjacency lists
+  /** Remove the nodes' uids from each other's adjacency lists 
+  	* @returns true if the removal was successful 
+	*/
   size_type remove_edge(const Node& a, const Node& b) {
   	uid_type uid_a = u2i_( a.index() );
   	uid_type uid_b = u2i_( b.index() );
-	remove_edge_(uid_a, uid_b);
-	return 0;
+	if( has_edge(a, b) ) {
+		remove_edge_(uid_a, uid_b);
+		return true;
+	}
+	else {
+		return false;
+	}
   }
 
   adj_list_iterator remove_edge_(uid_type uid_a, uid_type uid_b) const {
 	adj_list_iterator it_a, it_b;
-	for(it_a = edges_[uid_a].adj_list.begin(); 
-								it_a != edges_[uid_a].adj_list.end(); ++it_a) {
-		if((*it_a).uid == uid_b) {
-			edges_[uid_a].adj_list.erase(it_a);
+	if(!edges_[uid_a].adj_list.empty()) {
+		for(it_a = edges_[uid_a].adj_list.begin(); 
+				it_a != edges_[uid_a].adj_list.end(); ++it_a) {
+			if((*it_a).uid == uid_b) {
+				edges_[uid_a].adj_list.erase(it_a);
+			}
 		}
-	}
-	for(it_b = edges_[uid_b].adj_list.begin(); 
-								it_b != edges_[uid_b].adj_list.end(); ++it_b) {
-		if((*it_b).uid == uid_a) {
-			edges_[uid_a].adj_list.erase(it_b);
+		for(it_b = edges_[uid_b].adj_list.begin(); 
+				it_b != edges_[uid_b].adj_list.end(); ++it_b) {
+			if((*it_b).uid == uid_a) {
+				edges_[uid_a].adj_list.erase(it_b);
+			}
 		}
+		return ((uid_a < uid_b) ? it_a : it_b);
 	}
-	return ((uid_a < uid_b) ? it_a : it_b);
+	else {
+		return it_a;
+	}
   }
 
   /** Check to see if there is an edge between nodes a and b
