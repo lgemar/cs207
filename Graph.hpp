@@ -7,7 +7,7 @@
 
 #include <algorithm>
 #include <vector>
-#include <set>
+#include <list>
 #include <cassert>
 #include <iterator>
 
@@ -88,17 +88,17 @@ class Graph {
 
   /** custom type to hold node data */
   typedef struct node_data {
-	imap_idx_type imap_idx;
+	uid_type uid;
+  	idx_type idx;
 	Point p_orig;
 	mutable Point p;
 	mutable node_value_type v;
   } node_data;
 
-  typedef struct imap_data {
-  	uid_type uid;
-	size_type idx;
-	edge_idx_type edge_idx;
-  } imap_data;
+  typedef struct adjacency_data {
+	uid_type uid;
+	mutable	std::list<uid_type> adj_list;
+  } adjacency_data;
 
   ////////////////////////////////
   // CONSTRUCTOR AND DESTRUCTOR //
@@ -129,7 +129,8 @@ class Graph {
    * Invalidates all outstanding Node and Edge objects.
    */
   void clear() {
-    // HW0: YOUR CODE HERE
+  	num_nodes_ = 0;
+	num_edges_ = 0;
   }
 
   /////////////////
@@ -213,21 +214,19 @@ class Graph {
 
 	/** Returns the number of edges associated with this Node */
 	size_type degree() const {
-		edge_idx_type i = graph_->imap_[ graph_->u2imap_(uid_) ];
-		if (i < 0)
-			return 0;
-		else
-			return graph_->edges[ i ].size();
+		graph_->edges_[ uid_ ].adj_list.size();
 	}
 
    	/** Returns an iterator to beginning of incident iterator list */
-	IncidentIterator edge_begin() const {
-		return IncidentIterator(graph_, uid_);
+	const IncidentIterator edge_begin() const {
+		IncidentIterator it (graph_, uid_);
+		return it;
 	}
 
 	/** Returns an iterator to the end of incident iterator list */
-	IncidentIterator edge_end() const {
-		return IncidentIterator(graph_, uid_).to_end_();
+	const IncidentIterator edge_end() const {
+		IncidentIterator it (graph_, uid_);
+		return it.to_end_();
 	}
 
    private:
@@ -236,7 +235,7 @@ class Graph {
 	const Graph* graph_;
 	uid_type uid_ = 0;
 	// Construct a node as just a pointer to the graph and an id number
-	Node(const Graph* graph, size_type uid) : graph_(graph), uid_(uid) {
+	Node(const Graph* graph, uid_type uid) : graph_(graph), uid_(uid) {
 	}
   };
 
@@ -254,41 +253,35 @@ class Graph {
    */
   Node add_node(const Point& position, 
   					const node_value_type& value = node_value_type()) {
-	node_data temp_node_data;
-	imap_data temp_imap_data;
   	Node new_node;
-	if ( size() < imap_.size() ) {
+	if ( size() < i2u_vect_.size() ) {
 		// First case: there have been deleted nodes and we can reuse uids
 		// Set all the data fields of the node data structure in nodes
-		uid_type reusable_uid = imap_[size()].uid;
+		uid_type reusable_uid = i2u_vect_[size()];
 		nodes_[reusable_uid].p = position;
 		nodes_[reusable_uid].p_orig = position;
 		nodes_[reusable_uid].v = value;
-		nodes_[reusable_uid].imap_idx = size();
-		// Update the index of the node
-		imap_[size()].idx = size();
-		imap_[size()].edge_idx = -1; // -1 represents no edge
-		// Update the index of the indices vector point back to this imap entry
-		indices_[size()] = size();
-		// Make new node using the reusable uid
+		nodes_[reusable_uid].idx = size();
 		new_node = Node(this, reusable_uid);
 	}
 	else {
 		/** Second case: all uids are valid and we must push back nodes_, 
 		 * imap_, and indices_ */
 		// Set all the data fields of the new node data structure
+		node_data temp_node_data;
+
+		temp_node_data.uid = size();
+		temp_node_data.idx = size();
 		temp_node_data.p = position;
 		temp_node_data.p_orig = position;
 		temp_node_data.v = value;
-		temp_node_data.imap_idx = size();
 		nodes_.push_back(temp_node_data);
-		// Set all the data fields of the new imap data structure
-		temp_imap_data.uid = size();
-		temp_imap_data.idx = size();
-		temp_imap_data.edge_idx = -1; // represents no edges
-		imap_.push_back(temp_imap_data);
-		// Push the new imap index onto the back indices
-		indices_.push_back(size());
+		// Push back onto i2u mapping vector
+		i2u_vect_.push_back(size());
+		// Create an empty adjacency list for this node to put in edges
+		adjacency_data adj;
+		adj.uid = size();
+		edges_.push_back(adj);
 		// Create new node off of the given uid
 		new_node = Node(this, size());
 	}
@@ -387,10 +380,14 @@ class Graph {
 	uid_type uid1_;
 	uid_type uid2_;
 	// Constructor available to the Graph class for constructing edges
-  	Edge(const Graph* graph, idx_type idx1, idx_type idx2) {
+  	Edge(const Graph* graph, Node node1, Node node2) {
 		graph_ = graph;
-		uid1_ = graph->i2u_(idx1);
-		uid2_ = graph->i2u_(idx2);
+		uid1_ = node1.uid_;
+		uid2_ = node2.uid_;
+	}
+
+  	Edge(const Graph* graph, uid_type uid1, uid_type uid2) : 
+								graph_(graph), uid1_(uid1), uid2_(uid2) {
 	}
   };
 
@@ -419,31 +416,14 @@ class Graph {
 	// Compute the corresponding uid's of a and b
 	uid_type uid_a = i2u_( a.index() );
 	uid_type uid_b = i2u_( b.index() );
-	edge_idx_type edge_idx_a = imap_[ u2imap_(uid_a) ].edge_idx;
-	edge_idx_type edge_idx_b = imap_[ u2imap_(uid_b) ].edge_idx;
-	if (edge_idx_a > 0 && edge_idx_b > 0) {
+	if ( !has_edge(a, b) ) {
 		// This is the case where a and b have more than 0 edges
 		// Insert a and b into each others adjacency lists
-		edges_[edge_idx_a].insert( uid_b );
-		edges_[edge_idx_b].insert( uid_a );
+		edges_[uid_a].adj_list.push_back( uid_b );
+		edges_[uid_b].adj_list.push_back( uid_a );
+		num_edges_++;
 	}
-	else {
-		std::set<uid_type> edge_set_a;
-		std::set<uid_type> edge_set_b;
-		edge_set_a.insert(uid_b);
-		edge_set_b.insert(uid_a);
-		// Store the index of a's adjacency list and push back edge vector
-		edge_idx_a = edges_.size();
-		edges_.push_back(edge_set_a);
-		// Store the index of b's adjacency list and push back edge vector
-		edge_idx_b = edges_.size();
-		edges_.push_back(edge_set_b);
-		// Update the edge indices of a and b in the imap vector
-		imap_[ u2imap_(uid_a) ].edge_idx = edge_idx_a;
-		imap_[ u2imap_(uid_b) ].edge_idx = edge_idx_b;
-	}
-	num_edges_++;
-	return Edge(this, a.index(), b.index());
+	return Edge(this, a, b);
   }
 
   /** Check to see if there is an edge between nodes a and b
@@ -456,7 +436,12 @@ class Graph {
 	uid_type uid_b = i2u_( b.index() );
 	/** RI: a must be in the adjacency list of b and vice versa
 	 * so just check one case: is a in the adjacency list of b */
-	return !(edges_[uid_a].find( uid_b ) == edges_[uid_a].end());
+	 for (auto i = edges_[uid_a].adj_list.begin(); 
+	 	  i != edges_[uid_a].adj_list.end(); ++i) {
+	 	if( *i == uid_b )
+			return true;
+	}
+	return false; // Returns false if we get to end of list and don't find edge
    }
 
   /** Return the edge with index @a i.
@@ -499,15 +484,15 @@ class Graph {
 
 	/** Returns the node referenced by the iterator
 	 */
-	Node operator*() const{
-		idx_type this_index = *it_;
-		return Node(graph_, graph_->i2u_(this_index));
+	Node operator* () const {
+		return Node(graph_, uid_);
 	}
 
 	/** Returns the node iterator that points to the next node in the graph
 	 */
 	NodeIterator& operator++() {
-		++it_;
+		idx_type this_index = graph_->u2i_(uid_);
+		uid_ = graph_->i2u_(++this_index);
 		return *this;
 	}
 
@@ -518,29 +503,29 @@ class Graph {
 	 * @returns true if the two iterators point to the same node
 	 */
 	bool operator==(const NodeIterator& it) const {
-		return it_ == it.it_;
+		return uid_ == it.uid_;
 	}
 
    private:
     friend class Graph;
 	const Graph* graph_;
-	std::vector<idx_type>::iterator it_;
+	uid_type uid_;
   	NodeIterator(Graph* graph, idx_type index) {
 		graph_ = graph;
-		it_ = graph->indices_.begin() + index;
+		uid_ = graph->i2u_(index);
 	}
   };
 
   /** Returns a node_iterator pointing to the beginning of the node list
    */
-  NodeIterator node_begin() {
+  const NodeIterator node_begin() {
 	// Return an node iterator into the graph at the specified index
   	return NodeIterator(this, 0);
   }
 
   /** Returns a node_iterator pointing to the end of the node list
    */
-  NodeIterator node_end() {
+  const NodeIterator node_end() {
 	// Return an node iterator into the graph at the specified index
   	return NodeIterator(this, size());
   }
@@ -560,54 +545,58 @@ class Graph {
     typedef std::input_iterator_tag iterator_category;
     /** Difference between iterators */
     typedef std::ptrdiff_t difference_type;
+	/** Type of the inner iterator */
+	typedef IncidentIterator inner_it_type;
+	/** Type of outer iterator */
+	typedef NodeIterator outer_it_type;
 
     /** Construct an invalid EdgeIterator. */
     EdgeIterator() {
     }
 
 	/** Returns the edge pointed to by the iterator
-	 * @pre this->it_nodes_ < nodes_end_
 	 */
 	Edge operator*() const {
-		return Edge(graph_, *outer_, graph_->u2i_( *inner_ ));
+		Node node1 = *outer_pos_;
+		Node node2 = (*inner_pos_).node2(); // node 2 is the adjacent node
+		return Edge(graph_, node1, node2);
 	}
 	
 	/** Returns an edge iterator that points to the next edge in the graph
 	 */
 	EdgeIterator& operator++() {
-		next();
-		fix();
-		return *this;
+		for( ++inner_pos_ ; (*outer_pos_) < (*inner_pos_).node2(); ++inner_pos_)
+			fix(); // Makes sure that inner pos is pointing at valid edge
+		return (*this);
 	}
 
 	/* Returns true if this iterator points to the same edge, false otherwise
 	 */
 	bool operator==(const EdgeIterator& it) const {
-		if (outer_ == end_) 
-			return (outer_ == it.outer_ && end_ == it.end_)
-		else
-			return (outer_ == it.outer_ && inner_ == it.inner_);
+		return ((outer_pos_ == graph_->node_end() 
+			&& it.outer_pos_ == graph_->node_end()) || 
+				(inner_pos_ == it.inner_pos_ && outer_pos_ == it.outer_pos_));
 	}
 
    private:
     friend class Graph;
-	const Graph* graph_;
+	Graph* graph_;
 	/** Define node iterator to loop over all nodes and edge iterator to 
 	 * iterate over adjacent nodes that form edges */
-	std::vector<idx_type>::iterator outer_;
-	std::set<uid_type>::iterator inner_;
-	std::vector<idx_type>::iterator end_;
+	outer_it_type outer_pos_;
+	inner_it_type inner_pos_;
 	/** Initialize an edge iterator to point to the first valid edge */
-	EdgeIterator(Graph* graph, idx_type index) {
+	EdgeIterator(Graph* graph) {
 		graph_ = graph;
-		outer_ = graph->indices_.begin() + index;
-		end_ = graph->indices_.begin() + graph->size();
-		if (outer_ != end_) 
-			inner_ = 
-			graph->edges_[graph->imap_[graph->i2imap_(index)].edge_idx].begin();
+		outer_pos_ = graph_->node_begin();
+		inner_pos_ = (*outer_pos_).edge_begin();
 		fix();
 	}
 
+	EdgeIterator& to_end_() {
+		outer_pos_ = graph_->node_end();	
+		return *this;
+	}
 	/** Private function to maintain representation invariants 
 	  * @pre All iterator_category iterators must point at valid node/edge
 	  * or the end of the vector
@@ -615,18 +604,9 @@ class Graph {
 	  * it is pointing at the very end of the edge list
 	  */
 	void fix() {
-		while ((outer_ != end_) && (graph_->imap_[ *outer_ ].uid > *inner_)) {
-			next();
-		}
-	}
-
-	void next() {
-		++inner_;
-		edge_idx_type this_edge_idx = graph_->imap_[ *outer_ ].edge_idx;
-		if (inner_ == graph_->edges_[ this_edge_idx ].end()) {
-			++outer_;
-			edge_idx_type next_edge_idx = graph_->imap_[ *outer_ ].edge_idx;
-			inner_ = graph_->edges_[ next_edge_idx ].begin();
+		while((outer_pos_ != graph_->node_end()) && inner_pos_ == (*outer_pos_).edge_end()) {
+			++outer_pos_;
+			inner_pos_ = (*outer_pos_).edge_begin();
 		}
 	}
   };
@@ -634,13 +614,13 @@ class Graph {
   /** Returns an iterator to the first edge in the graph
    */
   EdgeIterator edge_begin() {
-  	return EdgeIterator(this, 0);
+  	return EdgeIterator(this);
   }
   
   /** Return an iterator to one past the last edge in the graph
    */
   EdgeIterator edge_end() {
-  	return EdgeIterator(this, size());
+  	return EdgeIterator(this).to_end_();
   }
 
   /** @class Graph::IncidentIterator
@@ -660,6 +640,8 @@ class Graph {
     typedef std::ptrdiff_t difference_type;
 	/** Iterator type */
 	typedef std::vector<uid_type>::iterator iterator;
+	/** Adjacency list iterator type */
+	typedef std::list<uid_type>::iterator list_it_type;
 
     /** Construct an invalid IncidentIterator. */
     IncidentIterator() {
@@ -667,27 +649,19 @@ class Graph {
 
 	/** Return the edge to which the iterator is pointing */
 	Edge operator*() const {
-		return Edge(graph_, 
-					graph_->u2i_( uid_ ), 
-					graph_->u2i_( *it_ ));
+		return Edge(graph_, uid_, *pos_);
 	}
 
 	/** Return the iterator to the next element in the indicent list */
 	IncidentIterator& operator++() {
-		++it_;
+		++pos_;
 		return *this;
 	}
 
 	/** Return true if two iterators point to the same element, else false */
 	bool operator==(const IncidentIterator& other) const {
 		return (graph_ == other.graph_ && 
-				uid_ == other.uid_ && it_ == other.it_);
-	}
-
-	// Return iterator to back
-	IncidentIterator& to_end_() {
-		it_ = graph_->edges_[ edge_idx_ ].end();
-		return *this;
+				uid_ == other.uid_ && pos_ == other.pos_);
 	}
 
    private:
@@ -696,38 +670,36 @@ class Graph {
 
 	// UID of this node
 	uid_type uid_;
-	edge_idx_type edge_idx_;
-
-	// Index to box that contains uid of second node in edge
-	std::set<uid_type>::iterator it_;
+	list_it_type pos_;
 
 	IncidentIterator(const Graph* graph, uid_type uid) {
 		// Set private variables
 		graph_ = graph;
 		uid_ = uid;
-		edge_idx_ = graph->imap_[ graph->u2imap_( uid ) ].edge_idx;
-		// Set the iterator to the beginning of the adjacency list by default
-		it_ = graph->edges_[ edge_idx_ ].begin();
+		pos_ = graph_->edges_[ uid_ ].adj_list.begin();
+	}
+
+	IncidentIterator& to_end_() {
+		pos_ = graph_->edges_[ uid_ ].adj_list.end();
+		return *this;
 	}
 
   };
 
  private:
 	// Utility functions that maps an indices to uids and vice versa
-	uid_type i2u_(idx_type index) const { return imap_[indices_[index]].uid; };
-	idx_type u2i_(uid_type u) const {return imap_[nodes_[u].imap_idx].idx;}
-	imap_idx_type u2imap_(uid_type u) const {return nodes_[u].imap_idx;};
-	imap_idx_type i2imap_(idx_type i) const {return indices_[i];};
+	uid_type i2u_(idx_type index) const { return i2u_vect_[index];}
+	idx_type u2i_(uid_type u) const {return nodes_[u].idx;}
 	// Keep track of the number of nodes and edges in the graph
 	size_type num_nodes_ = 0;
 	size_type num_edges_ = 0;
 	// Stores the mapping between uids and indices
-	std::vector<imap_data> imap_;
+	std::vector<uid_type> i2u_vect_;
 	// Maps between the uid's and imap nodes
  	std::vector<node_data> nodes_;
 	// Maps from indices to imap nodes
 	std::vector<imap_idx_type> indices_;
 	// Maps from uids to sets of uids that represent adjacency lists
-	std::vector<std::set<uid_type>> edges_;
+	std::vector<adjacency_data> edges_;
 };
 #endif
