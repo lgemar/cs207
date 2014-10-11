@@ -500,31 +500,30 @@ class Graph {
 		remove_edge_(uid_a, uid_b);
 		return true;
 	}
-	else {
-		return false;
-	}
+	return false;
   }
 
-  adj_list_iterator remove_edge_(uid_type uid_a, uid_type uid_b) const {
-	adj_list_iterator it_a, it_b;
-	if(!edges_[uid_a].adj_list.empty()) {
-		for(it_a = edges_[uid_a].adj_list.begin(); 
-				it_a != edges_[uid_a].adj_list.end(); ++it_a) {
-			if((*it_a).uid == uid_b) {
-				edges_[uid_a].adj_list.erase(it_a);
-			}
+  edge_iterator remove_edge_(uid_type uid_a, uid_type uid_b) {
+	Node a (this, uid_a);
+	Node b (this, uid_b);
+	assert( has_edge(a, b) ); // we will enter both for loops if there's edge
+	Edge del_edge = Edge(this, a, b);
+	for(auto it_b = b.edge_begin(); it_b != b.edge_end(); ++it_b) {
+		if( (*it_b) == del_edge) {
+			it_b.erase_curr_();
+			break;
 		}
-		for(it_b = edges_[uid_b].adj_list.begin(); 
-				it_b != edges_[uid_b].adj_list.end(); ++it_b) {
-			if((*it_b).uid == uid_a) {
-				edges_[uid_a].adj_list.erase(it_b);
-			}
+	}
+	for(auto it_a = a.edge_begin(); it_a != a.edge_end(); ++it_a) {
+		if( (*it_a) == del_edge) {
+			it_a.erase_curr_();
+			node_iterator n_it (this, a.index());
+			// construct edge iterator using node_iterator and incident_it
+			--num_edges_;
+			return EdgeIterator(this, n_it, it_a); 
 		}
-		return ((uid_a < uid_b) ? it_a : it_b);
 	}
-	else {
-		return it_a;
-	}
+	assert( false ); // we must hit the return if the graph has this edge
   }
 
   /** Check to see if there is an edge between nodes a and b
@@ -532,7 +531,7 @@ class Graph {
    * @return true if it exists, else return the number of edges
    */
    //TODO: make sure that we don't try to access invalid index of edges
-   bool has_edge(const Node& a, const Node& b) {
+   bool has_edge(const Node& a, const Node& b) const {
    	uid_type uid_a = i2u_( a.index() );
 	uid_type uid_b = i2u_( b.index() );
 	/** RI: a must be in the adjacency list of b and vice versa
@@ -656,9 +655,9 @@ class Graph {
     /** Difference between iterators */
     typedef std::ptrdiff_t difference_type;
 	/** Type of the inner iterator */
-	typedef IncidentIterator inner_it_type;
+	typedef incident_iterator inner_it_type;
 	/** Type of outer iterator */
-	typedef NodeIterator outer_it_type;
+	typedef node_iterator outer_it_type;
 
     /** Construct an invalid EdgeIterator. */
     EdgeIterator() {
@@ -704,10 +703,8 @@ class Graph {
 		fix();
 	}
 
-	EdgeIterator(const Graph* graph, uid_type uid, adj_list_iterator adj_it) {
-		graph_ = graph;
-		outer_pos_ = graph_->node_begin() + graph_->u2i_(uid);
-		inner_pos_ = adj_it;
+	EdgeIterator(const Graph* graph, node_iterator n, 
+					incident_iterator i) : graph_(graph), outer_pos_(n), inner_pos_(i) {
 	}
 
 	EdgeIterator& to_end_() {
@@ -812,6 +809,11 @@ class Graph {
 	uid_type uid_;
 	list_it_type pos_;
 
+	// erases the element currently pointed to by the incident iterator
+	void erase_curr_() {
+		pos_ = graph_->edges_[ uid_ ].adj_list.erase( pos_ );
+	}
+
 	IncidentIterator(const Graph* graph, uid_type uid) {
 		// Set private variables
 		graph_ = graph;
@@ -831,7 +833,7 @@ class Graph {
 	uid_type i2u_(idx_type index) const { return i2u_vect_[index];}
 	idx_type u2i_(uid_type u) const {return nodes_[u].idx;}
 	// Keep track of the number of nodes and edges in the graph
-	size_type num_nodes_ = 0;
+ 	size_type num_nodes_ = 0;
 	size_type num_edges_ = 0;
 	// Stores the mapping between uids and indices
 	std::vector<uid_type> i2u_vect_;
