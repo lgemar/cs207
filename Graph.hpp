@@ -220,13 +220,13 @@ class Graph {
 	}
 
    	/** Returns an iterator to beginning of incident iterator list */
-	const IncidentIterator edge_begin() const {
+	IncidentIterator edge_begin() const {
 		IncidentIterator it (graph_, uid_);
 		return it;
 	}
 
 	/** Returns an iterator to the end of incident iterator list */
-	const IncidentIterator edge_end() const {
+	IncidentIterator edge_end() const {
 		IncidentIterator it (graph_, uid_);
 		return it.to_end_();
 	}
@@ -494,7 +494,13 @@ class Graph {
 	 */
 	NodeIterator& operator++() {
 		idx_type this_index = graph_->u2i_(uid_);
-		uid_ = graph_->i2u_(++this_index);
+		++this_index;
+		if(this_index < graph_->size())
+			uid_ = graph_->i2u_(this_index);
+		else 
+			uid_ = -1; // The end of the graph is represented by a uid -1
+		std::cout << "The uid of this node is" << uid_ << std::endl;
+		std::cout << "The index of this node is" << this_index << std::endl;
 		return *this;
 	}
 
@@ -514,7 +520,10 @@ class Graph {
 	uid_type uid_;
   	NodeIterator(const Graph* graph, idx_type index) {
 		graph_ = graph;
-		uid_ = graph->i2u_(index);
+		if(index < graph_->size())
+			uid_ = graph_->i2u_(index);
+		else 
+			uid_ = -1; // The end of graph is represented by uid of -1
 	}
   };
 
@@ -567,8 +576,8 @@ class Graph {
 	/** Returns an edge iterator that points to the next edge in the graph
 	 */
 	EdgeIterator& operator++() {
-		for( ++inner_pos_ ; (*outer_pos_) < (*inner_pos_).node2(); ++inner_pos_)
-			fix(); // Makes sure that inner pos is pointing at valid edge
+		++inner_pos_;
+		fix();
 		return (*this);
 	}
 
@@ -606,10 +615,25 @@ class Graph {
 	  * it is pointing at the very end of the edge list
 	  */
 	void fix() {
-		while((outer_pos_ != graph_->node_end()) && inner_pos_ == (*outer_pos_).edge_end()) {
-			++outer_pos_;
-			inner_pos_ = (*outer_pos_).edge_begin();
+		while(!outer_end_()) {
+			if (!inner_end_() && !((*outer_pos_) < (*inner_pos_).node2())) {
+				++inner_pos_;
+			}
+			else {
+				++outer_pos_;
+				if( !outer_end_() )
+					inner_pos_ = (*outer_pos_).edge_begin();	
+			}
 		}
+	}
+
+	/** Helper functions for deciding when iterator is at end of adj list 
+	 * or at the end of a file */
+	bool inner_end_() {
+		return inner_pos_ == (*outer_pos_).edge_end();
+	}
+	bool outer_end_() {
+		return outer_pos_ == graph_->node_end();
 	}
   };
 
@@ -651,6 +675,7 @@ class Graph {
 
 	/** Return the edge to which the iterator is pointing */
 	Edge operator*() const {
+		assert(pos_ != graph_->edges_[uid_].adj_list.end());
 		return Edge(graph_, uid_, *pos_);
 	}
 
