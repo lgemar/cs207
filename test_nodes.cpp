@@ -3,7 +3,7 @@
 #include "CS207/Util.hpp"
 
 // Define the GraphType HERE
-typedef Graph<int> GraphType;
+typedef Graph<int, int> GraphType;
 typedef GraphType::node_type Node;
 
 using namespace std;

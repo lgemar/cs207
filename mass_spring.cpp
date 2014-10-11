@@ -30,9 +30,13 @@ struct NodeData {
   double mass;     //< Node mass
 };
 
+struct EdgeData {
+	int test;
+};
+
 // HW2 #1 YOUR CODE HERE
 // Define your Graph type
-typedef Graph<NodeData> GraphType;
+typedef Graph<NodeData, EdgeData> GraphType;
 typedef typename GraphType::node_type Node;
 typedef typename GraphType::edge_type Edge;
 

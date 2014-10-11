@@ -22,7 +22,7 @@
  * Users can add and retrieve nodes and edges. Edges are unique (there is at
  * most one edge between any pair of distinct nodes).
  */
-template <typename V>
+template <typename V, typename E>
 class Graph {
  private:
 
@@ -39,6 +39,8 @@ class Graph {
 
   /** Define the node value type in terms of template parameter */
   typedef V node_value_type;
+  /** Define the value type for edge values */
+  typedef E edge_value_type;
 
   /** Type of this graph. */
   typedef Graph graph_type;
@@ -96,9 +98,14 @@ class Graph {
 	mutable node_value_type v;
   } node_data;
 
+  typedef struct edge_data {
+  	uid_type uid;
+	edge_value_type v;
+  } edge_data;
+
   typedef struct adjacency_data {
 	uid_type uid;
-	mutable	std::list<uid_type> adj_list;
+	mutable	std::list<edge_data> adj_list;
   } adjacency_data;
 
   ////////////////////////////////
@@ -291,6 +298,31 @@ class Graph {
 	return new_node;
   }
 
+  node_iterator remove_node(node_iterator n_it) const {
+	Node del_node = *n_it;
+	idx_type del_idx = del_node.index(); // this will be the index of the "next"
+  	remove_node(*n_it); // Remove the node at n_it
+	return NodeIterator(this, i2u_(del_idx)); // return iterator to next el.
+  }
+
+  size_type remove_node(const Node& n) const {
+	idx_type n_idx, prev_idx;
+	for( n_idx = n.index() + 1, prev_idx = n.index(); 
+		 	n_idx < size(); ++n_idx, ++prev_idx) {
+		swap_(prev_idx, n_idx);		
+	}
+	--num_nodes_;
+  }
+
+  void swap_(idx_type a, idx_type b) const {
+  	uid_type uid_a = i2u_(a);
+	uid_type uid_b = i2u_(b);
+	i2u_vect_[a] = uid_b;
+	i2u_vect_[b] = uid_a;
+	nodes_[uid_a].idx = b;
+	nodes_[uid_b].idx = a;
+  }
+
   /** Determine if this Node belongs to this Graph
    * @return True if @a n is currently a Node of this Graph
    *
@@ -341,6 +373,16 @@ class Graph {
 		return distance(graph_->nodes_[ uid1_ ].p_orig, 
 								graph_->nodes_[ uid2_ ].p_orig);
 	}
+
+	edge_value_type& value() const {
+		Node this_node (graph_, uid1_);
+		Edge this_edge (graph_, uid1_, uid2_);
+		for(auto it = this_node.edge_begin();it != this_node.edge_end();++it) { 
+			if( this_edge == (*it) )
+				return it.value_();
+		}
+		assert(false); // edge is invalid 
+	}
     /** Test whether this edge and @a x are equal.
      * @pre RI for Edges must hold: uid1_ < uid2_
      * Equal edges are from the same graph and have the same nodes.
@@ -360,16 +402,18 @@ class Graph {
      */
     bool operator<(const Edge& x) const {
 		bool result; 
-		if (node1() < node2())
+		if (node1() < node2()) {
 			if (x.node1() < x.node2())
 				result = (node1() < x.node1() || node2() < x.node2());
 			else
 				result = (node1() < x.node2() || node2() < x.node1());
-		else
+		}
+		else {
 			if (x.node1() < x.node2())
 				result = (node2() < x.node1() || node1() < x.node2());
 			else
 				result = (node2() < x.node2() || node1() < x.node1());
+		}
 		return result;
     }
 
@@ -420,8 +464,12 @@ class Graph {
 	if ( !has_edge(a, b) ) {
 		// This is the case where a and b have more than 0 edges
 		// Insert a and b into each others adjacency lists
-		edges_[uid_a].adj_list.push_back( uid_b );
-		edges_[uid_b].adj_list.push_back( uid_a );
+		edge_data edge_a_data;
+		edge_data edge_b_data;
+		edge_a_data.uid = uid_a;
+		edge_b_data.uid = uid_b;
+		edges_[uid_a].adj_list.push_back( edge_b_data );
+		edges_[uid_b].adj_list.push_back( edge_a_data );
 		num_edges_++;
 	}
 	return Edge(this, a, b);
@@ -439,7 +487,7 @@ class Graph {
 	 * so just check one case: is a in the adjacency list of b */
 	 for (auto i = edges_[uid_a].adj_list.begin(); 
 	 	  i != edges_[uid_a].adj_list.end(); ++i) {
-	 	if( *i == uid_b )
+	 	if( (*i).uid == uid_b )
 			return true;
 	}
 	return false; // Returns false if we get to end of list and don't find edge
@@ -670,7 +718,7 @@ class Graph {
 	/** Iterator type */
 	typedef std::vector<uid_type>::iterator iterator;
 	/** Adjacency list iterator type */
-	typedef std::list<uid_type>::iterator list_it_type;
+	typedef typename std::list<edge_data>::iterator list_it_type;
 
     /** Construct an invalid IncidentIterator. */
     IncidentIterator() {
@@ -679,7 +727,7 @@ class Graph {
 	/** Return the edge to which the iterator is pointing */
 	Edge operator*() const {
 		assert(pos_ != graph_->edges_[uid_].adj_list.end());
-		return Edge(graph_, uid_, *pos_);
+		return Edge(graph_, uid_, (*pos_).uid);
 	}
 
 	/** Return the iterator to the next element in the indicent list */
@@ -692,6 +740,10 @@ class Graph {
 	bool operator==(const IncidentIterator& other) const {
 		return (graph_ == other.graph_ && 
 				uid_ == other.uid_ && pos_ == other.pos_);
+	}
+
+	edge_value_type& value_() const {
+		return (*pos_).v;
 	}
 
    private:

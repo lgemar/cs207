@@ -114,7 +114,7 @@ int main(int argc, char** argv)
   }
 
   // Construct a Graph
-  typedef Graph<int> GraphType;
+  typedef Graph<int, int> GraphType;
   GraphType graph;
   std::vector<GraphType::node_type> nodes;
 

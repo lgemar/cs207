@@ -66,8 +66,8 @@ struct MyComparator {
  * the root node. The root's value() is 0. Nodes unreachable from
  * the root have value() -1.
  */
-int shortest_path_lengths(Graph<int>& g, const Point& point) {
-	typedef Graph<int>::node_type NODE;
+int shortest_path_lengths(Graph<int, int>& g, const Point& point) {
+	typedef Graph<int, int>::node_type NODE;
 	int longest_path = 0;
 	NODE current_node;
 	NODE adjacent_node;
@@ -78,7 +78,7 @@ int shortest_path_lengths(Graph<int>& g, const Point& point) {
 	// Find closest current_node to the given point
 	auto closest = std::min_element(g.node_begin(), 
 									g.node_end(), MyComparator(point));
-	Graph<int>::node_type closest_node = *closest;
+	Graph<int, int>::node_type closest_node = *closest;
 	// Set the root value to 0
 	closest_node.value() = 0;
 	// Put the root in the "visited" list and to the front of the queue
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
   }
 
   // Construct a Graph
-  typedef Graph<int> GraphType;
+  typedef Graph<int, int> GraphType;
   GraphType graph;
   std::vector<GraphType::node_type> nodes;
 
