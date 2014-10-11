@@ -93,7 +93,6 @@ class Graph {
   typedef struct node_data {
 	uid_type uid;
   	idx_type idx;
-	size_type life_cyle;
 	Point p_orig;
 	mutable Point p;
 	mutable node_value_type v;
@@ -106,8 +105,10 @@ class Graph {
 
   typedef struct adjacency_data {
 	uid_type uid;
-	mutable	std::list<edge_data> adj_list;
+	mutable std::list<edge_data> adj_list;
   } adjacency_data;
+
+  typedef typename std::list<edge_data>::iterator adj_list_iterator;
 
   ////////////////////////////////
   // CONSTRUCTOR AND DESTRUCTOR //
@@ -268,7 +269,6 @@ class Graph {
 		// Set all the data fields of the node data structure in nodes
 		uid_type reusable_uid = i2u_vect_[size()];
 		nodes_[reusable_uid].idx = size();
-		++nodes_[reusable_uid].life_cyle; // this node uid is being reused
 		nodes_[reusable_uid].p = position;
 		nodes_[reusable_uid].p_orig = position;
 		nodes_[reusable_uid].v = value;
@@ -282,7 +282,6 @@ class Graph {
 
 		temp_node_data.uid = size();
 		temp_node_data.idx = size();
-		temp_node_data.life_cyle = 0; // Node's first lifetime
 		temp_node_data.p = position;
 		temp_node_data.p_orig = position;
 		temp_node_data.v = value;
@@ -479,6 +478,43 @@ class Graph {
 	return Edge(this, a, b);
   }
 
+  edge_iterator remove_edge(edge_iterator e_it) const {
+	Edge e = *e_it;
+	uid_type a = u2i_(e.node1());
+	uid_type b = u2i_(e.node1());
+  	adj_list_iterator it = remove_edge_( a, b );
+	return EdgeIterator(this, a, it);
+  }
+
+  size_type remove_edge(const Edge& e) {
+  	return remove_edge(e.node1(), e.node2());
+  }
+
+  // Remove the nodes' uids from each other's adjacency lists
+  size_type remove_edge(const Node& a, const Node& b) {
+  	uid_type uid_a = u2i_( a.index() );
+  	uid_type uid_b = u2i_( b.index() );
+	remove_edge_(uid_a, uid_b);
+	return 0;
+  }
+
+  adj_list_iterator remove_edge_(uid_type uid_a, uid_type uid_b) {
+	adj_list_iterator it_a, it_b;
+	for(it_a = edges_[uid_a].adj_list.begin(); 
+								it_a != edges_[uid_a].adj_list.end(); ++it_a) {
+		if((*it_a).uid == uid_b) {
+			edges_[uid_a].adj_list.remove(*it_a);
+		}
+	}
+	for(it_b = edges_[uid_b].adj_list.begin(); 
+								it_b != edges_[uid_b].adj_list.end(); ++it_b) {
+		if((*it_b).uid == uid_a) {
+			edges_[uid_a].adj_list.remove(*it_b);
+		}
+	}
+	return ((uid_a < uid_b) ? it_a : it_b);
+  }
+
   /** Check to see if there is an edge between nodes a and b
    * @a a and @a b are distinct valid nodes in the graph
    * @return true if it exists, else return the number of edges
@@ -504,9 +540,9 @@ class Graph {
    */
   Edge edge(size_type i) const {
 	assert(i < size());
-	EdgeIterator it = edge_begin();
+	edge_iterator it = edge_begin();
 	for (size_type counter = 0; counter < i; counter++) {
-		it++;
+		++it;
 	}
 	return *it;
   }
@@ -654,6 +690,12 @@ class Graph {
 		outer_pos_ = graph_->node_begin();
 		inner_pos_ = (*outer_pos_).edge_begin();
 		fix();
+	}
+
+	EdgeIterator(const Graph* graph, uid_type uid, adj_list_iterator adj_it) {
+		graph_ = graph;
+		outer_pos_ = graph_->node_begin() + graph_->u2i_(uid);
+		inner_pos_ = adj_it;
 	}
 
 	EdgeIterator& to_end_() {
