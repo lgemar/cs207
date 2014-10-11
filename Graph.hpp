@@ -498,8 +498,8 @@ class Graph {
 			uid_ = graph_->i2u_(this_index);
 		else 
 			uid_ = -1; // The end of the graph is represented by a uid -1
-		std::cout << "The uid of this node is" << uid_ << std::endl;
-		std::cout << "The index of this node is" << this_index << std::endl;
+		//std::cout << "The uid of this node is" << uid_ << std::endl;
+		//std::cout << "The index of this node is" << this_index << std::endl;
 		return *this;
 	}
 
@@ -569,7 +569,7 @@ class Graph {
 	Edge operator*() const {
 		Node node1 = *outer_pos_;
 		Node node2 = (*inner_pos_).node2(); // node 2 is the adjacent node
-		std::cout << "This edge is: " << "(" << node1.index() << "," << node2.index() << ")" << std::endl;
+		//std::cout << "This edge is: " << "(" << node1.index() << "," << node2.index() << ")" << std::endl;
 		return Edge(graph_, node1, node2);
 	}
 	
