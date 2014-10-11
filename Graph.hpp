@@ -302,6 +302,7 @@ class Graph {
 
   node_iterator remove_node(node_iterator n_it) const {
 	Node del_node = *n_it;
+	remove_edge( del_node ); // remove all edges associated with node
 	idx_type del_idx = del_node.index(); // this will be the index of the "next"
   	remove_node(*n_it); // Remove the node at n_it
 	return NodeIterator(this, i2u_(del_idx)); // return iterator to next el.
@@ -501,6 +502,14 @@ class Graph {
 		return true;
 	}
 	return false;
+  }
+
+  // Remove all edges associated with the given node
+  size_type remove_edge(const Node& n) {
+  	for(auto it = n.edge_begin(); it != n.edge_end; ++it) {
+		remove_edge( *it );
+	}
+	return true;
   }
 
   edge_iterator remove_edge_(uid_type uid_a, uid_type uid_b) {
