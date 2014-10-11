@@ -93,6 +93,7 @@ class Graph {
   typedef struct node_data {
 	uid_type uid;
   	idx_type idx;
+	size_type life_cyle;
 	Point p_orig;
 	mutable Point p;
 	mutable node_value_type v;
@@ -195,7 +196,7 @@ class Graph {
      * Equal nodes have the same graph and the same index.
      */
     bool operator==(const Node& x) const {
-		return (index() == x.index());
+		return (uid_ == x.uid_);
     }
 
     /** Test whether this node is less than @a x in the global order.
@@ -266,10 +267,11 @@ class Graph {
 		// First case: there have been deleted nodes and we can reuse uids
 		// Set all the data fields of the node data structure in nodes
 		uid_type reusable_uid = i2u_vect_[size()];
+		nodes_[reusable_uid].idx = size();
+		++nodes_[reusable_uid].life_cyle; // this node uid is being reused
 		nodes_[reusable_uid].p = position;
 		nodes_[reusable_uid].p_orig = position;
 		nodes_[reusable_uid].v = value;
-		nodes_[reusable_uid].idx = size();
 		new_node = Node(this, reusable_uid);
 	}
 	else {
@@ -280,6 +282,7 @@ class Graph {
 
 		temp_node_data.uid = size();
 		temp_node_data.idx = size();
+		temp_node_data.life_cyle = 0; // Node's first lifetime
 		temp_node_data.p = position;
 		temp_node_data.p_orig = position;
 		temp_node_data.v = value;
