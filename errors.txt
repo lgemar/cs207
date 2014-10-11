@@ -1,3 +1,63 @@
+In file included from viewer.cpp:21:
+./Graph.hpp:524:11: warning: reference to stack memory associated with local variable 'it' returned [-Wreturn-stack-address]
+        return it;
+               ^~
+viewer.cpp:62:26: note: in instantiation of member function 'Graph<int>::node_begin' requested here
+  viewer.add_nodes(graph.node_begin(), graph.node_end(), node_map);
+                         ^
+In file included from viewer.cpp:21:
+./Graph.hpp:532:11: warning: reference to stack memory associated with local variable 'it' returned [-Wreturn-stack-address]
+        return it;
+               ^~
+viewer.cpp:62:46: note: in instantiation of member function 'Graph<int>::node_end' requested here
+  viewer.add_nodes(graph.node_begin(), graph.node_end(), node_map);
+                                             ^
+2 warnings generated.
+In file included from subgraph.cpp:17:
+./Graph.hpp:524:11: warning: reference to stack memory associated with local variable 'it' returned [-Wreturn-stack-address]
+        return it;
+               ^~
+subgraph.cpp:146:36: note: in instantiation of member function 'Graph<int>::node_begin' requested here
+  auto first = make_filtered(graph.node_begin(), 
+                                   ^
+In file included from subgraph.cpp:17:
+./Graph.hpp:532:11: warning: reference to stack memory associated with local variable 'it' returned [-Wreturn-stack-address]
+        return it;
+               ^~
+subgraph.cpp:147:17: note: in instantiation of member function 'Graph<int>::node_end' requested here
+                                                         graph.node_end(), 
+                                                               ^
+2 warnings generated.
+In file included from shortest_path.cpp:21:
+./Graph.hpp:524:11: warning: reference to stack memory associated with local variable 'it' returned [-Wreturn-stack-address]
+        return it;
+               ^~
+shortest_path.cpp:79:36: note: in instantiation of member function 'Graph<int>::node_begin' requested here
+        auto closest = std::min_element(g.node_begin(), 
+                                          ^
+In file included from shortest_path.cpp:21:
+./Graph.hpp:532:11: warning: reference to stack memory associated with local variable 'it' returned [-Wreturn-stack-address]
+        return it;
+               ^~
+shortest_path.cpp:80:12: note: in instantiation of member function 'Graph<int>::node_end' requested here
+                                                                        g.node_end(), MyComparator(point));
+                                                                          ^
+2 warnings generated.
+In file included from mass_spring.cpp:17:
+./Graph.hpp:524:11: warning: reference to stack memory associated with local variable 'it' returned [-Wreturn-stack-address]
+        return it;
+               ^~
+mass_spring.cpp:160:24: note: in instantiation of member function 'Graph<NodeData>::node_begin' requested here
+  for( auto it = graph.node_begin(); it != graph.node_end(); ++it ) {
+                       ^
+In file included from mass_spring.cpp:17:
+./Graph.hpp:532:11: warning: reference to stack memory associated with local variable 'it' returned [-Wreturn-stack-address]
+        return it;
+               ^~
+mass_spring.cpp:160:50: note: in instantiation of member function 'Graph<NodeData>::node_end' requested here
+  for( auto it = graph.node_begin(); it != graph.node_end(); ++it ) {
+                                                 ^
+2 warnings generated.
 test_nodes.cpp:54:5: error: no member named 'remove_node' in 'Graph<int>'
   g.remove_node(node);
   ~ ^

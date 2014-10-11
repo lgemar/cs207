@@ -5,6 +5,7 @@
  * @brief An undirected graph type
  */
 
+#include <iostream>
 #include <algorithm>
 #include <vector>
 #include <list>
@@ -179,6 +180,7 @@ class Graph {
 	 *		incorrect index.
 	 */
     idx_type index() const {
+		std::cout << uid_ << std::endl;
 		return graph_->u2i_(uid_);
     }
 
@@ -518,16 +520,16 @@ class Graph {
 
   /** Returns a node_iterator pointing to the beginning of the node list
    */
-  const NodeIterator node_begin() {
+  NodeIterator node_begin() {
 	// Return an node iterator into the graph at the specified index
   	return NodeIterator(this, 0);
   }
 
   /** Returns a node_iterator pointing to the end of the node list
    */
-  const NodeIterator node_end() {
+  NodeIterator node_end() {
 	// Return an node iterator into the graph at the specified index
-  	return NodeIterator(this, size());
+	return NodeIterator(this, size());
   }
 
   /** @class Graph::EdgeIterator
