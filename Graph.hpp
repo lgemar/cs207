@@ -512,7 +512,7 @@ class Graph {
     friend class Graph;
 	const Graph* graph_;
 	uid_type uid_;
-  	NodeIterator(Graph* graph, idx_type index) {
+  	NodeIterator(const Graph* graph, idx_type index) {
 		graph_ = graph;
 		uid_ = graph->i2u_(index);
 	}
@@ -520,14 +520,14 @@ class Graph {
 
   /** Returns a node_iterator pointing to the beginning of the node list
    */
-  NodeIterator node_begin() {
+  NodeIterator node_begin() const {
 	// Return an node iterator into the graph at the specified index
   	return NodeIterator(this, 0);
   }
 
   /** Returns a node_iterator pointing to the end of the node list
    */
-  NodeIterator node_end() {
+  NodeIterator node_end() const {
 	// Return an node iterator into the graph at the specified index
 	return NodeIterator(this, size());
   }
@@ -582,13 +582,13 @@ class Graph {
 
    private:
     friend class Graph;
-	Graph* graph_;
+	const Graph* graph_;
 	/** Define node iterator to loop over all nodes and edge iterator to 
 	 * iterate over adjacent nodes that form edges */
 	outer_it_type outer_pos_;
 	inner_it_type inner_pos_;
 	/** Initialize an edge iterator to point to the first valid edge */
-	EdgeIterator(Graph* graph) {
+	EdgeIterator(const Graph* graph) {
 		graph_ = graph;
 		outer_pos_ = graph_->node_begin();
 		inner_pos_ = (*outer_pos_).edge_begin();
@@ -615,13 +615,13 @@ class Graph {
 
   /** Returns an iterator to the first edge in the graph
    */
-  EdgeIterator edge_begin() {
+  EdgeIterator edge_begin() const {
   	return EdgeIterator(this);
   }
   
   /** Return an iterator to one past the last edge in the graph
    */
-  EdgeIterator edge_end() {
+  EdgeIterator edge_end() const {
   	return EdgeIterator(this).to_end_();
   }
 
