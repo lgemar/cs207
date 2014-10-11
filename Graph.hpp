@@ -498,18 +498,18 @@ class Graph {
 	return 0;
   }
 
-  adj_list_iterator remove_edge_(uid_type uid_a, uid_type uid_b) {
+  adj_list_iterator remove_edge_(uid_type uid_a, uid_type uid_b) const {
 	adj_list_iterator it_a, it_b;
 	for(it_a = edges_[uid_a].adj_list.begin(); 
 								it_a != edges_[uid_a].adj_list.end(); ++it_a) {
 		if((*it_a).uid == uid_b) {
-			edges_[uid_a].adj_list.remove(*it_a);
+			edges_[uid_a].adj_list.erase(it_a);
 		}
 	}
 	for(it_b = edges_[uid_b].adj_list.begin(); 
 								it_b != edges_[uid_b].adj_list.end(); ++it_b) {
 		if((*it_b).uid == uid_a) {
-			edges_[uid_a].adj_list.remove(*it_b);
+			edges_[uid_a].adj_list.erase(it_b);
 		}
 	}
 	return ((uid_a < uid_b) ? it_a : it_b);
