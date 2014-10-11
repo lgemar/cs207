@@ -150,7 +150,7 @@ class Graph {
    *
    * Node objects are used to access information about the Graph's nodes.
    */
-  class Node {
+  class Node : private totally_ordered<Node> {
    public:
     /** Construct an invalid node.
      *
@@ -305,16 +305,17 @@ class Graph {
 	return NodeIterator(this, i2u_(del_idx)); // return iterator to next el.
   }
 
-  size_type remove_node(const Node& n) const {
+  size_type remove_node(const Node& n) {
 	idx_type n_idx, prev_idx;
 	for( n_idx = n.index() + 1, prev_idx = n.index(); 
 		 	n_idx < size(); ++n_idx, ++prev_idx) {
-		swap_(prev_idx, n_idx);		
+		swap_(prev_idx, n_idx); // After first swap node is invalid
 	}
 	--num_nodes_;
+	return num_nodes_;
   }
 
-  void swap_(idx_type a, idx_type b) const {
+  void swap_(idx_type a, idx_type b) {
   	uid_type uid_a = i2u_(a);
 	uid_type uid_b = i2u_(b);
 	i2u_vect_[a] = uid_b;
@@ -353,7 +354,7 @@ class Graph {
    * Edges are order-insensitive pairs of nodes. Two Edges with the same nodes
    * are considered equal if they connect the same nodes, in either order.
    */
-  class Edge {
+  class Edge : private totally_ordered<Edge> {
    public:
     /** Construct an invalid Edge. */
     Edge() {
