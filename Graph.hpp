@@ -108,6 +108,17 @@ class Graph {
 	mutable std::list<edge_data> adj_list;
   } adjacency_data;
 
+  typedef struct uid_predicate {
+  	uid_type uid;
+
+	uid_predicate( uid_type u ) : uid(u) {
+	}
+
+	bool operator()(const edge_data& e_data) {
+		return (e_data.uid == uid);
+	}
+  } uid_predicate;
+
   typedef typename std::list<edge_data>::iterator adj_list_iterator;
 
   ////////////////////////////////
@@ -301,15 +312,16 @@ class Graph {
   }
 
   node_iterator remove_node(node_iterator n_it) const {
-	Node del_node = *n_it;
-	remove_edge( del_node ); // remove all edges associated with node
-	idx_type del_idx = del_node.index(); // this will be the index of the "next"
-  	remove_node(*n_it); // Remove the node at n_it
-	return NodeIterator(this, i2u_(del_idx)); // return iterator to next el.
+	Node n = *n_it;
+	remove_edge( n ); // remove all edges associated with node
+	idx_type idx = n.index(); // this will be the index of the "next"
+  	remove_node( n ); // Remove the node at n_it
+	return NodeIterator(this, i2u_(idx)); // return iterator to next el.
   }
 
   size_type remove_node(const Node& n) {
 	idx_type n_idx, prev_idx;
+	remove_edge( n ); // remove all edges associated with node
 	for( n_idx = n.index() + 1, prev_idx = n.index(); 
 		 	n_idx < size(); ++n_idx, ++prev_idx) {
 		swap_(prev_idx, n_idx); // After first swap node is invalid
@@ -480,11 +492,7 @@ class Graph {
   }
 
   edge_iterator remove_edge(edge_iterator e_it) const {
-	Edge e = *e_it;
-	uid_type a = u2i_(e.node1());
-	uid_type b = u2i_(e.node1());
-  	adj_list_iterator it = remove_edge_( a, b );
-	return EdgeIterator(this, a, it);
+	return remove_edge(*e_it);
   }
 
   size_type remove_edge(const Edge& e) {
@@ -506,33 +514,47 @@ class Graph {
 
   // Remove all edges associated with the given node
   size_type remove_edge(const Node& n) {
-  	for(auto it = n.edge_begin(); it != n.edge_end; ++it) {
-		remove_edge( *it );
+	size_type ret = 0;
+	uid_type this_uid = i2u_(n.index());
+	adj_list_iterator adj_it;
+	adj_it = edges_[ i2u_(this_uid) ].adj_list.begin();
+	while( !edges_[ i2u_(this_uid) ].adj_list.empty() ) {
+		remove_edge_(this_uid, (*adj_it).uid);
+		++adj_it;
+		++ret;
 	}
-	return true;
+	return ret;
   }
 
+  /** Removes the edge corresponding to the uid's given by uid_a and uid b
+   * @pre uid_a and uid_b form a valid edge in this graph
+   * @param[in] @a uid_a, the uid of the first node in the edge 
+   * @param[in] @a uid_b, the uid of the second node in the edge
+   * @returns an edge_iterator to the "next" edge in the graph
+   * @post uid_a and uid_b do not form a valid edge in the graph
+   * @post all iterators that pointed at the edge formed by a and b are invalid
+   * @post new num_edges() == old num_edges() - 1
+   */
   edge_iterator remove_edge_(uid_type uid_a, uid_type uid_b) {
+	// Initialize nodes that correspond to the two edges
 	Node a (this, uid_a);
 	Node b (this, uid_b);
+	size_type num_edges_orig = num_edges();
+	// Check preconditions
 	assert( has_edge(a, b) ); // we will enter both for loops if there's edge
-	Edge del_edge = Edge(this, a, b);
-	for(auto it_b = b.edge_begin(); it_b != b.edge_end(); ++it_b) {
-		if( (*it_b) == del_edge) {
-			it_b.erase_curr_();
-			break;
-		}
-	}
-	for(auto it_a = a.edge_begin(); it_a != a.edge_end(); ++it_a) {
-		if( (*it_a) == del_edge) {
-			it_a.erase_curr_();
-			node_iterator n_it (this, a.index());
-			// construct edge iterator using node_iterator and incident_it
-			--num_edges_;
-			return EdgeIterator(this, n_it, it_a); 
-		}
-	}
-	assert( false ); // we must hit the return if the graph has this edge
+	assert( num_edges_ > 0 );
+	// Initialize predicates for list removal
+	uid_predicate a_pred (uid_a);
+	uid_predicate b_pred (uid_b);
+	// Remove the uid's from the other's adjacency lists
+	edges_[uid_a].adj_list.remove_if(b_pred);
+	edges_[uid_b].adj_list.remove_if(a_pred);
+	num_edges_ -= 1;
+	node_iterator n_it (this, a.index());
+	// Check post condtions
+	assert( !has_edge(a, b) );
+	assert( num_edges() == (num_edges_orig - 1) );
+	return EdgeIterator(this, n_it, a.edge_begin()); 
   }
 
   /** Check to see if there is an edge between nodes a and b
@@ -541,14 +563,16 @@ class Graph {
    */
    //TODO: make sure that we don't try to access invalid index of edges
    bool has_edge(const Node& a, const Node& b) const {
-   	uid_type uid_a = i2u_( a.index() );
-	uid_type uid_b = i2u_( b.index() );
-	/** RI: a must be in the adjacency list of b and vice versa
-	 * so just check one case: is a in the adjacency list of b */
-	 for (auto i = edges_[uid_a].adj_list.begin(); 
-	 	  i != edges_[uid_a].adj_list.end(); ++i) {
-	 	if( (*i).uid == uid_b )
-			return true;
+	if( a.index() < size() && b.index() < size() ) {
+		uid_type uid_a = i2u_( a.index() );
+		uid_type uid_b = i2u_( b.index() );
+		/** RI: a must be in the adjacency list of b and vice versa
+		 * so just check one case: is a in the adjacency list of b */
+		 for (auto i = edges_[uid_a].adj_list.begin(); 
+			  i != edges_[uid_a].adj_list.end(); ++i) {
+			if( (*i).uid == uid_b )
+				return true;
+		}
 	}
 	return false; // Returns false if we get to end of list and don't find edge
    }
@@ -818,13 +842,7 @@ class Graph {
 	uid_type uid_;
 	list_it_type pos_;
 
-	// erases the element currently pointed to by the incident iterator
-	void erase_curr_() {
-		pos_ = graph_->edges_[ uid_ ].adj_list.erase( pos_ );
-	}
-
 	IncidentIterator(const Graph* graph, uid_type uid) {
-		// Set private variables
 		graph_ = graph;
 		uid_ = uid;
 		pos_ = graph_->edges_[ uid_ ].adj_list.begin();

@@ -1,15 +1,35 @@
 In file included from test_edges.cpp:1:
+./Graph.hpp:522:32: error: reference to type 'const Graph<int, int>::edge_data' could not bind to an lvalue of type 'uid_type' (aka 'unsigned int')
+        edges_[uid_a].adj_list.remove(uid_b);
+                                      ^~~~~
+./Graph.hpp:501:3: note: in instantiation of member function 'Graph<int, int>::remove_edge_' requested here
+                remove_edge_(uid_a, uid_b);
+                ^
+test_edges.cpp:60:14: note: in instantiation of member function 'Graph<int, int>::remove_edge' requested here
+  sf_print(g.remove_edge(e.node1(), e.node2()),
+             ^
+/usr/include//c++/4.8/bits/stl_list.h:1348:25: note: passing argument to parameter '__value' here
+      remove(const _Tp& __value);
+                        ^
+In file included from test_edges.cpp:1:
+./Graph.hpp:523:32: error: reference to type 'const Graph<int, int>::edge_data' could not bind to an lvalue of type 'uid_type' (aka 'unsigned int')
+        edges_[uid_b].adj_list.remove(uid_a);
+                                      ^~~~~
+/usr/include//c++/4.8/bits/stl_list.h:1348:25: note: passing argument to parameter '__value' here
+      remove(const _Tp& __value);
+                        ^
+In file included from test_edges.cpp:1:
 In file included from ./Graph.hpp:11:
 In file included from /usr/include//c++/4.8/list:64:
 /usr/include//c++/4.8/bits/list.tcc:248:17: error: invalid operands to binary expression ('Graph<int, int>::edge_data' and 'const Graph<int, int>::edge_data')
           if (*__first == __value)
               ~~~~~~~~ ^  ~~~~~~~
-./Graph.hpp:506:27: note: in instantiation of member function 'std::list<Graph<int, int>::edge_data, std::allocator<Graph<int, int>::edge_data> >::remove' requested here
-                        edges_[uid_a].adj_list.remove(*it_a);
-                                               ^
-./Graph.hpp:497:2: note: in instantiation of member function 'Graph<int, int>::remove_edge_' requested here
-        remove_edge_(uid_a, uid_b);
-        ^
+./Graph.hpp:522:25: note: in instantiation of member function 'std::list<Graph<int, int>::edge_data, std::allocator<Graph<int, int>::edge_data> >::remove' requested here
+        edges_[uid_a].adj_list.remove(uid_b);
+                               ^
+./Graph.hpp:501:3: note: in instantiation of member function 'Graph<int, int>::remove_edge_' requested here
+                remove_edge_(uid_a, uid_b);
+                ^
 test_edges.cpp:60:14: note: in instantiation of member function 'Graph<int, int>::remove_edge' requested here
   sf_print(g.remove_edge(e.node1(), e.node2()),
              ^
@@ -76,5 +96,5 @@ test_edges.cpp:60:14: note: in instantiation of member function 'Graph<int, int>
 /usr/include//c++/4.8/bits/stl_list.h:1602:5: note: candidate template ignored: could not match 'list<type-parameter-0-0, type-parameter-0-1>' against 'Graph<int, int>::edge_data'
     operator==(const list<_Tp, _Alloc>& __x, const list<_Tp, _Alloc>& __y)
     ^
-1 error generated.
+3 errors generated.
 make: *** [test_edges.o] Error 1
