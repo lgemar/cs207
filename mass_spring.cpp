@@ -63,6 +63,8 @@ double symp_euler_step(G& g, double t, double dt, F force) {
 
     // Update the position of the node according to its velocity
     // x^{n+1} = x^{n} + v^{n} * dt
+	if( n.position() == Point(0, 0, 0) || n.position() == Point(1, 0, 0))
+		continue;
     n.position() += n.value().velocity * dt;
   }
 
@@ -160,14 +162,7 @@ class GravityForce : public Stimulus {
 	public:
 		virtual Point apply(Node n, double t) {
 			(void) t;
-			Point total_force;
-			// Calculate force on node
-			if (n.position() == Point(0, 0, 0) || 
-							n.position() == Point(1, 0, 0)) {
-				return Point(0, 0, 0);
-			}
-			total_force = Point(0, 0, -grav * n.value().mass);
-			return total_force;
+			return Point(0, 0, -grav * n.value().mass);
 		}
 };
 
@@ -183,10 +178,6 @@ class MassSpringForce : public Stimulus {
 		Point total_force = Point(0, 0, 0);
 		Point xi, xj; // xi: position of node n; xj position of adjacent node
 
-		// Calculate force on node
-		if (n.position() == Point(0, 0, 0) || n.position() == Point(1, 0, 0)) {
-			return Point(0, 0, 0);
-		}
 		xi = n.position();
 		for (auto it = n.edge_begin(); it != n.edge_end(); ++it) {
 			adjacent_node = (*it).node2();
