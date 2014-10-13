@@ -9,6 +9,7 @@
  */
 
 #include <fstream>
+#include <numeric>
 
 #include "CS207/SDLViewer.hpp"
 #include "CS207/Util.hpp"
@@ -122,6 +123,17 @@ struct Problem1Force {
   }
 };
 
+typedef struct Force {
+	Force(Point (*fun)(Node, double)) : force_function(*fun) {
+	}
+	
+	Point force_function(Node, double);
+
+	operator()(Node n, double t) {
+		force_function(n, t);
+	}
+} Force;
+
 struct GravityForce {
 	Point operator()(Node n, double t) {
 		(void) t;
@@ -161,10 +173,12 @@ struct MassSpringForce {
   }
 };
 
-Point make_combined_force(const Point& f1, const Point& f2) {
+<template FORCE1, template FORCE2>
+Point make_combined_force(FORCE1 f1, FORCE2 f2) {
 }
 
-Point make_combined_force(const Point& f1, const Point& f2, const Point& f3) {
+<template FORCE1, template FORCE2, template FORCE3>
+Point make_combined_force(FORCE1 f1, FORCE2 f2, FORCE3 f3) {
 }
 
 int main(int argc, char** argv) {
