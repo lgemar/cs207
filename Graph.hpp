@@ -264,7 +264,7 @@ class Graph {
 	uid_type uid_;
 	// Construct a node as just a pointer to the graph and an id number
 	Node(const Graph* graph, const uid_type uid) : graph_(graph), uid_(uid) {
-		// assert( !(uid > graph->size()) );
+		assert( !(uid > graph->nodes_.size()) );
 	}
   };
 
@@ -301,21 +301,25 @@ class Graph {
 		// Set all the data fields of the new node data structure
 		node_data temp_node_data;
 
-		temp_node_data.uid = size();
-		temp_node_data.idx = size();
+		uid_type new_uid = nodes_.size();
+		temp_node_data.uid = new_uid;
+		temp_node_data.idx = new_uid;
 		temp_node_data.p = position;
 		temp_node_data.p_orig = position;
 		temp_node_data.v = value;
 		nodes_.push_back(temp_node_data);
+		assert(new_uid < nodes_.size());
 		// Push back onto i2u mapping vector
-		i2u_vect_.push_back(size());
+		i2u_vect_.push_back(new_uid);
+		std::cout << "assigning uid: " << new_uid << std::endl;
 		// Create an empty adjacency list for this node to put in edges
 		adjacency_data adj;
 		adj.uid = size();
 		edges_.push_back(adj);
+		assert( edges_.size() == nodes_.size() );
 		// Create new node off of the given uid
 		++num_nodes_; //new size() = old size() + 1
-		return Node(this, size());
+		return Node(this, new_uid);
 	}
   }
 

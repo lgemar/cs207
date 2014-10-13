@@ -46,9 +46,12 @@ int main(int argc, char** argv)
   // Interpret each line of the tets_file as four ints which refer to nodes
   std::array<int,4> t;
   while (CS207::getline_parsed(tets_file, t))
-    for (unsigned i = 1; i < t.size(); ++i)
-      for (unsigned j = 0; j < i; ++j)
+    for (unsigned i = 1; i < t.size(); ++i) {
+      for (unsigned j = 0; j < i; ++j) {
+		//std::cout << "Adding edge for nodes: " << "(" << i << "," << j << ")" << std::endl;
         graph.add_edge(nodes[t[i]], nodes[t[j]]);
+	  }
+	}
 
   // Print number of nodes and edges
   std::cout << graph.num_nodes() << " " << graph.num_edges() << std::endl;
