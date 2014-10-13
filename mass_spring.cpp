@@ -60,6 +60,7 @@ double symp_euler_step(G& g, double t, double dt, F force) {
   // Compute the {n+1} node positions
   for (auto it = g.node_begin(); it != g.node_end(); ++it) {
     auto n = *it;
+	std::cout << "Node index: " << n.index() << std::endl;
 
     // Update the position of the node according to its velocity
     // x^{n+1} = x^{n} + v^{n} * dt
@@ -123,63 +124,80 @@ struct Problem1Force {
   }
 };
 
-typedef struct Force {
-	Force(Point (*fun)(Node, double)) : force_function(*fun) {
-	}
-	
-	Point force_function(Node, double);
+class Stimulus {
+	public: 
+		virtual Point apply(Node, double)=0;
+};
 
-	operator()(Node n, double t) {
-		force_function(n, t);
-	}
-} Force;
+class Force {
+	public: 
+		typedef typename std::list<Stimulus*> f_composition;
+		f_composition forces_;
+		Force(Stimulus* s) {
+			forces_.push_front(s);
+		}
 
-struct GravityForce {
-	Point operator()(Node n, double t) {
-		(void) t;
-		Point total_force;
+		Force(f_composition composite) : forces_(composite) {
+		}
+		
+		Point operator()(Node n, double t) const {
+			Point total_force = Point(0,0,0);
+			for(auto it = forces_.begin(); it != forces_.end(); ++it) {
+				total_force += (*it)->apply(n, t);
+			}
+			return total_force;
+		}
+
+		Force operator+(Force f) const {
+			f_composition force_list = f.forces_;
+			for(auto it = f.forces_.rbegin(); it != f.forces_.rend(); ++it) {
+				force_list.push_front(*it);	
+			}
+			return Force(force_list);
+		}
+};
+
+class GravityForce : public Stimulus {
+	public:
+		virtual Point apply(Node n, double t) {
+			(void) t;
+			Point total_force;
+			// Calculate force on node
+			if (n.position() == Point(0, 0, 0) || 
+							n.position() == Point(1, 0, 0)) {
+				return Point(0, 0, 0);
+			}
+			return Point(0, 0, -grav * n.value().mass);
+		}
+};
+
+class MassSpringForce : public Stimulus {
+  public: 
+	  virtual Point apply(Node n, double t) {
+		// Initialize variables
+		(void) t;//suppress compiler warning
+		Node adjacent_node;
+		scalar K = 100.0; // Spring constant
+		scalar displacement; // displacement from spring rest-length
+		Point direction; // direction of the force
+		Point total_force = Point(0, 0, 0);
+		Point xi, xj; // xi: position of node n; xj position of adjacent node
+
 		// Calculate force on node
 		if (n.position() == Point(0, 0, 0) || n.position() == Point(1, 0, 0)) {
 			return Point(0, 0, 0);
 		}
-		return Point(0, 0, -grav * n.value().mass);
-	}
+		xi = n.position();
+		for (auto it = n.edge_begin(); it != n.edge_end(); ++it) {
+			adjacent_node = (*it).node2();
+			xj = adjacent_node.position();
+			displacement = distance(xi, xj) - (*it).length();
+			direction = (xi - xj) / distance(xi, xj);
+			total_force += -K * displacement * direction;
+		}
+		return total_force;
+	  }
 };
-
-struct MassSpringForce {
-  Point operator()(Node n, double t) {
-	// Initialize variables
-	(void) t;//suppress compiler warning
-	Node adjacent_node;
-  	scalar K = 100.0; // Spring constant
-	scalar displacement; // displacement from spring rest-length
-	Point direction; // direction of the force
-	Point total_force = Point(0, 0, 0);
-	Point xi, xj; // xi: position of node n; xj position of adjacent node
-
-	// Calculate force on node
-  	if (n.position() == Point(0, 0, 0) || n.position() == Point(1, 0, 0)) {
-		return Point(0, 0, 0);
-	}
-	xi = n.position();
-	for (auto it = n.edge_begin(); it != n.edge_end(); ++it) {
-		adjacent_node = (*it).node2();
-		xj = adjacent_node.position();
-		displacement = distance(xi, xj) - (*it).length();
-		direction = (xi - xj) / distance(xi, xj);
-		total_force += -K * displacement * direction;
-	}
-	return total_force;
-  }
-};
-
-<template FORCE1, template FORCE2>
-Point make_combined_force(FORCE1 f1, FORCE2 f2) {
-}
-
-<template FORCE1, template FORCE2, template FORCE3>
-Point make_combined_force(FORCE1 f1, FORCE2 f2, FORCE3 f3) {
-}
 
 int main(int argc, char** argv) {
   // Check arguments
@@ -244,9 +262,17 @@ int main(int argc, char** argv) {
   double t_start = 0.0;
   double t_end   = 5.0;
 
+  // Construct the problem 1 force using new Force structure
+
+  Stimulus* g_force = new GravityForce();
+  Stimulus* spring_force = new MassSpringForce();
+  Force gravity_f (g_force);
+  Force spring_f (spring_force);
+  Force problem1_f = gravity_f + spring_f;
+
   for (double t = t_start; t < t_end; t += dt) {
     //std::cout << "t = " << t << std::endl;
-    symp_euler_step(graph, t, dt, Problem1Force());
+    symp_euler_step(graph, t, dt, problem1_f);
 
     // Update viewer with nodes' new positions
     viewer.add_nodes(graph.node_begin(), graph.node_end(), node_map);
