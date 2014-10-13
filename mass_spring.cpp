@@ -125,6 +125,48 @@ struct Problem1Force {
   }
 };
 
+class Rule {
+	public: 
+		virtual void apply(const GraphType, double)=0;
+};
+
+class Constraint {
+	public: 
+		typedef typename std::list<Rule*> f_composition;
+		f_composition constraints_;
+		Constraint(Rule* s) {
+			constraints_.push_front(s);
+		}
+
+		Constraint(f_composition composite) : constraints_(composite) {
+		}
+		
+		void operator()(GraphType g, double t) const {
+			for(auto it = constraints_.begin(); it != constraints_.end(); ++it)
+				(*it)->apply(g, t);
+		}
+
+		Constraint operator+(Constraint f) const {
+			f_composition constraint_list = f.constraints_;
+			for(auto it = constraints_.begin(); it != constraints_.end(); ++it) {
+				constraint_list.push_front(*it);	
+			}
+			return Constraint(constraint_list);
+		}
+};
+
+class TableTop {
+	public: 
+		void operator()(GraphType g, double t) {
+			(void) t;
+			for(auto it = g.node_begin(); it != g.node_end(); ++it) {
+				Point& node_position = (*it).position();
+				if((inner_prod(node_position, Point(0, 0, 1)) < -0.75))
+					node_position.z = -0.75;
+			}
+		}
+};
+
 class Stimulus {
 	public: 
 		virtual Point apply(Node, double)=0;
@@ -188,6 +230,17 @@ class MassSpringForce : public Stimulus {
 		}
 		return total_force;
 	  }
+};
+
+class DampingForce : public Stimulus {
+	public: 
+		scalar coeff_;
+		DampingForce(scalar coeff) : coeff_(coeff) {
+		}
+		virtual Point apply(Node n, double t) {
+			(void) t;
+			return -(n.value().velocity * coeff_);
+		}
 };
 
 int main(int argc, char** argv) {
@@ -257,13 +310,16 @@ int main(int argc, char** argv) {
 
   GravityForce g_force;
   MassSpringForce spring_force;
+  DampingForce damp_force ((scalar) 1 / graph.size());
   Force gravity_f (&g_force);
   Force spring_f (&spring_force);
+  Force damp_f (&damp_force);
   Force problem1_f = spring_f + gravity_f;
+  Force problem3_f = spring_f + gravity_f + damp_f;
 
   for (double t = t_start; t < t_end; t += dt) {
     //std::cout << "t = " << t << std::endl;
-    symp_euler_step(graph, t, dt, problem1_f);
+    symp_euler_step(graph, t, dt, problem3_f);
 
     // Update viewer with nodes' new positions
     viewer.add_nodes(graph.node_begin(), graph.node_end(), node_map);

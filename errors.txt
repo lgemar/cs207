@@ -1,38 +1,61 @@
-mass_spring.cpp:145:33: error: too many arguments to function call, expected 0, have 2
-                                total_force += (*it)->apply(n, t);
-                                               ~~~~~~~~~~~~ ^~~~
-mass_spring.cpp:128:3: note: 'apply' declared here
-                virtual void apply()=0;
+mass_spring.cpp:135:30: error: use of undeclared identifier 'Stimulus'
+                typedef typename std::list<Stimulus*> f_composition;
+                                           ^
+mass_spring.cpp:135:39: error: expected expression
+                typedef typename std::list<Stimulus*> f_composition;
+                                                    ^
+mass_spring.cpp:137:14: error: unknown type name 'Stimulus'
+                Constraint(Stimulus* s) {
+                           ^
+mass_spring.cpp:141:3: error: C++ requires a type specifier for all declarations
+                Force(f_composition composite) : constraints_(composite) {
+                ^~~~~
+mass_spring.cpp:149:3: error: unknown type name 'Force'
+                Force operator+(Force f) const {
                 ^
-mass_spring.cpp:161:9: warning: 'GravityForce::apply' hides overloaded virtual function [-Woverloaded-virtual]
-                Point apply(Node n, double t) const {
-                      ^
-mass_spring.cpp:128:16: note: hidden overloaded virtual function 'Stimulus::apply' declared here: different number of parameters (0 vs 2)
-                virtual void apply()=0;
-                             ^
-mass_spring.cpp:175:10: warning: 'MassSpringForce::apply' hides overloaded virtual function [-Woverloaded-virtual]
-          Point apply(Node n, double t) const {
+mass_spring.cpp:149:19: error: unknown type name 'Force'
+                Force operator+(Force f) const {
+                                ^
+mass_spring.cpp:138:16: error: member reference base type 'f_composition' (aka 'int') is not a structure or union
+                        constraints_.push_front(s);
+                        ~~~~~~~~~~~~^~~~~~~~~~~
+mass_spring.cpp:141:34: error: only constructors take base initializers
+                Force(f_composition composite) : constraints_(composite) {
+                                               ^
+mass_spring.cpp:145:30: error: member reference base type 'const f_composition' (aka 'const int') is not a structure or union
+                        for(auto it = constraints_.begin(); it != constraints_.end(); ++it)
+                                      ~~~~~~~~~~~~^~~~~~
+mass_spring.cpp:145:58: error: member reference base type 'const f_composition' (aka 'const int') is not a structure or union
+                        for(auto it = constraints_.begin(); it != constraints_.end(); ++it)
+                                                                  ~~~~~~~~~~~~^~~~
+mass_spring.cpp:151:30: error: member reference base type 'const f_composition' (aka 'const int') is not a structure or union
+                        for(auto it = constraints_.begin(); it != constraints_.end(); ++it) {
+                                      ~~~~~~~~~~~~^~~~~~
+mass_spring.cpp:151:58: error: member reference base type 'const f_composition' (aka 'const int') is not a structure or union
+                        for(auto it = constraints_.begin(); it != constraints_.end(); ++it) {
+                                                                  ~~~~~~~~~~~~^~~~
+mass_spring.cpp:152:20: error: member reference base type 'f_composition' (aka 'int') is not a structure or union
+                                constraint_list.push_front(*it);        
+                                ~~~~~~~~~~~~~~~^~~~~~~~~~~
+mass_spring.cpp:154:17: error: use of undeclared identifier 'force_list'
+                        return Force(force_list);
+                                     ^
+mass_spring.cpp:160:12: error: expected ')'
+                operator(GraphType g, t) {
+                         ^
+mass_spring.cpp:160:11: note: to match this '('
+                operator(GraphType g, t) {
+                        ^
+mass_spring.cpp:160:3: error: 'operator()' cannot be the name of a variable or data member
+                operator(GraphType g, t) {
                 ^
-mass_spring.cpp:128:16: note: hidden overloaded virtual function 'Stimulus::apply' declared here: different number of parameters (0 vs 2)
-                virtual void apply()=0;
-                             ^
-mass_spring.cpp:266:27: error: allocating an object of abstract class type 'GravityForce'
-  Stimulus* g_force = new GravityForce();
-                          ^
-mass_spring.cpp:128:16: note: unimplemented pure virtual method 'apply' in 'GravityForce'
-                virtual void apply()=0;
-                             ^
-mass_spring.cpp:267:32: error: allocating an object of abstract class type 'MassSpringForce'
-  Stimulus* spring_force = new MassSpringForce();
-                               ^
-mass_spring.cpp:128:16: note: unimplemented pure virtual method 'apply' in 'MassSpringForce'
-                virtual void apply()=0;
-                             ^
-mass_spring.cpp:274:35: error: no matching function for call to object of type 'Force'
-    symp_euler_step(graph, t, dt, problem1_f();
-                                  ^~~~~~~~~~
-mass_spring.cpp:142:9: note: candidate function not viable: requires 2 arguments, but 0 were provided
-                Point operator()(Node n, double t) const {
-                      ^
-2 warnings and 4 errors generated.
+mass_spring.cpp:166:4: error: expected ';' at end of declaration list
+                }
+                 ^
+                 ;
+mass_spring.cpp:167:2: error: expected ';' after class
+}
+ ^
+ ;
+18 errors generated.
 make: *** [mass_spring.o] Error 1
