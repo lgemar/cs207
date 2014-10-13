@@ -311,7 +311,7 @@ class Graph {
 		assert(new_uid < nodes_.size());
 		// Push back onto i2u mapping vector
 		i2u_vect_.push_back(new_uid);
-		std::cout << "assigning uid: " << new_uid << std::endl;
+		// std::cout << "assigning uid: " << new_uid << std::endl;
 		// Create an empty adjacency list for this node to put in edges
 		adjacency_data adj;
 		adj.uid = size();

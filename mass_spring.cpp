@@ -122,6 +122,45 @@ struct Problem1Force {
   }
 };
 
+struct GravityForce {
+	Point operator()(Node n, double t) {
+		(void) t;
+		Point total_force;
+		// Calculate force on node
+		if (n.position() == Point(0, 0, 0) || n.position() == Point(1, 0, 0)) {
+			return Point(0, 0, 0);
+		}
+		return Point(0, 0, -grav * n.value().mass);
+	}
+};
+
+struct MassSpringForce {
+  Point operator()(Node n, double t) {
+	// Initialize variables
+	(void) t;//suppress compiler warning
+	Node adjacent_node;
+  	scalar K = 100.0; // Spring constant
+	scalar displacement; // displacement from spring rest-length
+	Point direction; // direction of the force
+	Point total_force = Point(0, 0, 0);
+	Point xi, xj; // xi: position of node n; xj position of adjacent node
+
+	// Calculate force on node
+  	if (n.position() == Point(0, 0, 0) || n.position() == Point(1, 0, 0)) {
+		return Point(0, 0, 0);
+	}
+	xi = n.position();
+	for (auto it = n.edge_begin(); it != n.edge_end(); ++it) {
+		adjacent_node = (*it).node2();
+		xj = adjacent_node.position();
+		displacement = distance(xi, xj) - (*it).length();
+		direction = (xi - xj) / distance(xi, xj);
+		total_force += -K * displacement * direction;
+	}
+	return total_force;
+  }
+};
+
 
 int main(int argc, char** argv) {
   // Check arguments
@@ -150,8 +189,8 @@ int main(int argc, char** argv) {
       graph.add_edge(nodes[t[0]], nodes[t[1]]);
       graph.add_edge(nodes[t[0]], nodes[t[2]]);
       // Diagonal edges: include as of HW2 #2
-      graph.add_edge(nodes[t[0]], nodes[t[3]]);
-      graph.add_edge(nodes[t[1]], nodes[t[2]]);
+      //graph.add_edge(nodes[t[0]], nodes[t[3]]);
+      //graph.add_edge(nodes[t[1]], nodes[t[2]]);
       graph.add_edge(nodes[t[1]], nodes[t[3]]);
       graph.add_edge(nodes[t[2]], nodes[t[3]]);
     }
