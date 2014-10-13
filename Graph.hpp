@@ -105,7 +105,7 @@ class Graph {
 	}
 
   	uid_type uid;
-	float rest_length;
+	scalar rest_length;
 	edge_value_type v;
   } edge_data;
 
@@ -399,8 +399,15 @@ class Graph {
 		return Node(graph_, uid2_);
     }
 
+	/**
 	scalar length() const {
 		return data_().rest_length;
+	}
+	*/
+
+	scalar length() const {
+		return distance(graph_->nodes_[ uid1_ ].p_orig, 
+								graph_->nodes_[ uid2_ ].p_orig);
 	}
 
 	edge_value_type& value() const {
@@ -507,7 +514,7 @@ class Graph {
 	if ( !has_edge(a, b) ) {
 		// This is the case where a and b have more than 0 edges
 		// Insert a and b into each others adjacency lists
-		float rest_length = distance(a.position(), b.position());
+		scalar rest_length = distance(a.position(), b.position());
 		edge_data edge_a_data (uid_a, rest_length);
 		edge_data edge_b_data (uid_b, rest_length);
 		edges_[uid_a].adj_list.push_back( edge_b_data );
