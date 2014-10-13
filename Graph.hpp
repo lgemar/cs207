@@ -11,6 +11,7 @@
 #include <list>
 #include <cassert>
 #include <iterator>
+#include <algorithm>
 
 #include "CS207/Util.hpp"
 #include "Point.hpp"
@@ -35,7 +36,7 @@ class Graph {
 
 
   /** define a scalar type */
-  typedef double scalar;
+  typedef float scalar;
 
   /** Define the node value type in terms of template parameter */
   typedef V node_value_type;
@@ -99,7 +100,12 @@ class Graph {
   } node_data;
 
   typedef struct edge_data {
+  	
+	edge_data(uid_type u, size_type len) : uid(u), rest_length(len) {
+	}
+
   	uid_type uid;
+	float rest_length;
 	edge_value_type v;
   } edge_data;
 
@@ -200,6 +206,7 @@ class Graph {
 	 *		incorrect index.
 	 */
     idx_type index() const {
+		assert( uid_ < graph_->nodes_.size() );
 		return graph_->u2i_(uid_);
     }
 
@@ -254,9 +261,10 @@ class Graph {
     // Allow Graph to access Node's private member data and functions.
     friend class Graph;
 	const Graph* graph_;
-	uid_type uid_ = 0;
+	uid_type uid_;
 	// Construct a node as just a pointer to the graph and an id number
-	Node(const Graph* graph, uid_type uid) : graph_(graph), uid_(uid) {
+	Node(const Graph* graph, const uid_type uid) : graph_(graph), uid_(uid) {
+		// assert( !(uid > graph->size()) );
 	}
   };
 
@@ -274,7 +282,6 @@ class Graph {
    */
   Node add_node(const Point& position, 
   					const node_value_type& value = node_value_type()) {
-  	Node new_node;
 	if ( size() < i2u_vect_.size() ) {
 		// First case: there have been deleted nodes and we can reuse uids
 		// Set all the data fields of the node data structure in nodes
@@ -283,9 +290,12 @@ class Graph {
 		nodes_[reusable_uid].p = position;
 		nodes_[reusable_uid].p_orig = position;
 		nodes_[reusable_uid].v = value;
-		new_node = Node(this, reusable_uid);
+		assert( reusable_uid < nodes_.size() );
+		++num_nodes_; //new size() = old size() + 1
+		return Node(this, reusable_uid);
 	}
 	else {
+		assert( size() == i2u_vect_.size() );
 		/** Second case: all uids are valid and we must push back nodes_, 
 		 * imap_, and indices_ */
 		// Set all the data fields of the new node data structure
@@ -304,11 +314,9 @@ class Graph {
 		adj.uid = size();
 		edges_.push_back(adj);
 		// Create new node off of the given uid
-		new_node = Node(this, size());
+		++num_nodes_; //new size() = old size() + 1
+		return Node(this, size());
 	}
-
-	++num_nodes_; //new size() = old size() + 1
-	return new_node;
   }
 
   node_iterator remove_node(node_iterator n_it) const {
@@ -320,6 +328,7 @@ class Graph {
   }
 
   size_type remove_node(const Node& n) {
+	assert( n.index() < size() );
 	idx_type n_idx, prev_idx;
 	remove_edge( n ); // remove all edges associated with node
 	for( n_idx = n.index() + 1, prev_idx = n.index(); 
@@ -356,6 +365,7 @@ class Graph {
    */
   Node node(idx_type i) const {
 	assert( i < size() );
+	assert( i2u_(i) < nodes_.size() );
     return Node(this, i2u_(i));
   }
 
@@ -386,8 +396,7 @@ class Graph {
     }
 
 	scalar length() const {
-		return distance(graph_->nodes_[ uid1_ ].p_orig, 
-								graph_->nodes_[ uid2_ ].p_orig);
+		return data_().rest_length;
 	}
 
 	edge_value_type& value() const {
@@ -417,19 +426,12 @@ class Graph {
      * and y, exactly one of x == y, x < y, and y < x is true.
      */
     bool operator<(const Edge& x) const {
-		bool result; 
-		if (node1() < node2()) {
-			if (x.node1() < x.node2())
-				result = (node1() < x.node1() || node2() < x.node2());
-			else
-				result = (node1() < x.node2() || node2() < x.node1());
-		}
-		else {
-			if (x.node1() < x.node2())
-				result = (node2() < x.node1() || node1() < x.node2());
-			else
-				result = (node2() < x.node2() || node1() < x.node1());
-		}
+		bool result;
+		if( graph_ == x.graph_ )
+			result = min_(node1().index(), node2().index()) 
+							< min_(x.node1().index(), node2().index());
+		else 
+			result = (graph_ < x.graph_);
 		return result;
     }
 
@@ -449,6 +451,23 @@ class Graph {
 
   	Edge(const Graph* graph, uid_type uid1, uid_type uid2) : 
 								graph_(graph), uid1_(uid1), uid2_(uid2) {
+	}
+
+	/** Return the minimum of two indices */
+	idx_type min_(idx_type a, idx_type b) const {
+		if( a < b )
+			return a;
+		return b;
+	}
+
+	edge_data data_() const {
+		adj_list_iterator it;
+		uid_predicate pred (uid2_);	
+		it = std::find_if(
+		 	graph_->edges_[uid1_].adj_list.begin(), 
+			graph_->edges_[uid2_].adj_list.end(), 
+			pred);
+		return *it;
 	}
   };
 
@@ -473,17 +492,20 @@ class Graph {
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
   Edge add_edge(const Node& a, const Node& b) {
+	assert(a.uid_ < nodes_.size() && b.uid_ < nodes_.size() );
 	assert(a.index() != b.index());
+	assert(a.index() < size() && b.index() < size());
 	// Compute the corresponding uid's of a and b
 	uid_type uid_a = i2u_( a.index() );
 	uid_type uid_b = i2u_( b.index() );
+	// std::cout << "adding " << "(" 
+				//<< uid_a << "," << uid_b << ")" << std::endl;
 	if ( !has_edge(a, b) ) {
 		// This is the case where a and b have more than 0 edges
 		// Insert a and b into each others adjacency lists
-		edge_data edge_a_data;
-		edge_data edge_b_data;
-		edge_a_data.uid = uid_a;
-		edge_b_data.uid = uid_b;
+		float rest_length = distance(a.position(), b.position());
+		edge_data edge_a_data (uid_a, rest_length);
+		edge_data edge_b_data (uid_b, rest_length);
 		edges_[uid_a].adj_list.push_back( edge_b_data );
 		edges_[uid_b].adj_list.push_back( edge_a_data );
 		num_edges_++;
@@ -512,16 +534,24 @@ class Graph {
 	return false;
   }
 
-  // Remove all edges associated with the given node
+  /** Removes all egdes associated with the given node
+   * @pre @a n is a valid node in the graph
+   * param[in] @a n, a node in the graph
+   * @post there are no edges associated with the node n
+   */
   size_type remove_edge(const Node& n) {
 	size_type ret = 0;
+	assert( n.index() < size() );
 	uid_type this_uid = i2u_(n.index());
 	adj_list_iterator adj_it;
-	adj_it = edges_[ i2u_(this_uid) ].adj_list.begin();
-	while( !edges_[ i2u_(this_uid) ].adj_list.empty() ) {
+	while( !edges_[ this_uid ].adj_list.empty() ) {
+		adj_it = edges_[ this_uid ].adj_list.begin();
+		// debug: which edge am i removing?
+		// std::cout << "removing " << "(" 
+				//	<< this_uid << "," << (*adj_it).uid << ")" << std::endl;
+		assert( has_edge(this_uid, (*adj_it).uid) ); // make sure edge exists
 		remove_edge_(this_uid, (*adj_it).uid);
-		++adj_it;
-		++ret;
+		ret = 1;
 	}
 	return ret;
   }
@@ -539,42 +569,59 @@ class Graph {
 	// Initialize nodes that correspond to the two edges
 	Node a (this, uid_a);
 	Node b (this, uid_b);
+	// std::cout << "removing " << "(" << uid_a << "," 
+								//<< uid_b << ")" << std::endl;
+	// Enforce @pre that a and b are valid nodes in the graph
+	assert(a.index() < size() && b.index() < size());
+	// Number of edges before removal
 	size_type num_edges_orig = num_edges();
 	// Check preconditions
-	assert( has_edge(a, b) ); // we will enter both for loops if there's edge
 	assert( num_edges_ > 0 );
+	assert( has_edge(a, b) ); // we will enter both for loops if there's edge
 	// Initialize predicates for list removal
 	uid_predicate a_pred (uid_a);
 	uid_predicate b_pred (uid_b);
 	// Remove the uid's from the other's adjacency lists
-	edges_[uid_a].adj_list.remove_if(b_pred);
-	edges_[uid_b].adj_list.remove_if(a_pred);
+	adj_list_iterator it_a = std::find_if(edges_[uid_a].adj_list.begin(),
+									edges_[uid_a].adj_list.end(), b_pred);
+	adj_list_iterator it_b = std::find_if(edges_[uid_b].adj_list.begin(),
+									edges_[uid_b].adj_list.end(), a_pred);
+	// Store the next iterators
+	adj_list_iterator it_a_next;
+	it_a_next = edges_[uid_a].adj_list.erase(it_a);
+	edges_[uid_b].adj_list.erase(it_b); // ignore the return value
 	num_edges_ -= 1;
-	node_iterator n_it (this, a.index());
 	// Check post condtions
 	assert( !has_edge(a, b) );
 	assert( num_edges() == (num_edges_orig - 1) );
-	return EdgeIterator(this, n_it, a.edge_begin()); 
+	// Return results
+	node_iterator n_it (this, a.index());
+	incident_iterator ind_it (this, i2u_(a.index()), it_a_next);
+	return EdgeIterator(this, n_it, ind_it); 
   }
 
   /** Check to see if there is an edge between nodes a and b
-   * @a a and @a b are distinct valid nodes in the graph
+   * @a a and @a b are distinct valid in the graph
    * @return true if it exists, else return the number of edges
    */
    //TODO: make sure that we don't try to access invalid index of edges
    bool has_edge(const Node& a, const Node& b) const {
-	if( a.index() < size() && b.index() < size() ) {
-		uid_type uid_a = i2u_( a.index() );
-		uid_type uid_b = i2u_( b.index() );
+   	if( a.index() == b.index() )
+		return false; // RI: no self edges in the graph
+	assert( a.index() < size() && b.index() < size() );
+	uid_type uid_a = i2u_( a.index() );
+	uid_type uid_b = i2u_( b.index() );
+	return has_edge(uid_a, uid_b);
+   }
+
+   /** Return true if uid's form a valid edge in the graph */
+   bool has_edge(const uid_type uid_a, const uid_type uid_b) const {
 		/** RI: a must be in the adjacency list of b and vice versa
 		 * so just check one case: is a in the adjacency list of b */
-		 for (auto i = edges_[uid_a].adj_list.begin(); 
-			  i != edges_[uid_a].adj_list.end(); ++i) {
-			if( (*i).uid == uid_b )
-				return true;
-		}
-	}
-	return false; // Returns false if we get to end of list and don't find edge
+		uid_predicate b_pred (uid_b);
+		adj_list_iterator it_a = std::find_if(edges_[uid_a].adj_list.begin(),
+										edges_[uid_a].adj_list.end(), b_pred);
+		return (it_a != edges_[uid_a].adj_list.end());
    }
 
   /** Return the edge with index @a i.
@@ -840,12 +887,16 @@ class Graph {
 
 	// UID of this node
 	uid_type uid_;
-	list_it_type pos_;
+	adj_list_iterator pos_;
 
 	IncidentIterator(const Graph* graph, uid_type uid) {
 		graph_ = graph;
 		uid_ = uid;
 		pos_ = graph_->edges_[ uid_ ].adj_list.begin();
+	}
+
+	IncidentIterator(const Graph* graph, uid_type uid, adj_list_iterator pos) :
+										graph_(graph), uid_(uid), pos_(pos) {
 	}
 
 	IncidentIterator& to_end_() {

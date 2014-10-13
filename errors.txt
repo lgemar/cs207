@@ -1,100 +1,180 @@
-In file included from test_edges.cpp:1:
-./Graph.hpp:522:32: error: reference to type 'const Graph<int, int>::edge_data' could not bind to an lvalue of type 'uid_type' (aka 'unsigned int')
-        edges_[uid_a].adj_list.remove(uid_b);
-                                      ^~~~~
-./Graph.hpp:501:3: note: in instantiation of member function 'Graph<int, int>::remove_edge_' requested here
-                remove_edge_(uid_a, uid_b);
-                ^
-test_edges.cpp:60:14: note: in instantiation of member function 'Graph<int, int>::remove_edge' requested here
-  sf_print(g.remove_edge(e.node1(), e.node2()),
-             ^
-/usr/include//c++/4.8/bits/stl_list.h:1348:25: note: passing argument to parameter '__value' here
-      remove(const _Tp& __value);
-                        ^
-In file included from test_edges.cpp:1:
-./Graph.hpp:523:32: error: reference to type 'const Graph<int, int>::edge_data' could not bind to an lvalue of type 'uid_type' (aka 'unsigned int')
-        edges_[uid_b].adj_list.remove(uid_a);
-                                      ^~~~~
-/usr/include//c++/4.8/bits/stl_list.h:1348:25: note: passing argument to parameter '__value' here
-      remove(const _Tp& __value);
-                        ^
-In file included from test_edges.cpp:1:
-In file included from ./Graph.hpp:11:
-In file included from /usr/include//c++/4.8/list:64:
-/usr/include//c++/4.8/bits/list.tcc:248:17: error: invalid operands to binary expression ('Graph<int, int>::edge_data' and 'const Graph<int, int>::edge_data')
-          if (*__first == __value)
-              ~~~~~~~~ ^  ~~~~~~~
-./Graph.hpp:522:25: note: in instantiation of member function 'std::list<Graph<int, int>::edge_data, std::allocator<Graph<int, int>::edge_data> >::remove' requested here
-        edges_[uid_a].adj_list.remove(uid_b);
-                               ^
-./Graph.hpp:501:3: note: in instantiation of member function 'Graph<int, int>::remove_edge_' requested here
-                remove_edge_(uid_a, uid_b);
-                ^
-test_edges.cpp:60:14: note: in instantiation of member function 'Graph<int, int>::remove_edge' requested here
-  sf_print(g.remove_edge(e.node1(), e.node2()),
-             ^
-/usr/include//c++/4.8/bits/postypes.h:216:5: note: candidate template ignored: could not match 'fpos<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
-    operator==(const fpos<_StateT>& __lhs, const fpos<_StateT>& __rhs)
+In file included from test_nodes.cpp:1:
+./Graph.hpp:529:54: error: invalid operands to binary expression ('basic_ostream<char, std::char_traits<char> >' and 'Graph<int, int>::edge_data')
+                std::cout << "removing " << "(" << this_uid << "," << *adj_it << ")" << std::endl;
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^  ~~~~~~~
+./Graph.hpp:326:2: note: in instantiation of member function 'Graph<int, int>::remove_edge' requested here
+        remove_edge( n ); // remove all edges associated with node
+        ^
+test_nodes.cpp:54:5: note: in instantiation of member function 'Graph<int, int>::remove_node' requested here
+  g.remove_node(node);
     ^
-/usr/include//c++/4.8/bits/stl_pair.h:214:5: note: candidate template ignored: could not match 'pair<type-parameter-0-0, type-parameter-0-1>' against 'Graph<int, int>::edge_data'
-    operator==(const pair<_T1, _T2>& __x, const pair<_T1, _T2>& __y)
+/usr/include//c++/4.8/ostream:245:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'const void *' for 1st argument; take the address of the argument with &
+      operator<<(const void* __p)
+      ^
+/usr/include//c++/4.8/ostream:108:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to '__ostream_type &(*)(__ostream_type &)' for 1st argument
+      operator<<(__ostream_type& (*__pf)(__ostream_type&))
+      ^
+/usr/include//c++/4.8/ostream:117:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to '__ios_type &(*)(__ios_type &)' for 1st argument
+      operator<<(__ios_type& (*__pf)(__ios_type&))
+      ^
+/usr/include//c++/4.8/ostream:127:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'std::ios_base &(*)(std::ios_base &)' for 1st argument
+      operator<<(ios_base& (*__pf) (ios_base&))
+      ^
+/usr/include//c++/4.8/ostream:166:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'long' for 1st argument
+      operator<<(long __n)
+      ^
+/usr/include//c++/4.8/ostream:170:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'unsigned long' for 1st argument
+      operator<<(unsigned long __n)
+      ^
+/usr/include//c++/4.8/ostream:174:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'bool' for 1st argument
+      operator<<(bool __n)
+      ^
+/usr/include//c++/4.8/ostream:178:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'short' for 1st argument
+      operator<<(short __n);
+      ^
+/usr/include//c++/4.8/ostream:181:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'unsigned short' for 1st argument
+      operator<<(unsigned short __n)
+      ^
+/usr/include//c++/4.8/ostream:189:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'int' for 1st argument
+      operator<<(int __n);
+      ^
+/usr/include//c++/4.8/ostream:192:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'unsigned int' for 1st argument
+      operator<<(unsigned int __n)
+      ^
+/usr/include//c++/4.8/ostream:201:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'long long' for 1st argument
+      operator<<(long long __n)
+      ^
+/usr/include//c++/4.8/ostream:205:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'unsigned long long' for 1st argument
+      operator<<(unsigned long long __n)
+      ^
+/usr/include//c++/4.8/ostream:220:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'double' for 1st argument
+      operator<<(double __f)
+      ^
+/usr/include//c++/4.8/ostream:224:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'float' for 1st argument
+      operator<<(float __f)
+      ^
+/usr/include//c++/4.8/ostream:232:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'long double' for 1st argument
+      operator<<(long double __f)
+      ^
+/usr/include//c++/4.8/ostream:270:7: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to '__streambuf_type *' (aka 'basic_streambuf<char, std::char_traits<char> > *') for 1st argument
+      operator<<(__streambuf_type* __sb);
+      ^
+/usr/include//c++/4.8/ostream:476:5: note: candidate function [with _CharT = char, _Traits = std::char_traits<char>] not viable: no known conversion from 'Graph<int, int>::edge_data' to 'char' for 2nd argument
+    operator<<(basic_ostream<_CharT, _Traits>& __out, char __c)
     ^
-/usr/include//c++/4.8/bits/stl_iterator.h:291:5: note: candidate template ignored: could not match 'reverse_iterator<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
-    operator==(const reverse_iterator<_Iterator>& __x,
+/usr/include//c++/4.8/ostream:482:5: note: candidate function [with _Traits = std::char_traits<char>] not viable: no known conversion from 'Graph<int, int>::edge_data' to 'char' for 2nd argument
+    operator<<(basic_ostream<char, _Traits>& __out, char __c)
     ^
-/usr/include//c++/4.8/bits/stl_iterator.h:341:5: note: candidate template ignored: could not match 'reverse_iterator<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
-    operator==(const reverse_iterator<_IteratorL>& __x,
+/usr/include//c++/4.8/ostream:488:5: note: candidate function [with _Traits = std::char_traits<char>] not viable: no known conversion from 'Graph<int, int>::edge_data' to 'signed char' for 2nd argument
+    operator<<(basic_ostream<char, _Traits>& __out, signed char __c)
     ^
-/usr/include//c++/4.8/bits/stl_iterator.h:1031:5: note: candidate template ignored: could not match 'move_iterator<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
-    operator==(const move_iterator<_IteratorL>& __x,
+/usr/include//c++/4.8/ostream:493:5: note: candidate function [with _Traits = std::char_traits<char>] not viable: no known conversion from 'Graph<int, int>::edge_data' to 'unsigned char' for 2nd argument
+    operator<<(basic_ostream<char, _Traits>& __out, unsigned char __c)
     ^
-/usr/include//c++/4.8/bits/stl_iterator.h:1037:5: note: candidate template ignored: could not match 'move_iterator<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
-    operator==(const move_iterator<_Iterator>& __x,
+/usr/include//c++/4.8/ostream:530:5: note: candidate function [with _Traits = std::char_traits<char>] not viable: no known conversion from 'Graph<int, int>::edge_data' to 'const char *' for 2nd argument
+    operator<<(basic_ostream<char, _Traits>& __out, const char* __s)
     ^
-/usr/include//c++/4.8/bits/allocator.h:128:5: note: candidate template ignored: could not match 'allocator<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
-    operator==(const allocator<_T1>&, const allocator<_T2>&)
+/usr/include//c++/4.8/ostream:543:5: note: candidate function [with _Traits = std::char_traits<char>] not viable: no known conversion from 'Graph<int, int>::edge_data' to 'const signed char *' for 2nd argument
+    operator<<(basic_ostream<char, _Traits>& __out, const signed char* __s)
     ^
-/usr/include//c++/4.8/bits/allocator.h:133:5: note: candidate template ignored: could not match 'allocator<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
-    operator==(const allocator<_Tp>&, const allocator<_Tp>&)
+/usr/include//c++/4.8/ostream:548:5: note: candidate function [with _Traits = std::char_traits<char>] not viable: no known conversion from 'Graph<int, int>::edge_data' to 'const unsigned char *' for 2nd argument
+    operator<<(basic_ostream<char, _Traits>& __out, const unsigned char* __s)
     ^
-/usr/include//c++/4.8/bits/basic_string.h:2486:5: note: candidate template ignored: could not match 'basic_string<type-parameter-0-0, type-parameter-0-1, type-parameter-0-2>' against 'Graph<int, int>::edge_data'
-    operator==(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
+/usr/include//c++/4.8/ostream:602:5: note: candidate function [with _CharT = char, _Traits = std::char_traits<char>, _Tp = Graph<int, int>::edge_data] not viable: no known conversion from 'basic_ostream<char, std::char_traits<char> >' to 'basic_ostream<char, std::char_traits<char> > &&' for 1st argument
+    operator<<(basic_ostream<_CharT, _Traits>&& __os, const _Tp& __x)
     ^
-/usr/include//c++/4.8/bits/basic_string.h:2493:5: note: candidate template ignored: could not match 'basic_string<type-parameter-0-0, char_traits<type-parameter-0-0>, allocator<type-parameter-0-0> >' against 'Graph<int, int>::edge_data'
-    operator==(const basic_string<_CharT>& __lhs,
+/usr/include//c++/4.8/bits/ostream.tcc:321:5: note: candidate function [with _CharT = char, _Traits = std::char_traits<char>] not viable: no known conversion from 'Graph<int, int>::edge_data' to 'const char *' for 2nd argument
+    operator<<(basic_ostream<_CharT, _Traits>& __out, const char* __s)
     ^
-/usr/include//c++/4.8/bits/basic_string.h:2507:5: note: candidate template ignored: could not match 'const _CharT *' against 'Graph<int, int>::edge_data'
-    operator==(const _CharT* __lhs,
+/usr/include//c++/4.8/bits/random.tcc:1150:5: note: candidate function [with _CharT = char, _Traits = std::char_traits<char>] not viable: no known conversion from 'Graph<int, int>::edge_data' to 'const std::bernoulli_distribution' for 2nd argument
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
     ^
-/usr/include//c++/4.8/bits/basic_string.h:2519:5: note: candidate template ignored: could not match 'basic_string<type-parameter-0-0, type-parameter-0-1, type-parameter-0-2>' against 'Graph<int, int>::edge_data'
-    operator==(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
+./Point.hpp:137:15: note: candidate function not viable: no known conversion from 'Graph<int, int>::edge_data' to 'const Point' for 2nd argument
+std::ostream& operator<<(std::ostream& s, const Point& a) {
+              ^
+/usr/include//c++/4.8/ostream:471:5: note: candidate template ignored: deduced conflicting types for parameter '_CharT' ('char' vs. 'Graph<int, int>::edge_data')
+    operator<<(basic_ostream<_CharT, _Traits>& __out, _CharT __c)
     ^
-/usr/include//c++/4.8/bits/streambuf_iterator.h:204:5: note: candidate template ignored: could not match 'istreambuf_iterator<type-parameter-0-0, type-parameter-0-1>' against 'Graph<int, int>::edge_data'
-    operator==(const istreambuf_iterator<_CharT, _Traits>& __a,
+/usr/include//c++/4.8/bits/basic_string.h:2753:5: note: candidate template ignored: could not match 'basic_string<type-parameter-0-0, type-parameter-0-1, type-parameter-0-2>' against 'Graph<int, int>::edge_data'
+    operator<<(basic_ostream<_CharT, _Traits>& __os,
     ^
-/usr/include//c++/4.8/bits/stl_vector.h:1404:5: note: candidate template ignored: could not match 'vector<type-parameter-0-0, type-parameter-0-1>' against 'Graph<int, int>::edge_data'
-    operator==(const vector<_Tp, _Alloc>& __x, const vector<_Tp, _Alloc>& __y)
+/usr/include//c++/4.8/ostream:513:5: note: candidate template ignored: could not match 'const _CharT *' against 'Graph<int, int>::edge_data'
+    operator<<(basic_ostream<_CharT, _Traits>& __out, const _CharT* __s)
     ^
-/usr/include//c++/4.8/bits/random.tcc:2030:5: note: candidate template ignored: could not match 'normal_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
-    operator==(const std::normal_distribution<_RealType>& __d1,
+/usr/include//c++/4.8/bits/random.h:1277:5: note: candidate template ignored: could not match 'independent_bits_engine<type-parameter-0-0, __w, type-parameter-0-2>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
     ^
-/usr/include//c++/4.8/array:228:5: note: candidate template ignored: could not match 'array<type-parameter-0-0, _Nm>' against 'Graph<int, int>::edge_data'
-    operator==(const array<_Tp, _Nm>& __one, const array<_Tp, _Nm>& __two)
+/usr/include//c++/4.8/bits/random.tcc:156:5: note: candidate template ignored: could not match 'linear_congruential_engine<type-parameter-0-0, __a, __c, __m>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
     ^
-/usr/include//c++/4.8/tuple:811:5: note: candidate template ignored: could not match 'tuple<type-parameter-0-0...>' against 'Graph<int, int>::edge_data'
-    operator==(const tuple<_TElements...>& __t,
+/usr/include//c++/4.8/bits/random.tcc:477:5: note: candidate template ignored: could not match 'mersenne_twister_engine<type-parameter-0-0, __w, __n, __m, __r, __a, __u, __d, __s, __b, __t, __c, __l, __f>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
     ^
-/usr/include//c++/4.8/functional:2530:5: note: candidate template ignored: could not match 'function<type-parameter-0-0 (type-parameter-0-1...)>' against 'Graph<int, int>::edge_data'
-    operator==(const function<_Res(_Args...)>& __f, nullptr_t) noexcept
+/usr/include//c++/4.8/bits/random.tcc:632:5: note: candidate template ignored: could not match 'subtract_with_carry_engine<type-parameter-0-0, __w, __s, __r>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
     ^
-/usr/include//c++/4.8/functional:2536:5: note: candidate template ignored: could not match 'function<type-parameter-0-0 (type-parameter-0-1...)>' against 'const Graph<int, int>::edge_data'
-    operator==(nullptr_t, const function<_Res(_Args...)>& __f) noexcept
+/usr/include//c++/4.8/bits/random.tcc:702:5: note: candidate template ignored: could not match 'discard_block_engine<type-parameter-0-0, __p, __r>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
     ^
-/usr/include//c++/4.8/bits/stl_list.h:276:5: note: candidate template ignored: could not match '_List_iterator<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
-    operator==(const _List_iterator<_Val>& __x,
+/usr/include//c++/4.8/bits/random.tcc:831:5: note: candidate template ignored: could not match 'shuffle_order_engine<type-parameter-0-0, __k>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
     ^
-/usr/include//c++/4.8/bits/stl_list.h:1602:5: note: candidate template ignored: could not match 'list<type-parameter-0-0, type-parameter-0-1>' against 'Graph<int, int>::edge_data'
-    operator==(const list<_Tp, _Alloc>& __x, const list<_Tp, _Alloc>& __y)
+/usr/include//c++/4.8/bits/random.tcc:1029:5: note: candidate template ignored: could not match 'uniform_int_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
     ^
-3 errors generated.
-make: *** [test_edges.o] Error 1
+/usr/include//c++/4.8/bits/random.tcc:1088:5: note: candidate template ignored: could not match 'uniform_real_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:1232:5: note: candidate template ignored: could not match 'geometric_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:1347:5: note: candidate template ignored: could not match 'negative_binomial_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:1552:5: note: candidate template ignored: could not match 'poisson_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:1819:5: note: candidate template ignored: could not match 'binomial_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:1883:5: note: candidate template ignored: could not match 'exponential_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:2050:5: note: candidate template ignored: could not match 'normal_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:2115:5: note: candidate template ignored: could not match 'lognormal_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:2188:5: note: candidate template ignored: could not match 'chi_squared_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:2275:5: note: candidate template ignored: could not match 'cauchy_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:2352:5: note: candidate template ignored: could not match 'fisher_f_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:2427:5: note: candidate template ignored: could not match 'student_t_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:2596:5: note: candidate template ignored: could not match 'gamma_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:2674:5: note: candidate template ignored: could not match 'weibull_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:2750:5: note: candidate template ignored: could not match 'extreme_value_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:2886:5: note: candidate template ignored: could not match 'discrete_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:3096:5: note: candidate template ignored: could not match 'piecewise_constant_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+/usr/include//c++/4.8/bits/random.tcc:3312:5: note: candidate template ignored: could not match 'piecewise_linear_distribution<type-parameter-0-0>' against 'Graph<int, int>::edge_data'
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+    ^
+1 error generated.
+make: *** [test_nodes.o] Error 1
