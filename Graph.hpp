@@ -908,8 +908,14 @@ class Graph {
 
  private:
 	// Utility functions that maps an indices to uids and vice versa
-	uid_type i2u_(idx_type index) const { return i2u_vect_[index];}
-	idx_type u2i_(uid_type u) const {return nodes_[u].idx;}
+	uid_type i2u_(idx_type index) const { 
+		assert( index < nodes_.size() && i2u_vect_.size() );
+		return i2u_vect_[index];
+	}
+	idx_type u2i_(uid_type u) const {
+		assert( u < nodes_.size() && i2u_vect_.size() );
+		return nodes_[u].idx;
+	}
 	// Keep track of the number of nodes and edges in the graph
  	size_type num_nodes_ = 0;
 	size_type num_edges_ = 0;
