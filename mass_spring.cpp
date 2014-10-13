@@ -127,7 +127,7 @@ struct Problem1Force {
 
 class Rule {
 	public: 
-		virtual void apply(const GraphType, double)=0;
+		virtual void apply(const GraphType&, double)=0;
 };
 
 class Constraint {
@@ -141,7 +141,7 @@ class Constraint {
 		Constraint(f_composition composite) : constraints_(composite) {
 		}
 		
-		void operator()(GraphType g, double t) const {
+		void operator()(const GraphType& g, double t) const {
 			for(auto it = constraints_.begin(); it != constraints_.end(); ++it)
 				(*it)->apply(g, t);
 		}
@@ -155,17 +155,23 @@ class Constraint {
 		}
 };
 
-class TableTop {
+class TableTop : public Rule {
 	public: 
-		void operator()(GraphType g, double t) {
+		virtual void apply(const GraphType& g, double t) {
 			(void) t;
 			for(auto it = g.node_begin(); it != g.node_end(); ++it) {
-				Point& node_position = (*it).position();
-				if((inner_prod(node_position, Point(0, 0, 1)) < -0.75))
-					node_position.z = -0.75;
+				auto n = *it;
+				scalar dot_product = dot(n.position(), Point(0, 0, 1));
+				if(dot_product < -0.75) {
+					n.position().z = -0.75;
+					n.value().velocity = Point(0, 0, 0);
+				}
 			}
 		}
 };
+
+class Sphere : public Rule {
+}
 
 class Stimulus {
 	public: 
@@ -317,9 +323,13 @@ int main(int argc, char** argv) {
   Force problem1_f = spring_f + gravity_f;
   Force problem3_f = spring_f + gravity_f + damp_f;
 
+  TableTop tt_constraint;
+  Constraint table_top (&tt_constraint);
+
   for (double t = t_start; t < t_end; t += dt) {
     //std::cout << "t = " << t << std::endl;
     symp_euler_step(graph, t, dt, problem3_f);
+	table_top(graph, t);
 
     // Update viewer with nodes' new positions
     viewer.add_nodes(graph.node_begin(), graph.node_end(), node_map);
