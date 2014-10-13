@@ -365,7 +365,7 @@ int main(int argc, char** argv) {
 
   TableTop tt_constraint;
   Sphere s_constraint;
-  Sphere fire_ball_constraint;
+  FireBall fire_ball_constraint;
   Constraint table_top_c (&tt_constraint);
   Constraint sphere_c (&s_constraint);
   Constraint fireball_c (&fire_ball_constraint);
