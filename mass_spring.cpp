@@ -179,8 +179,6 @@ class Sphere : public Rule {
 			for(auto it = g.node_begin(); it != g.node_end(); ++it) {
 				auto n = *it;
 				scalar dist = distance(n.position(), center);
-				// std::cout << "Position: " << n.position() << std::endl;
-				// std::cout << "Distance: " << dist << std::endl;
 				if(dist < radius) {
 					// Reset the position to the closest on the sphere
 					Point old_position = n.position();
@@ -194,6 +192,22 @@ class Sphere : public Rule {
 					Point v = n.value().velocity;
 					n.value().velocity = (v - dot(v, direction) * direction);
 					assert( dot(n.value().velocity, direction) < 0.01 );
+				}
+			}
+		}
+};
+
+class FireBall : public Rule {
+	public: 
+		virtual void apply(const GraphType& g, double t) {
+			(void) t;
+			Point center = Point(0.5, 0.5, -0.5);
+			scalar radius = 0.15;
+			for(auto it = g.node_begin(); it != g.node_end(); ++it) {
+				Node n = *it;
+				scalar dist = distance(n.position(), center);
+				if(dist < radius) {
+					g.remove_node(n);
 				}
 			}
 		}
@@ -351,16 +365,22 @@ int main(int argc, char** argv) {
 
   TableTop tt_constraint;
   Sphere s_constraint;
+  Sphere fire_ball_constraint;
   Constraint table_top_c (&tt_constraint);
   Constraint sphere_c (&s_constraint);
+  Constraint fireball_c (&fire_ball_constraint);
 
   for (double t = t_start; t < t_end; t += dt) {
     //std::cout << "t = " << t << std::endl;
     symp_euler_step(graph, t, dt, problem3_f);
-	sphere_c(graph, t);
+	fireball_c(graph, t);
 
+	// Redraw the graph
+	viewer.clear();
+	node_map.clear();
     // Update viewer with nodes' new positions
     viewer.add_nodes(graph.node_begin(), graph.node_end(), node_map);
+	viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
     viewer.set_label(t);
 
     // These lines slow down the animation for small graphs, like grid0_*.

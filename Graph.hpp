@@ -331,7 +331,7 @@ class Graph {
 	return NodeIterator(this, i2u_(idx)); // return iterator to next el.
   }
 
-  size_type remove_node(const Node& n) {
+  size_type remove_node(const Node& n) const {
 	assert( n.index() < size() );
 	idx_type n_idx, prev_idx;
 	remove_edge( n ); // remove all edges associated with node
@@ -343,7 +343,7 @@ class Graph {
 	return num_nodes_;
   }
 
-  void swap_(idx_type a, idx_type b) {
+  void swap_(idx_type a, idx_type b) const {
   	uid_type uid_a = i2u_(a);
 	uid_type uid_b = i2u_(b);
 	i2u_vect_[a] = uid_b;
@@ -521,14 +521,14 @@ class Graph {
 	return remove_edge(*e_it);
   }
 
-  size_type remove_edge(const Edge& e) {
+  size_type remove_edge(const Edge& e) const {
   	return remove_edge(e.node1(), e.node2());
   }
 
   /** Remove the nodes' uids from each other's adjacency lists 
   	* @returns true if the removal was successful 
 	*/
-  size_type remove_edge(const Node& a, const Node& b) {
+  size_type remove_edge(const Node& a, const Node& b) const {
   	uid_type uid_a = u2i_( a.index() );
   	uid_type uid_b = u2i_( b.index() );
 	if( has_edge(a, b) ) {
@@ -543,7 +543,7 @@ class Graph {
    * param[in] @a n, a node in the graph
    * @post there are no edges associated with the node n
    */
-  size_type remove_edge(const Node& n) {
+  size_type remove_edge(const Node& n) const {
 	size_type ret = 0;
 	assert( n.index() < size() );
 	uid_type this_uid = i2u_(n.index());
@@ -569,7 +569,7 @@ class Graph {
    * @post all iterators that pointed at the edge formed by a and b are invalid
    * @post new num_edges() == old num_edges() - 1
    */
-  edge_iterator remove_edge_(uid_type uid_a, uid_type uid_b) {
+  edge_iterator remove_edge_(uid_type uid_a, uid_type uid_b) const {
 	// Initialize nodes that correspond to the two edges
 	Node a (this, uid_a);
 	Node b (this, uid_b);
@@ -921,12 +921,12 @@ class Graph {
 		return nodes_[u].idx;
 	}
 	// Keep track of the number of nodes and edges in the graph
- 	size_type num_nodes_ = 0;
-	size_type num_edges_ = 0;
+ 	mutable size_type num_nodes_ = 0;
+	mutable size_type num_edges_ = 0;
 	// Stores the mapping between uids and indices
-	std::vector<uid_type> i2u_vect_;
+	mutable std::vector<uid_type> i2u_vect_;
 	// Maps between the uid's and imap nodes
- 	std::vector<node_data> nodes_;
+ 	mutable std::vector<node_data> nodes_;
 	// Maps from indices to imap nodes
 	std::vector<imap_idx_type> indices_;
 	// Maps from uids to sets of uids that represent adjacency lists
