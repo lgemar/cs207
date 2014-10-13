@@ -161,6 +161,11 @@ struct MassSpringForce {
   }
 };
 
+Point make_combined_force(const Point& f1, const Point& f2) {
+}
+
+Point make_combined_force(const Point& f1, const Point& f2, const Point& f3) {
+}
 
 int main(int argc, char** argv) {
   // Check arguments
@@ -189,8 +194,8 @@ int main(int argc, char** argv) {
       graph.add_edge(nodes[t[0]], nodes[t[1]]);
       graph.add_edge(nodes[t[0]], nodes[t[2]]);
       // Diagonal edges: include as of HW2 #2
-      //graph.add_edge(nodes[t[0]], nodes[t[3]]);
-      //graph.add_edge(nodes[t[1]], nodes[t[2]]);
+      graph.add_edge(nodes[t[0]], nodes[t[3]]);
+      graph.add_edge(nodes[t[1]], nodes[t[2]]);
       graph.add_edge(nodes[t[1]], nodes[t[3]]);
       graph.add_edge(nodes[t[2]], nodes[t[3]]);
     }

@@ -101,7 +101,7 @@ class Graph {
 
   typedef struct edge_data {
   	
-	edge_data(uid_type u, size_type len) : uid(u), rest_length(len) {
+	edge_data(uid_type u, scalar len) : uid(u), rest_length(len) {
 	}
 
   	uid_type uid;
@@ -399,15 +399,8 @@ class Graph {
 		return Node(graph_, uid2_);
     }
 
-	/**
 	scalar length() const {
 		return data_().rest_length;
-	}
-	*/
-
-	scalar length() const {
-		return distance(graph_->nodes_[ uid1_ ].p_orig, 
-								graph_->nodes_[ uid2_ ].p_orig);
 	}
 
 	edge_value_type& value() const {
@@ -476,7 +469,7 @@ class Graph {
 		uid_predicate pred (uid2_);	
 		it = std::find_if(
 		 	graph_->edges_[uid1_].adj_list.begin(), 
-			graph_->edges_[uid2_].adj_list.end(), 
+			graph_->edges_[uid1_].adj_list.end(), 
 			pred);
 		return *it;
 	}
@@ -514,7 +507,7 @@ class Graph {
 	if ( !has_edge(a, b) ) {
 		// This is the case where a and b have more than 0 edges
 		// Insert a and b into each others adjacency lists
-		scalar rest_length = distance(a.position(), b.position());
+		scalar rest_length = distance(nodes_[uid_a].p, nodes_[uid_b].p);
 		edge_data edge_a_data (uid_a, rest_length);
 		edge_data edge_b_data (uid_b, rest_length);
 		edges_[uid_a].adj_list.push_back( edge_b_data );
