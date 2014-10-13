@@ -163,7 +163,7 @@ class TableTop : public Rule {
 				auto n = *it;
 				scalar dot_product = dot(n.position(), Point(0, 0, 1));
 				if(dot_product < -0.75) {
-					n.position().z = -0.75;
+					n.position() = Point(n.position().x, n.position().y, -0.75);
 					n.value().velocity = Point(0, 0, 0);
 				}
 			}
@@ -171,7 +171,33 @@ class TableTop : public Rule {
 };
 
 class Sphere : public Rule {
-}
+	public: 
+		virtual void apply(const GraphType& g, double t) {
+			(void) t;
+			Point center = Point(0.5, 0.5, -0.5);
+			scalar radius = 0.15;
+			for(auto it = g.node_begin(); it != g.node_end(); ++it) {
+				auto n = *it;
+				scalar dist = distance(n.position(), center);
+				// std::cout << "Position: " << n.position() << std::endl;
+				// std::cout << "Distance: " << dist << std::endl;
+				if(dist < radius) {
+					// Reset the position to the closest on the sphere
+					Point old_position = n.position();
+					Point direction = (n.position() / dist) - (center / dist); 
+					n.position() = center + radius * direction;
+					// Check representation invariants
+					assert( n.position() != old_position );
+					assert( distance(n.position(), center) < (radius + 0.01));
+					assert( distance(n.position(), center) > (radius - 0.01));
+					// Make the component norm to the surface 0
+					Point v = n.value().velocity;
+					n.value().velocity = (v - dot(v, direction) * direction);
+					assert( dot(n.value().velocity, direction) < 0.01 );
+				}
+			}
+		}
+};
 
 class Stimulus {
 	public: 
@@ -324,12 +350,14 @@ int main(int argc, char** argv) {
   Force problem3_f = spring_f + gravity_f + damp_f;
 
   TableTop tt_constraint;
-  Constraint table_top (&tt_constraint);
+  Sphere s_constraint;
+  Constraint table_top_c (&tt_constraint);
+  Constraint sphere_c (&s_constraint);
 
   for (double t = t_start; t < t_end; t += dt) {
     //std::cout << "t = " << t << std::endl;
     symp_euler_step(graph, t, dt, problem3_f);
-	table_top(graph, t);
+	sphere_c(graph, t);
 
     // Update viewer with nodes' new positions
     viewer.add_nodes(graph.node_begin(), graph.node_end(), node_map);
