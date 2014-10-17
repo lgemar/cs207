@@ -78,41 +78,138 @@ double symp_euler_step(G& g, double t, double dt, F force) {
   return t + dt;
 }
 
+struct Rule {
+	virtual void apply(const GraphType&, double)=0;
+};
 
-/** Force function object for HW2 #1. */
-struct Problem1Force {
-  /** Return the force being applied to @a n at time @a t.
-   *
-   * For HW2 #1, this is a combination of mass-spring force and gravity,
-   * except that points at (0, 0, 0) and (1, 0, 0) never move. We can
-   * model that by returning a zero-valued force. 
-   * The force on a given node is computed by adding the forces on it from 
-   * all its connected nodes. Represent the node adjacency list by A. Then, 
-   * the force on a given node n is given by the sum of forces from nodes
-   * n0, n1, ..., ni, ..., nm in the node adjacency list. To calculate the 
-   * force from any given node, use the spring equation. This is given simply
-   * as F = -kx, where k is the spring constant and x the displacement. The
-   * displacement is a vector. Its direction is computed by finding the vector
-   * difference between @a n and node xi in the adjacency list. The magnitude
-   * is calculated by finding the Euclidean distance between the nodes in the 
-   * adjacency list and the spring length, L. 
-   * @returns a Point that represents the force vector
-   */
-  Point operator()(Node n, double t) {
+struct Constraint {
+	typedef typename std::list<Rule*> f_composition;
+	f_composition constraints_;
+	Constraint(Rule* s) {
+		constraints_.push_front(s);
+	}
+
+	Constraint(f_composition composite) : constraints_(composite) {
+	}
+	
+	void operator()(const GraphType& g, double t) const {
+		for(auto it = constraints_.begin(); it != constraints_.end(); ++it)
+			(*it)->apply(g, t);
+	}
+
+	Constraint operator+(Constraint f) const {
+		f_composition constraint_list = f.constraints_;
+		for(auto it = constraints_.begin(); it != constraints_.end(); ++it) {
+			constraint_list.push_front(*it);	
+		}
+		return Constraint(constraint_list);
+	}
+};
+
+struct TableTop : public Rule {
+	virtual void apply(const GraphType& g, double t) {
+		(void) t;
+		for(auto it = g.node_begin(); it != g.node_end(); ++it) {
+			auto n = *it;
+			scalar dot_product = dot(n.position(), Point(0, 0, 1));
+			if(dot_product < -0.75) {
+				n.position() = Point(n.position().x, n.position().y, -0.75);
+				n.value().velocity = Point(0, 0, 0);
+			}
+		}
+	}
+};
+
+struct Sphere : public Rule {
+	virtual void apply(const GraphType& g, double t) {
+		(void) t;
+		Point center = Point(0.5, 0.5, -0.5);
+		scalar radius = 0.15;
+		for(auto it = g.node_begin(); it != g.node_end(); ++it) {
+			auto n = *it;
+			scalar dist = distance(n.position(), center);
+			if(dist < radius) {
+				// Reset the position to the closest on the sphere
+				Point old_position = n.position();
+				Point direction = (n.position() / dist) - (center / dist); 
+				n.position() = center + radius * direction;
+				// Check representation invariants
+				assert( n.position() != old_position );
+				assert( distance(n.position(), center) < (radius + 0.01));
+				assert( distance(n.position(), center) > (radius - 0.01));
+				// Make the component norm to the surface 0
+				Point v = n.value().velocity;
+				n.value().velocity = (v - dot(v, direction) * direction);
+				assert( dot(n.value().velocity, direction) < 0.01 );
+			}
+		}
+	}
+};
+
+struct FireBall : public Rule {
+	virtual void apply(const GraphType& g, double t) {
+		(void) t;
+		Point center = Point(0.5, 0.5, -0.5);
+		scalar radius = 0.15;
+		for(auto it = g.node_begin(); it != g.node_end(); ++it) {
+			Node n = *it;
+			scalar dist = distance(n.position(), center);
+			if(dist < radius) {
+				g.remove_node(n);
+			}
+		}
+	}
+};
+
+struct Stimulus {
+	virtual Point apply(Node, double)=0;
+};
+
+struct Force {
+	typedef typename std::list<Stimulus*> f_composition;
+	f_composition forces_;
+	Force(Stimulus* s) {
+		forces_.push_front(s);
+	}
+
+	Force(f_composition composite) : forces_(composite) {
+	}
+	
+	Point operator()(Node n, double t) const {
+		Point total_force = Point(0,0,0);
+		for(auto it = forces_.begin(); it != forces_.end(); ++it) {
+			total_force = total_force + (*it)->apply(n, t);
+		}
+		return total_force;
+	}
+
+	Force operator+(Force f) const {
+		f_composition force_list = f.forces_;
+		for(auto it = forces_.begin(); it != forces_.end(); ++it) {
+			force_list.push_front(*it);	
+		}
+		return Force(force_list);
+	}
+};
+
+struct GravityForce : public Stimulus {
+	virtual Point apply(Node n, double t) {
+		(void) t;
+		return Point(0, 0, -grav * n.value().mass);
+	}
+};
+
+struct MassSpringForce : public Stimulus {
+  virtual Point apply(Node n, double t) {
 	// Initialize variables
 	(void) t;//suppress compiler warning
 	Node adjacent_node;
-  	scalar K = 100.0; // Spring constant
+	scalar K = 100.0; // Spring constant
 	scalar displacement; // displacement from spring rest-length
 	Point direction; // direction of the force
-	Point total_force;
+	Point total_force = Point(0, 0, 0);
 	Point xi, xj; // xi: position of node n; xj position of adjacent node
 
-	// Calculate force on node
-  	if (n.position() == Point(0, 0, 0) || n.position() == Point(1, 0, 0)) {
-		return Point(0, 0, 0);
-	}
-	total_force = Point(0, 0, -grav * n.value().mass);
 	xi = n.position();
 	for (auto it = n.edge_begin(); it != n.edge_end(); ++it) {
 		adjacent_node = (*it).node2();
@@ -125,168 +222,14 @@ struct Problem1Force {
   }
 };
 
-class Rule {
-	public: 
-		virtual void apply(const GraphType&, double)=0;
-};
-
-class Constraint {
-	public: 
-		typedef typename std::list<Rule*> f_composition;
-		f_composition constraints_;
-		Constraint(Rule* s) {
-			constraints_.push_front(s);
-		}
-
-		Constraint(f_composition composite) : constraints_(composite) {
-		}
-		
-		void operator()(const GraphType& g, double t) const {
-			for(auto it = constraints_.begin(); it != constraints_.end(); ++it)
-				(*it)->apply(g, t);
-		}
-
-		Constraint operator+(Constraint f) const {
-			f_composition constraint_list = f.constraints_;
-			for(auto it = constraints_.begin(); it != constraints_.end(); ++it) {
-				constraint_list.push_front(*it);	
-			}
-			return Constraint(constraint_list);
-		}
-};
-
-class TableTop : public Rule {
-	public: 
-		virtual void apply(const GraphType& g, double t) {
-			(void) t;
-			for(auto it = g.node_begin(); it != g.node_end(); ++it) {
-				auto n = *it;
-				scalar dot_product = dot(n.position(), Point(0, 0, 1));
-				if(dot_product < -0.75) {
-					n.position() = Point(n.position().x, n.position().y, -0.75);
-					n.value().velocity = Point(0, 0, 0);
-				}
-			}
-		}
-};
-
-class Sphere : public Rule {
-	public: 
-		virtual void apply(const GraphType& g, double t) {
-			(void) t;
-			Point center = Point(0.5, 0.5, -0.5);
-			scalar radius = 0.15;
-			for(auto it = g.node_begin(); it != g.node_end(); ++it) {
-				auto n = *it;
-				scalar dist = distance(n.position(), center);
-				if(dist < radius) {
-					// Reset the position to the closest on the sphere
-					Point old_position = n.position();
-					Point direction = (n.position() / dist) - (center / dist); 
-					n.position() = center + radius * direction;
-					// Check representation invariants
-					assert( n.position() != old_position );
-					assert( distance(n.position(), center) < (radius + 0.01));
-					assert( distance(n.position(), center) > (radius - 0.01));
-					// Make the component norm to the surface 0
-					Point v = n.value().velocity;
-					n.value().velocity = (v - dot(v, direction) * direction);
-					assert( dot(n.value().velocity, direction) < 0.01 );
-				}
-			}
-		}
-};
-
-class FireBall : public Rule {
-	public: 
-		virtual void apply(const GraphType& g, double t) {
-			(void) t;
-			Point center = Point(0.5, 0.5, -0.5);
-			scalar radius = 0.15;
-			for(auto it = g.node_begin(); it != g.node_end(); ++it) {
-				Node n = *it;
-				scalar dist = distance(n.position(), center);
-				if(dist < radius) {
-					g.remove_node(n);
-				}
-			}
-		}
-};
-
-class Stimulus {
-	public: 
-		virtual Point apply(Node, double)=0;
-};
-
-class Force {
-	public: 
-		typedef typename std::list<Stimulus*> f_composition;
-		f_composition forces_;
-		Force(Stimulus* s) {
-			forces_.push_front(s);
-		}
-
-		Force(f_composition composite) : forces_(composite) {
-		}
-		
-		Point operator()(Node n, double t) const {
-			Point total_force = Point(0,0,0);
-			for(auto it = forces_.begin(); it != forces_.end(); ++it) {
-				total_force = total_force + (*it)->apply(n, t);
-			}
-			return total_force;
-		}
-
-		Force operator+(Force f) const {
-			f_composition force_list = f.forces_;
-			for(auto it = forces_.begin(); it != forces_.end(); ++it) {
-				force_list.push_front(*it);	
-			}
-			return Force(force_list);
-		}
-};
-
-class GravityForce : public Stimulus {
-	public:
-		virtual Point apply(Node n, double t) {
-			(void) t;
-			return Point(0, 0, -grav * n.value().mass);
-		}
-};
-
-class MassSpringForce : public Stimulus {
-  public: 
-	  virtual Point apply(Node n, double t) {
-		// Initialize variables
-		(void) t;//suppress compiler warning
-		Node adjacent_node;
-		scalar K = 100.0; // Spring constant
-		scalar displacement; // displacement from spring rest-length
-		Point direction; // direction of the force
-		Point total_force = Point(0, 0, 0);
-		Point xi, xj; // xi: position of node n; xj position of adjacent node
-
-		xi = n.position();
-		for (auto it = n.edge_begin(); it != n.edge_end(); ++it) {
-			adjacent_node = (*it).node2();
-			xj = adjacent_node.position();
-			displacement = distance(xi, xj) - (*it).length();
-			direction = (xi - xj) / distance(xi, xj);
-			total_force += -K * displacement * direction;
-		}
-		return total_force;
-	  }
-};
-
-class DampingForce : public Stimulus {
-	public: 
-		scalar coeff_;
-		DampingForce(scalar coeff) : coeff_(coeff) {
-		}
-		virtual Point apply(Node n, double t) {
-			(void) t;
-			return -(n.value().velocity * coeff_);
-		}
+struct DampingForce : public Stimulus {
+	scalar coeff_;
+	DampingForce(scalar coeff) : coeff_(coeff) {
+	}
+	virtual Point apply(Node n, double t) {
+		(void) t;
+		return -(n.value().velocity * coeff_);
+	}
 };
 
 int main(int argc, char** argv) {
@@ -354,6 +297,7 @@ int main(int argc, char** argv) {
 
   // Construct the problem 1 force using new Force structure
 
+  // Define Forces
   GravityForce g_force;
   MassSpringForce spring_force;
   DampingForce damp_force ((scalar) 1 / graph.size());
@@ -363,17 +307,20 @@ int main(int argc, char** argv) {
   Force problem1_f = spring_f + gravity_f;
   Force problem3_f = spring_f + gravity_f + damp_f;
 
+  // Define constraints
   TableTop tt_constraint;
   Sphere s_constraint;
   FireBall fire_ball_constraint;
   Constraint table_top_c (&tt_constraint);
   Constraint sphere_c (&s_constraint);
   Constraint fireball_c (&fire_ball_constraint);
+  Constraint test1 = sphere_c + table_top_c;
+  Constraint test2 = fireball_c + table_top_c;
 
   for (double t = t_start; t < t_end; t += dt) {
     //std::cout << "t = " << t << std::endl;
     symp_euler_step(graph, t, dt, problem3_f);
-	fireball_c(graph, t);
+	test2(graph, t);
 
 	// Redraw the graph
 	viewer.clear();
