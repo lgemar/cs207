@@ -83,6 +83,9 @@ class GraphSymmetricMatrix {
 		 * [ ] Take advantage of the fact that A is symmetric to reduce
 		 	multiplications from O(N^2) to O(N)
 		 * [ ] construct the b vector in the main function
+		 * [x] implement the f and g functions
+		 * [ ] provide conditional branch in g function base on whether node
+		 		is a boundary node
 		 */
 		 /** Calculate the A(i, j) value for indices i and j */
 
@@ -200,7 +203,23 @@ void remove_box(GraphType& g, const BoundingBox& bb) {
   return;
 }
 
+double function_f(const Point& p) {
+	return 5 * std::cos(norm_1(p));
+}
 
+double function_g(const Point& p) {
+	bool trial0 = norm_inf(p - Point(0.6, 0.6, 0)) < 0.2;
+	bool trial1 = norm_inf(p - Point(-0.6, 0.6, 0)) < 0.2;
+	bool trial2 = norm_inf(p - Point(0.6, -0.6, 0)) < 0.2;
+	bool trial3 = norm_inf(p - Point(-0.6, -0.6, 0)) < 0.2;
+	if( trial0 || trial1 || trial2 || trial3 )
+		return -0.2;
+	else if (BoundingBox(Point(-0.6, -0.2, -1), Point(0.6, 0.2, 1)).contains(p))
+		return 1.0;
+	else if ( norm_inf(p) == 1.0 ) 
+		return 0;
+	assert(false); // g(x) is undefined
+}
 
 int main(int argc, char** argv)
 {
@@ -271,8 +290,25 @@ int main(int argc, char** argv)
 
   // Make the b vector
   for(auto it = graph.node_begin(); it != graph.node_end(); ++it) {
-  	Node n = (*it);
-	b[n.index()] = 0;
+	Node n = (*it);
+  	Point p = n.position();
+	double bi;
+	if( n.value().boundary ) {
+		bi = function_f(p);
+	}
+	else {
+		Edge first_edge = *(graph.edge_begin());
+		double h = first_edge.length(); //all edges have same length
+		double f_res = function_f(p);
+		double adj_sum = 0;
+		for(auto adj_it = n.edge_begin(); adj_it != n.edge_end(); ++adj_it) {
+			Node adj_node = (*adj_it).node2();
+			if( adj_node.value().boundary )
+				adj_sum += function_g(adj_node.position());
+		}
+		bi = h * h * f_res - adj_sum;
+	}
+	b[n.index()] = bi;
   }
 
   itl::cyclic_iteration<double> iter(b, 50, 1e-10);
