@@ -17,22 +17,65 @@
 #include "Graph.hpp"
 #include "Point.hpp"
 #include "BoundingBox.hpp"
+#include <fstream>
 
 
-// HW3: YOUR CODE HERE
+/** Useful type information */
+// Define Node data and Edge data types
+typedef struct NodeData {
+	bool boundary;
+} node_data;
+
+typedef struct EdgeData {
+} edge_data;
+
+typedef Graph<node_data,edge_data> GraphType;
+typedef typename GraphType::node_type Node;
+typedef typename GraphType::edge_type Edge;
+
 // Define a GraphSymmetricMatrix that maps
 // your Graph concept to MTL's Matrix concept. This shouldn't need to copy or
 // modify Graph at all!
-typedef Graph<char,char> GraphType;  //<  DUMMY Placeholder
+class GraphSymmetricMatrix {
+
+	/** TODO: 
+	 * [x] flag whether a node is on a boundary
+	 *	: maybe I can do this within "remove_box" ? 
+	 *	: iterate along the adjacency list of the removed node and 
+	 * 	  tag the "boundary" flag for that node
+	 * [x] determine whether two nodes share an edge
+	 *	: graph.has_edge(Node i, Node j);  
+	 * [x] determine the degree of a node 
+	 *	: n.degree();
+	 * [ ] test whether adjacency iteration is working properly by trying to
+	 * 	   remove adjacent nodes. This will prove that the correct nodes
+	 * 	   are having their boundary value set to true
+	 * 
+	 */
+};
 
 /** Remove all the nodes in graph @a g whose posiiton is contained within
  * BoundingBox @a bb
  * @post For all i, 0 <= i < @a g.num_nodes(),
  *        not bb.contains(g.node(i).position())
+ * @post all nodes adjacent to the removed edges are flagged as boundary nodes
  */
 void remove_box(GraphType& g, const BoundingBox& bb) {
-  // HW3: YOUR CODE HERE
-  (void) g; (void) bb;   //< Quiet compiler
+  for (auto it = g.node_begin(); it != g.node_end(); ++it) {
+	Node n = (*it);
+	Point p = n.position();
+  	if( bb.contains(p) ) {
+		// Iterate through all the adjacent nodes and flag adjacent nodes
+		// as boundary nodes
+		for (auto adj_it = n.edge_begin(); adj_it != n.edge_end(); ++adj_it) {
+			Edge e = *(adj_it);
+			Node adj_node = e.node2();
+			adj_node.value().boundary = true;
+		}
+		// Remove the node contained within the bounding box
+		g.remove_node(it);		
+	}
+  }
   return;
 }
 
@@ -72,16 +115,31 @@ int main(int argc, char** argv)
   double h = graph.edge(0).length();
 
   // Make holes in our Graph
-  remove_box(graph, BoundingBox(Point(-0.8+h,-0.8+h,-1), Point(-0.4-h,-0.4-h,1)));
-  remove_box(graph, BoundingBox(Point( 0.4+h,-0.8+h,-1), Point( 0.8-h,-0.4-h,1)));
-  remove_box(graph, BoundingBox(Point(-0.8+h, 0.4+h,-1), Point(-0.4-h, 0.8-h,1)));
-  remove_box(graph, BoundingBox(Point( 0.4+h, 0.4+h,-1), Point( 0.8-h, 0.8-h,1)));
-  remove_box(graph, BoundingBox(Point(-0.6+h,-0.2+h,-1), Point( 0.6-h, 0.2-h,1)));
+  remove_box(graph, BoundingBox(Point(-0.8+h,-0.8+h,-1), 
+  								Point(-0.4-h,-0.4-h,1)));
+  remove_box(graph, BoundingBox(Point( 0.4+h,-0.8+h,-1), 
+  								Point( 0.8-h,-0.4-h,1)));
+  remove_box(graph, BoundingBox(Point(-0.8+h, 0.4+h,-1), 
+  								Point(-0.4-h, 0.8-h,1)));
+  remove_box(graph, BoundingBox(Point( 0.4+h, 0.4+h,-1), 
+  								Point( 0.8-h, 0.8-h,1)));
+  remove_box(graph, BoundingBox(Point(-0.6+h,-0.2+h,-1), 
+  								Point( 0.6-h, 0.2-h,1)));
 
   // HW3: YOUR CODE HERE
   // Define b using the graph, f, and g.
   // Construct the GraphSymmetricMatrix A using the graph
   // Solve Au = b using MTL.
+
+  // Launch a viewer
+  CS207::SDLViewer viewer;
+  viewer.launch();
+
+  // Create a graph
+  auto node_map = viewer.empty_node_map(graph);
+  viewer.add_nodes(graph.node_begin(), graph.node_end(), node_map);
+  viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
+  viewer.center_view();
 
   return 0;
 }
