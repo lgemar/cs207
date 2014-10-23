@@ -11,6 +11,10 @@
  * Launches an SDLViewer to visualize the solution.
  */
 
+// HW3: Need to install/include Boost and MTL in Makefile
+#include <boost/numeric/mtl/mtl.hpp>
+#include <boost/numeric/itl/itl.hpp>
+
 #include "CS207/SDLViewer.hpp"
 #include "CS207/Util.hpp"
 
@@ -39,58 +43,126 @@ typedef typename GraphType::edge_type Edge;
 // modify Graph at all!
 class GraphSymmetricMatrix {
 
-	/** TODO: 
-	 * [ ] Fix node iterator problem that causes invalidation of the last
-	 *  : node in graph upon node removal
-	 *	: when a node gets removed it becomes the end node
-	 *	: bug screws up viewer when there are no nodes in the graph
-	 * [ ] test whether adjacency iteration is working properly by trying to
-	 * 	   remove adjacent nodes. This will prove that the correct nodes
-	 * 	   are having their boundary value set to true
-	 *	: test did not work. Some adjacencies are removed, others not.
-	 * [x] flag whether a node is on a boundary
-	 *	: maybe I can do this within "remove_box" ? 
-	 *	: iterate along the adjacency list of the removed node and 
-	 * 	  tag the "boundary" flag for that node
-	 * [x] determine whether two nodes share an edge
-	 *	: graph.has_edge(Node i, Node j);  
-	 * [x] determine the degree of a node 
-	 *	: n.degree();
-	 * [x] check viewer to see if remove_box is working with "remove_list" 
-	 *		implementation as a workaround for the way "remove_node" 
-	 *		invalidates iterators
-	 * [x] Use the first page of the Problem 2 description to start 
-	 * 		developing this GraphSymmetricMatrix as the linear operator A
-	 * [x] Write the operators that determine A and L for some i and j
-	 * 		that represent indices into the graph
-	 * [ ] Write the constructor for a graph symmetric matrix
-	 */
-	 /** Calculate the A(i, j) value for indices i and j */
-	 GraphSymmetricMatrix(GraphType g) : g(g) {
-	 };
+	public:
+		const GraphType* g;
+		GraphSymmetricMatrix(const GraphType* graph) : g(graph) {
+		};
+		/** TODO: 
+		 * [ ] Fix node iterator problem that causes invalidation of the last
+		 *  : node in graph upon node removal
+		 *	: when a node gets removed it becomes the end node
+		 *	: bug screws up viewer when there are no nodes in the graph
+		 * [ ] test whether adjacency iteration is working properly by trying to
+		 * 	   remove adjacent nodes. This will prove that the correct nodes
+		 * 	   are having their boundary value set to true
+		 *	: test did not work. Some adjacencies are removed, others not.
+		 * [x] flag whether a node is on a boundary
+		 *	: maybe I can do this within "remove_box" ? 
+		 *	: iterate along the adjacency list of the removed node and 
+		 * 	  tag the "boundary" flag for that node
+		 * [x] determine whether two nodes share an edge
+		 *	: graph.has_edge(Node i, Node j);  
+		 * [x] determine the degree of a node 
+		 *	: n.degree();
+		 * [x] check viewer to see if remove_box is working with "remove_list" 
+		 *		implementation as a workaround for the way "remove_node" 
+		 *		invalidates iterators
+		 * [x] Use the first page of the Problem 2 description to start 
+		 * 		developing this GraphSymmetricMatrix as the linear operator A
+		 * [x] Write the operators that determine A and L for some i and j
+		 * 		that represent indices into the graph
+		 * [x] Write the constructor for a graph symmetric matrix
+		 * [x] copy over the Identity matrix multiply functions
+		 * [x] Write size, num_rows, and num_cols functions for GraphSymmetric
+		 * [x] Modify multiply function to reflect the A(i, j) matrix elements
+		 * [x] Get code to compile with new matrix multiplication definition
+		 * [x] Figure out why g this class things g is  undefined
+		 * [x] Figure out why "mtl" is an undeclared identifier
+		 * [ ] Solve dummy A * 0 = 0 equation to make sure there are no 
+		 	wierd segfaults with indices
+		 */
+		 /** Calculate the A(i, j) value for indices i and j */
 
-	 int calculate_A(int i, int j) { 
-		 if( i == j && g.node(i).value().boundary) 
-			return 1;
+		/** Helper function to perform delayed evalutation of multiplication. 
+		 * Assign::apply(a, b) resolves to an assignment such as a += b, a-=b, 
+		 * 	or a = b
+		 * @pre size(v) == size(w)
+		 */
+		template<typename VectorIn, typename VectorOut, typename Assign>
+		void mult(const VectorIn& v, VectorOut& w, Assign) const {
+			assert( size(v) == size(w) );
+			assert( g->size() == size(v) );
+
+			size_t highest_index = g->size();
+			for (size_t i = 0; i < highest_index; i++) {
+				double sum = 0;
+				for (size_t j = 0; j < highest_index; j++) {
+					sum += calculate_A(i, j) * v[j];
+				}
+				Assign::apply(w[i], sum);
+			}
+		}
+
+		/** Matrix-vector multiplication forwards to MTL's lazy mat_cvec_mult
+		 * operator */
+		template <typename Vector>
+		mtl::vec::mat_cvec_multiplier<GraphSymmetricMatrix, Vector> operator*(const Vector& v) const {
+			return mtl::vec::mat_cvec_multiplier
+						<GraphSymmetricMatrix, Vector>(*this, v);
+		}
+
+		double calculate_A(size_t i, size_t j) const { 
+		 if( i == j && g->node(i).value().boundary) 
+			return 1.0;
 		 else if( i != j && 
-		 		(g.node(i).value().boundary || g.node(j).value().boundary)) {
+				(g->node(i).value().boundary || g->node(j).value().boundary)) {
 			return 0;
 		 }
 		 else
 			return calculate_L(i,j);
-	 }
+		}
 
-	 int calculate_L(int i, int j) {
+		double calculate_L(size_t i, size_t j) const {
 		 if( i == j )
-			return g.node(i).degree();
-		 else if( g.has_edge( g.node(i), g.node(j) ))
-			return 1;
+			return (double) g->node(i).degree();
+		 else if( g->has_edge( g->node(i), g->node(j) ))
+			return 1.0;
 		 else
 			return 0;
-	 }
+		}
 
-	 GraphType g;
 };
+
+/** Size helper functions for the GraphSymmetricMatrix class */
+inline std::size_t size(const GraphSymmetricMatrix& A) { 
+	return A.g->size() * A.g->size(); 
+}
+inline std::size_t num_rows(const GraphSymmetricMatrix& A) { 
+	return A.g->size(); 
+}
+inline std::size_t num_cols(const GraphSymmetricMatrix& A) { 
+	return A.g->size(); 
+}
+
+/** Traits that mtl uses to determine properties of our Identity matrix */
+namespace mtl {
+
+/** Define IdentityMatrix to be a non-scalar type */
+namespace ashape {
+template<>
+struct ashape_aux<GraphSymmetricMatrix> {
+	typedef nonscal type;
+};
+} // end namespace ashape
+
+/** IdentityMatrix implements Collection concept with value type 
+ * and size type */
+template<>
+struct Collection<GraphSymmetricMatrix> {
+	typedef double value_type;
+	typedef unsigned size_type;
+};
+}
 
 /** Remove all the nodes in graph @a g whose posiiton is contained within
  * BoundingBox @a bb
@@ -178,10 +250,27 @@ int main(int argc, char** argv)
   remove_box(graph, BoundingBox(Point(-0.6+h,-0.2+h,-1), 
   								Point( 0.6-h, 0.2-h,1)));
 
-  // HW3: YOUR CODE HERE
   // Define b using the graph, f, and g.
   // Construct the GraphSymmetricMatrix A using the graph
   // Solve Au = b using MTL.
+
+  /** Set up equations */
+  typedef GraphSymmetricMatrix matrix_type;
+
+  // Set up an identity matrix, A
+  matrix_type A(&graph);
+
+  // Create a preconditioner
+  itl::pc::identity<matrix_type> P(A);
+
+  // Set up a matrix
+  mtl::dense_vector<double> x(graph.size(), 0.0), b(graph.size(), 0.0);
+
+  itl::cyclic_iteration<double> iter(b, 50, 1e-10);
+
+  cg(A, x, b, P, iter);
+  std::cout << b << std::endl;
+  std::cout << x << std::endl;
 
   // Launch a viewer
   CS207::SDLViewer viewer;

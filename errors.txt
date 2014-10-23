@@ -1,22 +1,44 @@
-In file included from mtl_test.cpp:7:
-In file included from ./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/mtl.hpp:16:
-In file included from ./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/types.hpp:17:
-In file included from ./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrices.hpp:26:
-./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/ell_matrix.hpp:72:34: warning: unused parameter 'os' [-Wunused-parameter]
-    void print_internal(OStream& os) const
-                                 ^
-1 warning generated.
-poisson.cpp:53:17: error: implicit instantiation of undefined template 'std::basic_ifstream<char, std::char_traits<char> >'
-  std::ifstream nodes_file(argv[1]);
+poisson.cpp:101:2: error: use of undeclared identifier 'mtl'
+        mtl::vec::mat_cvec_multiplier<IdentityMatrix, Vector> operator*(const Vector& v) const {
+        ^
+poisson.cpp:101:31: error: expected member name or ';' after declaration specifiers
+        mtl::vec::mat_cvec_multiplier<IdentityMatrix, Vector> operator*(const Vector& v) const {
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+poisson.cpp:92:12: error: use of undeclared identifier 'calculate_A'
+                                sum += calculate_A(i, j) * v[j];
+                                       ^
+poisson.cpp:130:11: error: 'g' is a private member of 'GraphSymmetricMatrix'
+        return A.g->num_nodes() * A.g->num_nodes(); 
+                 ^
+poisson.cpp:42:19: note: implicitly declared private here
+        const GraphType* g;
+                         ^
+poisson.cpp:130:30: error: 'g' is a private member of 'GraphSymmetricMatrix'
+        return A.g->num_nodes() * A.g->num_nodes(); 
+                                    ^
+poisson.cpp:42:19: note: implicitly declared private here
+        const GraphType* g;
+                         ^
+poisson.cpp:133:11: error: 'g' is a private member of 'GraphSymmetricMatrix'
+        return A.g->num_nodes(); 
+                 ^
+poisson.cpp:42:19: note: implicitly declared private here
+        const GraphType* g;
+                         ^
+poisson.cpp:136:11: error: 'g' is a private member of 'GraphSymmetricMatrix'
+        return A.g->num_nodes(); 
+                 ^
+poisson.cpp:42:19: note: implicitly declared private here
+        const GraphType* g;
+                         ^
+poisson.cpp:145:8: error: explicit specialization of non-template struct 'ashape_aux'
+struct ashape_aux<GraphSymmetricMatrix> {
+       ^         ~~~~~~~~~~~~~~~~~~~~~~
+poisson.cpp:146:10: error: unknown type name 'nonscal'
+        typedef nonscal type;
                 ^
-/usr/include//c++/4.8/iosfwd:111:11: note: template is declared here
-    class basic_ifstream;
-          ^
-poisson.cpp:61:17: error: implicit instantiation of undefined template 'std::basic_ifstream<char, std::char_traits<char> >'
-  std::ifstream tets_file(argv[2]);
-                ^
-/usr/include//c++/4.8/iosfwd:111:11: note: template is declared here
-    class basic_ifstream;
-          ^
-2 errors generated.
+poisson.cpp:153:8: error: explicit specialization of non-template struct 'Collection'
+struct Collection<GraphSymmetricMatrix> {
+       ^         ~~~~~~~~~~~~~~~~~~~~~~
+10 errors generated.
 make: *** [poisson.o] Error 1
