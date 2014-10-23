@@ -1,61 +1,22 @@
-mass_spring.cpp:135:30: error: use of undeclared identifier 'Stimulus'
-                typedef typename std::list<Stimulus*> f_composition;
-                                           ^
-mass_spring.cpp:135:39: error: expected expression
-                typedef typename std::list<Stimulus*> f_composition;
-                                                    ^
-mass_spring.cpp:137:14: error: unknown type name 'Stimulus'
-                Constraint(Stimulus* s) {
-                           ^
-mass_spring.cpp:141:3: error: C++ requires a type specifier for all declarations
-                Force(f_composition composite) : constraints_(composite) {
-                ^~~~~
-mass_spring.cpp:149:3: error: unknown type name 'Force'
-                Force operator+(Force f) const {
+In file included from mtl_test.cpp:7:
+In file included from ./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/mtl.hpp:16:
+In file included from ./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/types.hpp:17:
+In file included from ./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrices.hpp:26:
+./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/ell_matrix.hpp:72:34: warning: unused parameter 'os' [-Wunused-parameter]
+    void print_internal(OStream& os) const
+                                 ^
+1 warning generated.
+poisson.cpp:53:17: error: implicit instantiation of undefined template 'std::basic_ifstream<char, std::char_traits<char> >'
+  std::ifstream nodes_file(argv[1]);
                 ^
-mass_spring.cpp:149:19: error: unknown type name 'Force'
-                Force operator+(Force f) const {
-                                ^
-mass_spring.cpp:138:16: error: member reference base type 'f_composition' (aka 'int') is not a structure or union
-                        constraints_.push_front(s);
-                        ~~~~~~~~~~~~^~~~~~~~~~~
-mass_spring.cpp:141:34: error: only constructors take base initializers
-                Force(f_composition composite) : constraints_(composite) {
-                                               ^
-mass_spring.cpp:145:30: error: member reference base type 'const f_composition' (aka 'const int') is not a structure or union
-                        for(auto it = constraints_.begin(); it != constraints_.end(); ++it)
-                                      ~~~~~~~~~~~~^~~~~~
-mass_spring.cpp:145:58: error: member reference base type 'const f_composition' (aka 'const int') is not a structure or union
-                        for(auto it = constraints_.begin(); it != constraints_.end(); ++it)
-                                                                  ~~~~~~~~~~~~^~~~
-mass_spring.cpp:151:30: error: member reference base type 'const f_composition' (aka 'const int') is not a structure or union
-                        for(auto it = constraints_.begin(); it != constraints_.end(); ++it) {
-                                      ~~~~~~~~~~~~^~~~~~
-mass_spring.cpp:151:58: error: member reference base type 'const f_composition' (aka 'const int') is not a structure or union
-                        for(auto it = constraints_.begin(); it != constraints_.end(); ++it) {
-                                                                  ~~~~~~~~~~~~^~~~
-mass_spring.cpp:152:20: error: member reference base type 'f_composition' (aka 'int') is not a structure or union
-                                constraint_list.push_front(*it);        
-                                ~~~~~~~~~~~~~~~^~~~~~~~~~~
-mass_spring.cpp:154:17: error: use of undeclared identifier 'force_list'
-                        return Force(force_list);
-                                     ^
-mass_spring.cpp:160:12: error: expected ')'
-                operator(GraphType g, t) {
-                         ^
-mass_spring.cpp:160:11: note: to match this '('
-                operator(GraphType g, t) {
-                        ^
-mass_spring.cpp:160:3: error: 'operator()' cannot be the name of a variable or data member
-                operator(GraphType g, t) {
+/usr/include//c++/4.8/iosfwd:111:11: note: template is declared here
+    class basic_ifstream;
+          ^
+poisson.cpp:61:17: error: implicit instantiation of undefined template 'std::basic_ifstream<char, std::char_traits<char> >'
+  std::ifstream tets_file(argv[2]);
                 ^
-mass_spring.cpp:166:4: error: expected ';' at end of declaration list
-                }
-                 ^
-                 ;
-mass_spring.cpp:167:2: error: expected ';' after class
-}
- ^
- ;
-18 errors generated.
-make: *** [mass_spring.o] Error 1
+/usr/include//c++/4.8/iosfwd:111:11: note: template is declared here
+    class basic_ifstream;
+          ^
+2 errors generated.
+make: *** [poisson.o] Error 1

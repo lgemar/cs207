@@ -30,7 +30,7 @@ DEPSFLAGS = -MD -MF $(DEPSFILE) -MP
 
 # Define any directories containing header files
 #   To include directories use -Ipath/to/files
-INCLUDES += -I.
+INCLUDES += -I. -I./MTL-4.0.9555-Linux/usr/include/
 
 # Define CXX compile flags
 CXXFLAGS += -O0 -g -funroll-loops -W -Wall -Wextra #-Wfatal-errors
