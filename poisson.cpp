@@ -311,7 +311,7 @@ int main(int argc, char** argv)
 	b[n.index()] = bi;
   }
 
-  itl::cyclic_iteration<double> iter(b, 50, 1e-10);
+  itl::cyclic_iteration<double> iter(b, 200, 1e-10, 0, 1, std::cout);
 
   cg(A, x, b, P, iter);
   std::cout << b << std::endl;
