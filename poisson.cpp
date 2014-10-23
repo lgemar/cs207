@@ -78,8 +78,11 @@ class GraphSymmetricMatrix {
 		 * [x] Get code to compile with new matrix multiplication definition
 		 * [x] Figure out why g this class things g is  undefined
 		 * [x] Figure out why "mtl" is an undeclared identifier
-		 * [ ] Solve dummy A * 0 = 0 equation to make sure there are no 
+		 * [x] Solve dummy A * 0 = 0 equation to make sure there are no 
 		 	wierd segfaults with indices
+		 * [ ] Take advantage of the fact that A is symmetric to reduce
+		 	multiplications from O(N^2) to O(N)
+		 * [ ] construct the b vector in the main function
 		 */
 		 /** Calculate the A(i, j) value for indices i and j */
 
@@ -265,6 +268,12 @@ int main(int argc, char** argv)
 
   // Set up a matrix
   mtl::dense_vector<double> x(graph.size(), 0.0), b(graph.size(), 0.0);
+
+  // Make the b vector
+  for(auto it = graph.node_begin(); it != graph.node_end(); ++it) {
+  	Node n = (*it);
+	b[n.index()] = 0;
+  }
 
   itl::cyclic_iteration<double> iter(b, 50, 1e-10);
 
