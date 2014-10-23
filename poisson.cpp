@@ -59,7 +59,37 @@ class GraphSymmetricMatrix {
 	 * [x] check viewer to see if remove_box is working with "remove_list" 
 	 *		implementation as a workaround for the way "remove_node" 
 	 *		invalidates iterators
+	 * [x] Use the first page of the Problem 2 description to start 
+	 * 		developing this GraphSymmetricMatrix as the linear operator A
+	 * [x] Write the operators that determine A and L for some i and j
+	 * 		that represent indices into the graph
+	 * [ ] Write the constructor for a graph symmetric matrix
 	 */
+	 /** Calculate the A(i, j) value for indices i and j */
+	 GraphSymmetricMatrix(GraphType g) : g(g) {
+	 };
+
+	 int calculate_A(int i, int j) { 
+		 if( i == j && g.node(i).value().boundary) 
+			return 1;
+		 else if( i != j && 
+		 		(g.node(i).value().boundary || g.node(j).value().boundary)) {
+			return 0;
+		 }
+		 else
+			return calculate_L(i,j);
+	 }
+
+	 int calculate_L(int i, int j) {
+		 if( i == j )
+			return g.node(i).degree();
+		 else if( g.has_edge( g.node(i), g.node(j) ))
+			return 1;
+		 else
+			return 0;
+	 }
+
+	 GraphType g;
 };
 
 /** Remove all the nodes in graph @a g whose posiiton is contained within

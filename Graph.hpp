@@ -242,7 +242,7 @@ class Graph {
 
 	/** Returns the number of edges associated with this Node */
 	size_type degree() const {
-		graph_->edges_[ uid_ ].adj_list.size();
+		return graph_->edges_[ uid_ ].adj_list.size();
 	}
 
    	/** Returns an iterator to beginning of incident iterator list */
