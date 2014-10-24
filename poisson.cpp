@@ -118,21 +118,22 @@ class GraphSymmetricMatrix {
 		void mult(const VectorIn& v, VectorOut& w, Assign) const {
 			assert( size(v) == size(w) );
 			assert( g->size() == size(v) );
-			w = 0;
 
 			// w must be a vector of all zeros
 			size_t highest_index = g->size();
 			for (size_t i = 0; i < highest_index; i++) {
 				Node n = g->node(i);
+				Point pi = n.position();
 				double sum = 0.0;
-				if( on_boundary( n.position() ) )
+				if( on_boundary( pi ) )
 					sum += 1.0 * v[i];
 				else
 					sum += -1.0 * (double) n.degree() * v[i];
 				for(auto it = n.edge_begin(); it != n.edge_end(); ++it) {
 					Node adj_node = (*it).node2();
-					if( !on_boundary(adj_node.position()) )
-						sum += v[adj_node.index()];
+					Point pj = adj_node.position();
+					if( !on_boundary(pj) && !on_boundary(pi))
+						sum += 1.0 * v[adj_node.index()];
 				}
 				Assign::apply(w[i], sum);
 			}
@@ -292,7 +293,7 @@ int main(int argc, char** argv)
   for(auto it = graph.node_begin(); it != graph.node_end(); ++it) {
 	Node n = (*it);
   	Point p = n.position();
-	double bi;
+	double bi = 0.0;
 	if( on_boundary(p) ) {
 		bi = function_g(p);
 	}
