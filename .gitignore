@@ -29,6 +29,3 @@
 
 # Any other wierd hidden files
 .*
-
-# Ignore the MTL library
-MTL-4.0.0.9555-Linux/
