@@ -327,7 +327,7 @@ int main(int argc, char** argv)
   }
 
   itl::visual_iteration<VECT, GraphType, double> 
-  						iter(graph, x, b, 10000, 1e-10, 0, 50, std::cout);
+  						iter(graph, x, b, 10000, 1e-10, 0, 25, std::cout);
 
   cg(A, x, b, P, iter);
 
