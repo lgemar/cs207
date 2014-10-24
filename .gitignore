@@ -24,13 +24,11 @@
 *~
 .DS_Store
 
-<<<<<<< HEAD
-# vim swp files
-.*.swp
-=======
 # Vim swap files
 .*.swp
 
 # Any other wierd hidden files
 .*
->>>>>>> hw0update
+
+# Ignore the MTL library
+MTL-4.0.0.9555-Linux/
