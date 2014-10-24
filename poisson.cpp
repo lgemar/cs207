@@ -24,7 +24,6 @@
 #include <fstream>
 #include <list>
 
-
 /** Useful type information */
 // Define Node data and Edge data types
 typedef struct NodeData {
@@ -37,6 +36,21 @@ typedef struct EdgeData {
 typedef Graph<node_data,edge_data> GraphType;
 typedef typename GraphType::node_type Node;
 typedef typename GraphType::edge_type Edge;
+
+bool on_boundary(const Point& p) {
+	bool trial0 = norm_inf(p - Point(0.6, 0.6, 0)) < 0.2;
+	bool trial1 = norm_inf(p - Point(-0.6, 0.6, 0)) < 0.2;
+	bool trial2 = norm_inf(p - Point(0.6, -0.6, 0)) < 0.2;
+	bool trial3 = norm_inf(p - Point(-0.6, -0.6, 0)) < 0.2;
+	if( trial0 || trial1 || trial2 || trial3 )
+		return true;
+	else if (BoundingBox(Point(-0.6, -0.2, -1), Point(0.6, 0.2, 1)).contains(p))
+		return true;
+	else if ( norm_inf(p) == 1.0 ) 
+		return true;
+	else 
+		return false;
+}
 
 // Define a GraphSymmetricMatrix that maps
 // your Graph concept to MTL's Matrix concept. This shouldn't need to copy or
@@ -84,9 +98,14 @@ class GraphSymmetricMatrix {
 		 * [x] implement the f and g functions
 		 * [x] provide conditional branch in g function base on whether node
 		 		is a boundary node
-		 * [ ] Take advantage of the fact that A is symmetric to reduce
+		 * [x] Take advantage of the fact that A is symmetric to reduce
 		 	multiplications from O(N^2) to O(N)
 				--> This is actually necessary because my solver is too slow
+		 * [x] write "on_boundary" function using the fact that nodes on 
+		 		in the domain of g are boundary nodes
+		 * [x] go through multiply logic to ensure that calculation proceeds 
+		 	properly
+		 * [ ] go through generation of b matrix and make sure logic is correct
 		 */
 		 /** Calculate the A(i, j) value for indices i and j */
 
@@ -104,11 +123,16 @@ class GraphSymmetricMatrix {
 			// w must be a vector of all zeros
 			size_t highest_index = g->size();
 			for (size_t i = 0; i < highest_index; i++) {
-				double sum = calculate_A(i, i);
 				Node n = g->node(i);
+				double sum = 0.0;
+				if( on_boundary( n.position() ) )
+					sum += 1.0 * v[i];
+				else
+					sum += -1.0 * (double) n.degree() * v[i];
 				for(auto it = n.edge_begin(); it != n.edge_end(); ++it) {
 					Node adj_node = (*it).node2();
-					sum += calculate_A(n.index(), adj_node.index()) * v[adj_node.index()];
+					if( !on_boundary(adj_node.position()) )
+						sum += v[adj_node.index()];
 				}
 				Assign::apply(w[i], sum);
 			}
@@ -121,27 +145,6 @@ class GraphSymmetricMatrix {
 			return mtl::vec::mat_cvec_multiplier
 						<GraphSymmetricMatrix, Vector>(*this, v);
 		}
-
-		double calculate_A(size_t i, size_t j) const { 
-		 if( i == j && g->node(i).value().boundary) 
-			return 1.0;
-		 else if( i != j && 
-				(g->node(i).value().boundary || g->node(j).value().boundary)) {
-			return 0.0;
-		 }
-		 else
-			return calculate_L(i,j);
-		}
-
-		double calculate_L(size_t i, size_t j) const {
-		 if( i == j )
-			return (-1.0 * (double) g->node(i).degree());
-		 else if( g->has_edge( g->node(i), g->node(j) ))
-			return 1.0;
-		 else
-			return 0.0;
-		}
-
 };
 
 /** Size helper functions for the GraphSymmetricMatrix class */
@@ -188,14 +191,6 @@ void remove_box(GraphType& g, const BoundingBox& bb) {
 	Node n = (*it);
 	Point p = n.position();
   	if( bb.contains(p) ) {
-		// Iterate through all the adjacent nodes and flag adjacent nodes
-		// as boundary nodes; need to figure out if node is one edge length
-		// away from the boundary box
-		for (auto adj_it = n.edge_begin(); adj_it != n.edge_end(); ++adj_it) {
-			Edge e = *(adj_it);
-			Node adj_node = e.node2();
-			adj_node.value().boundary = true;
-		}
 		// Remove the node contained within the bounding box
 		remove_list.push_front(n);
 	}
@@ -298,18 +293,19 @@ int main(int argc, char** argv)
 	Node n = (*it);
   	Point p = n.position();
 	double bi;
-	if( n.value().boundary ) {
-		bi = function_f(p);
+	if( on_boundary(p) ) {
+		bi = function_g(p);
 	}
 	else {
 		Edge first_edge = *(graph.edge_begin());
 		double h = first_edge.length(); //all edges have same length
 		double f_res = function_f(p);
-		double adj_sum = 0;
+		double adj_sum = 0.0;
 		for(auto adj_it = n.edge_begin(); adj_it != n.edge_end(); ++adj_it) {
 			Node adj_node = (*adj_it).node2();
-			if( adj_node.value().boundary )
-				adj_sum += function_g(adj_node.position());
+			Point adj_p = adj_node.position();
+			if( on_boundary(adj_p) )
+				adj_sum += function_g(adj_p);
 		}
 		bi = h * h * f_res - adj_sum;
 	}
