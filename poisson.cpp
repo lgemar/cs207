@@ -61,53 +61,6 @@ class GraphSymmetricMatrix {
 		const GraphType* g;
 		GraphSymmetricMatrix(const GraphType* graph) : g(graph) {
 		};
-		/** TODO: 
-		 * [ ] Fix node iterator problem that causes invalidation of the last
-		 *  : node in graph upon node removal
-		 *	: when a node gets removed it becomes the end node
-		 *	: bug screws up viewer when there are no nodes in the graph
-		 * [ ] test whether adjacency iteration is working properly by trying to
-		 * 	   remove adjacent nodes. This will prove that the correct nodes
-		 * 	   are having their boundary value set to true
-		 *	: test did not work. Some adjacencies are removed, others not.
-		 * [x] flag whether a node is on a boundary
-		 *	: maybe I can do this within "remove_box" ? 
-		 *	: iterate along the adjacency list of the removed node and 
-		 * 	  tag the "boundary" flag for that node
-		 * [x] determine whether two nodes share an edge
-		 *	: graph.has_edge(Node i, Node j);  
-		 * [x] determine the degree of a node 
-		 *	: n.degree();
-		 * [x] check viewer to see if remove_box is working with "remove_list" 
-		 *		implementation as a workaround for the way "remove_node" 
-		 *		invalidates iterators
-		 * [x] Use the first page of the Problem 2 description to start 
-		 * 		developing this GraphSymmetricMatrix as the linear operator A
-		 * [x] Write the operators that determine A and L for some i and j
-		 * 		that represent indices into the graph
-		 * [x] Write the constructor for a graph symmetric matrix
-		 * [x] copy over the Identity matrix multiply functions
-		 * [x] Write size, num_rows, and num_cols functions for GraphSymmetric
-		 * [x] Modify multiply function to reflect the A(i, j) matrix elements
-		 * [x] Get code to compile with new matrix multiplication definition
-		 * [x] Figure out why g this class things g is  undefined
-		 * [x] Figure out why "mtl" is an undeclared identifier
-		 * [x] Solve dummy A * 0 = 0 equation to make sure there are no 
-		 	wierd segfaults with indices
-		 * [x] construct the b vector in the main function
-		 * [x] implement the f and g functions
-		 * [x] provide conditional branch in g function base on whether node
-		 		is a boundary node
-		 * [x] Take advantage of the fact that A is symmetric to reduce
-		 	multiplications from O(N^2) to O(N)
-				--> This is actually necessary because my solver is too slow
-		 * [x] write "on_boundary" function using the fact that nodes on 
-		 		in the domain of g are boundary nodes
-		 * [x] go through multiply logic to ensure that calculation proceeds 
-		 	properly
-		 * [ ] go through generation of b matrix and make sure logic is correct
-		 */
-		 /** Calculate the A(i, j) value for indices i and j */
 
 		/** Helper function to perform delayed evalutation of multiplication. 
 		 * Assign::apply(a, b) resolves to an assignment such as a += b, a-=b, 
@@ -177,6 +130,44 @@ struct Collection<GraphSymmetricMatrix> {
 	typedef double value_type;
 	typedef unsigned size_type;
 };
+}
+
+namespace itl {
+	template<typename GraphType, class Real, class OStream = std::ostream>
+	class visual_iteration : public cyclic_iteration<Real, OStream> {
+		typedef cyclic_iteration<Real, std::ostream> super;
+		typedef visual_iteration self;
+
+		// Member variables
+		GraphType graph;
+		CS207::SDLViewer viewer;
+
+		void update_viewer() {
+		  // Create a graph
+		  auto node_map = viewer.empty_node_map(graph);
+		  viewer.add_nodes(graph.node_begin(), graph.node_end(), 
+		  	CS207::PoissonColor(), CS207::PoissonPosition(), node_map);
+		  viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
+		  viewer.center_view();
+		}
+		public: 
+			template <class Vector>
+			visual_iteration(const Vector& r0, int max_iter, Real tol_,
+							 Real atol_ = Real(0), int cycle_=100,
+							 OStream& out=std::cout, GraphType g=GraphType()) : 
+							 super(r0, max_iter, tol_, atol_, cycle_, out), 
+							 graph(g) {
+			  // Launch a viewer
+			  CS207::SDLViewer viewer;
+			  viewer.launch();
+			}
+			template<typename T>
+			bool finished(const T& r) {
+				bool ret = super::finished(r);
+				update_viewer();
+				return ret;
+			}
+	};
 }
 
 /** Remove all the nodes in graph @a g whose posiiton is contained within
@@ -307,7 +298,7 @@ int main(int argc, char** argv)
 	b[n.index()] = bi;
   }
 
-  itl::cyclic_iteration<double> iter(b, 10000, 1e-10, 0, 50, std::cout);
+  itl::visual_iteration<GraphType, double> iter(b, 10000, 1e-10, 0, 50, std::cout, graph);
 
   cg(A, x, b, P, iter);
 
