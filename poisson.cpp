@@ -135,7 +135,7 @@ class GraphSymmetricMatrix {
 
 		double calculate_L(size_t i, size_t j) const {
 		 if( i == j )
-			return (double) g->node(i).degree();
+			return (-1.0 * (double) g->node(i).degree());
 		 else if( g->has_edge( g->node(i), g->node(j) ))
 			return 1.0;
 		 else
@@ -316,7 +316,7 @@ int main(int argc, char** argv)
 	b[n.index()] = bi;
   }
 
-  itl::cyclic_iteration<double> iter(b, 200, 1e-10, 0, 1, std::cout);
+  itl::cyclic_iteration<double> iter(b, 10000, 1e-10, 0, 50, std::cout);
 
   cg(A, x, b, P, iter);
 
