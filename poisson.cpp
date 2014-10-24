@@ -89,6 +89,7 @@ class GraphSymmetricMatrix {
 						sum += 1.0 * v[adj_node.index()];
 				}
 				Assign::apply(w[i], sum);
+				g->node(i).value().poisson = (double) i / highest_index;
 			}
 		}
 
@@ -133,50 +134,64 @@ struct Collection<GraphSymmetricMatrix> {
 }
 
 namespace itl {
-	template<typename GraphType, class Real, class OStream = std::ostream>
+	template<class Vector, typename GraphType, class Real, 
+			class OStream = std::ostream>
 	class visual_iteration : public cyclic_iteration<Real, OStream> {
 		typedef cyclic_iteration<Real, std::ostream> super;
 		typedef visual_iteration self;
 		typedef typename std::map<typename GraphType::node_type, unsigned> MAP;
-		typedef typename CS207::SDLViewer VIEW;
 
 		// Member variables
-		GraphType graph;
-		VIEW viewer;
+		const GraphType& graph;
+		const Vector& u;
+		CS207::SDLViewer viewer;
 		MAP node_map;
+		int counter;
+		int cycle;
 
 		void update_viewer() {
+		  // Adjust the poisson values to reflect the latest solve
+		  for(auto it = graph.node_begin(); it != graph.node_end(); ++it) {
+		  	Node n = (*it);
+			n.value().poisson = u[n.index()];
+		  }
 		  // Create a graph
 		  viewer.clear();
 		  node_map.clear();
 		  viewer.add_nodes(graph.node_begin(), graph.node_end(), 
-		  	CS207::PoissonColor(), CS207::PoissonPosition(), node_map);
+			CS207::PoissonColor(), CS207::PoissonPosition(), node_map);
 		  viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
 		  viewer.center_view();
 		}
+
 		public: 
-			template <class Vector>
-			visual_iteration(const Vector& r0, int max_iter, Real tol_,
+			// template <class Vector>
+			visual_iteration(const GraphType& g, const Vector& u, 
+							 const Vector& r0, int max_iter, Real tol_, 
 							 Real atol_ = Real(0), int cycle_=100,
-							 OStream& out=std::cout, GraphType g=GraphType()) : 
+							 OStream& out=std::cout) : 
 							 super(r0, max_iter, tol_, atol_, cycle_, out), 
-							 graph(g) {
+							 graph(g), u(u) {
+			  // Initialize counters
+			  cycle = cycle_;
+			  counter = 0;
 			  // Launch a viewer
 			  viewer.launch();
-			  node_map = viewer.empty_node_map(graph);
-			  viewer.add_nodes(graph.node_begin(), graph.node_end(), 
+			  node_map = viewer.empty_node_map(g);
+
+			  viewer.add_nodes(g.node_begin(), g.node_end(), 
 				CS207::PoissonColor(), CS207::PoissonPosition(), node_map);
-			  viewer.add_edges(graph.edge_begin(), g.edge_end(), node_map);
+			  viewer.add_edges(g.edge_begin(), g.edge_end(), node_map);
+
 			  viewer.center_view();
 			}
-			/**
-			template<typename T>
-			bool finished(const T& r) { return super::finished(r); };
-			*/
+
 			template<typename T>
 			bool finished(const T& r) {
 				bool ret = super::finished(r);
-				update_viewer();
+				if( counter % cycle == 0 || ret )
+					update_viewer();
+				++counter;
 				return ret;
 			}
 	};
@@ -276,6 +291,7 @@ int main(int argc, char** argv)
 
   /** Set up equations */
   typedef GraphSymmetricMatrix matrix_type;
+  typedef typename mtl::dense_vector<double> VECT;
 
   // Set up an identity matrix, A
   matrix_type A(&graph);
@@ -284,7 +300,7 @@ int main(int argc, char** argv)
   itl::pc::identity<matrix_type> P(A);
 
   // Set up a matrix
-  mtl::dense_vector<double> x(graph.size(), 0.0), b(graph.size(), 0.0);
+  VECT x(graph.size(), 0.0), b(graph.size(), 0.0);
 
   // Make the b vector
   for(auto it = graph.node_begin(); it != graph.node_end(); ++it) {
@@ -310,7 +326,8 @@ int main(int argc, char** argv)
 	b[n.index()] = bi;
   }
 
-  itl::visual_iteration<GraphType, double> iter(b, 10000, 1e-10, 0, 50, std::cout, graph);
+  itl::visual_iteration<VECT, GraphType, double> 
+  						iter(graph, x, b, 10000, 1e-10, 0, 50, std::cout);
 
   cg(A, x, b, P, iter);
 
@@ -319,12 +336,6 @@ int main(int argc, char** argv)
   b = A * x;
   std::cout << "A * x: " << b << std::endl;
   */
-
-  // Set the values of the nodes to the corresponding solutions
-  for(auto it = graph.node_begin(); it != graph.node_end(); ++it) {
-  	Node n = (*it);
-	n.value().poisson = x[n.index()];
-  }
 
   return 0;
 }

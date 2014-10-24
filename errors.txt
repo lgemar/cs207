@@ -1,44 +1,36 @@
-poisson.cpp:101:2: error: use of undeclared identifier 'mtl'
-        mtl::vec::mat_cvec_multiplier<IdentityMatrix, Vector> operator*(const Vector& v) const {
+In file included from poisson.cpp:15:
+In file included from ./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/mtl.hpp:16:
+In file included from ./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/types.hpp:17:
+In file included from ./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrices.hpp:26:
+./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/ell_matrix.hpp:72:34: warning: unused parameter 'os' [-Wunused-parameter]
+    void print_internal(OStream& os) const
+                                 ^
+poisson.cpp:92:16: error: no viable overloaded '='
+                                g->node(i) = w[i];
+                                ~~~~~~~~~~ ^ ~~~~
+./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/mat_cvec_multiplier.hpp:48:4: note: in instantiation of function template specialization 'GraphSymmetricMatrix::mult<mtl::vec::dense_vector<double, mtl::vec::parameters<mtl::tag::col_major, mtl::vec::non_fixed::dimension, false, unsigned int> >, mtl::vec::dense_vector<double, mtl::vec::parameters<mtl::tag::col_major, mtl::vec::non_fixed::dimension, false, unsigned int> >, mtl::assign::assign_sum>' requested here
+        A.mult(v, w, mtl::assign::assign_sum());
+          ^
+./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/compute_summand.hpp:74:7: note: in instantiation of function template specialization 'mtl::vec::mat_cvec_multiplier<GraphSymmetricMatrix, mtl::vec::dense_vector<double, mtl::vec::parameters<mtl::tag::col_major, mtl::vec::non_fixed::dimension, false, unsigned int> > >::assign_to<mtl::vec::dense_vector<double, mtl::vec::parameters<mtl::tag::col_major, mtl::vec::non_fixed::dimension, false, unsigned int> > >' requested here
+        expr.assign_to(value);
+             ^
+./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/vec_vec_pmop_expr.hpp:40:20: note: in instantiation of member function 'mtl::operation::compute_summand<mtl::vec::mat_cvec_multiplier<GraphSymmetricMatrix, mtl::vec::dense_vector<double, mtl::vec::parameters<mtl::tag::col_major, mtl::vec::non_fixed::dimension, false, unsigned int> > > >::compute_summand' requested here
+      : first(v1), second(v2)
+                   ^
+./MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/vec_vec_minus_expr.hpp:37:12: note: in instantiation of member function 'mtl::vec::vec_vec_pmop_expr<mtl::vec::dense_vector<double, mtl::vec::parameters<mtl::tag::col_major, mtl::vec::non_fixed::dimension, false, unsigned int> >, mtl::vec::mat_cvec_multiplier<GraphSymmetricMatrix, mtl::vec::dense_vector<double, mtl::vec::parameters<mtl::tag::col_major, mtl::vec::non_fixed::dimension, false, unsigned int> > >, mtl::sfunctor::minus<double, double> >::vec_vec_pmop_expr' requested here
+    return type(static_cast<const E1&>(e1), static_cast<const E2&>(e2));
+           ^
+./MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/krylov/cg.hpp:90:11: note: in instantiation of function template specialization 'mtl::vec::operator-<mtl::vec::dense_vector<double, mtl::vec::parameters<mtl::tag::col_major, mtl::vec::non_fixed::dimension, false, unsigned int> >, mtl::vec::mat_cvec_multiplier<GraphSymmetricMatrix, mtl::vec::dense_vector<double, mtl::vec::parameters<mtl::tag::col_major, mtl::vec::non_fixed::dimension, false, unsigned int> > > >' requested here
+    r = b - A*x;
+          ^
+poisson.cpp:316:3: note: in instantiation of function template specialization 'itl::cg<GraphSymmetricMatrix, mtl::vec::dense_vector<double, mtl::vec::parameters<mtl::tag::col_major, mtl::vec::non_fixed::dimension, false, unsigned int> >, mtl::vec::dense_vector<double, mtl::vec::parameters<mtl::tag::col_major, mtl::vec::non_fixed::dimension, false, unsigned int> >, itl::pc::identity<GraphSymmetricMatrix, double>, itl::visual_iteration<Graph<NodeData, EdgeData>, double, std::basic_ostream<char> > >' requested here
+  cg(A, x, b, P, iter);
+  ^
+./Graph.hpp:172:9: note: candidate function (the implicit copy assignment operator) not viable: no known conversion from 'value_type' (aka 'double') to 'const Graph<NodeData, EdgeData>::Node' for 1st argument
+  class Node : private totally_ordered<Node> {
         ^
-poisson.cpp:101:31: error: expected member name or ';' after declaration specifiers
-        mtl::vec::mat_cvec_multiplier<IdentityMatrix, Vector> operator*(const Vector& v) const {
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-poisson.cpp:92:12: error: use of undeclared identifier 'calculate_A'
-                                sum += calculate_A(i, j) * v[j];
-                                       ^
-poisson.cpp:130:11: error: 'g' is a private member of 'GraphSymmetricMatrix'
-        return A.g->num_nodes() * A.g->num_nodes(); 
-                 ^
-poisson.cpp:42:19: note: implicitly declared private here
-        const GraphType* g;
-                         ^
-poisson.cpp:130:30: error: 'g' is a private member of 'GraphSymmetricMatrix'
-        return A.g->num_nodes() * A.g->num_nodes(); 
-                                    ^
-poisson.cpp:42:19: note: implicitly declared private here
-        const GraphType* g;
-                         ^
-poisson.cpp:133:11: error: 'g' is a private member of 'GraphSymmetricMatrix'
-        return A.g->num_nodes(); 
-                 ^
-poisson.cpp:42:19: note: implicitly declared private here
-        const GraphType* g;
-                         ^
-poisson.cpp:136:11: error: 'g' is a private member of 'GraphSymmetricMatrix'
-        return A.g->num_nodes(); 
-                 ^
-poisson.cpp:42:19: note: implicitly declared private here
-        const GraphType* g;
-                         ^
-poisson.cpp:145:8: error: explicit specialization of non-template struct 'ashape_aux'
-struct ashape_aux<GraphSymmetricMatrix> {
-       ^         ~~~~~~~~~~~~~~~~~~~~~~
-poisson.cpp:146:10: error: unknown type name 'nonscal'
-        typedef nonscal type;
-                ^
-poisson.cpp:153:8: error: explicit specialization of non-template struct 'Collection'
-struct Collection<GraphSymmetricMatrix> {
-       ^         ~~~~~~~~~~~~~~~~~~~~~~
-10 errors generated.
+./Graph.hpp:172:9: note: candidate function (the implicit move assignment operator) not viable: no known conversion from 'value_type' (aka 'double') to 'Graph<NodeData, EdgeData>::Node' for 1st argument
+  class Node : private totally_ordered<Node> {
+        ^
+1 warning and 1 error generated.
 make: *** [poisson.o] Error 1
