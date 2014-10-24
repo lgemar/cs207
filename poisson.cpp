@@ -27,7 +27,7 @@
 /** Useful type information */
 // Define Node data and Edge data types
 typedef struct NodeData {
-	bool boundary;
+	double poisson;
 } node_data;
 
 typedef struct EdgeData {
@@ -136,6 +136,7 @@ class GraphSymmetricMatrix {
 						sum += 1.0 * v[adj_node.index()];
 				}
 				Assign::apply(w[i], sum);
+				n.value().poisson = sum;
 			}
 		}
 
@@ -252,12 +253,6 @@ int main(int argc, char** argv)
     graph.add_edge(node_vec[t[2]], node_vec[t[3]]);
   }
   
-  /** Initialize the boundary values of the nodes */
-  for (auto it = graph.node_begin(); it != graph.node_end(); ++it) {
-	Node n = (*it);
-  	n.value().boundary = false;
-  }
-
   // Get the edge length, should be the same for each edge
   double h = graph.edge(0).length();
 

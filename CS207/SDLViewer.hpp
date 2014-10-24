@@ -48,11 +48,25 @@ struct DefaultColor {
   }
 };
 
+struct PoissonColor {
+	template<typename NODE>
+	Color operator()(const NODE& n) {
+		return Color(n.value().poisson);
+	}
+};
+
 // A default position functor that returns node.position() for any node
 struct DefaultPosition {
   template <typename NODE>
   Point operator()(const NODE& node) {
     return node.position();
+  }
+};
+
+struct PoissonPosition {
+  template <typename NODE>
+  Point operator()(const NODE& n) {
+    return Point(n.position().x, n.position().y, n.value().poisson);
   }
 };
 
@@ -275,7 +289,7 @@ class SDLViewer {
   template <typename InputIterator, typename Map>
   void add_nodes(InputIterator first, InputIterator last,
                  Map& node_map) {
-    return add_nodes(first, last, DefaultColor(), DefaultPosition(), node_map);
+    return add_nodes(first, last, DefaultColor(), PoissonPosition(), node_map);
   }
 
   /** Add the nodes in the range [first, last) to the display.
