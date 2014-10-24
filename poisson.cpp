@@ -137,15 +137,18 @@ namespace itl {
 	class visual_iteration : public cyclic_iteration<Real, OStream> {
 		typedef cyclic_iteration<Real, std::ostream> super;
 		typedef visual_iteration self;
+		typedef typename std::map<typename GraphType::node_type, unsigned> MAP;
+		typedef typename CS207::SDLViewer VIEW;
 
 		// Member variables
 		GraphType graph;
-		CS207::SDLViewer viewer;
+		VIEW viewer;
+		MAP node_map;
 
 		void update_viewer() {
 		  // Create a graph
 		  viewer.clear();
-		  auto node_map = viewer.empty_node_map(graph);
+		  node_map.clear();
 		  viewer.add_nodes(graph.node_begin(), graph.node_end(), 
 		  	CS207::PoissonColor(), CS207::PoissonPosition(), node_map);
 		  viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
@@ -158,26 +161,23 @@ namespace itl {
 							 super(r0, max_iter, tol_, atol_, cycle_, out), 
 							 graph(g) {
 			  // Launch a viewer
-			  /**
-			  CS207::SDLViewer viewer;
 			  viewer.launch();
-			  auto node_map = viewer.empty_node_map(graph);
+			  node_map = viewer.empty_node_map(graph);
 			  viewer.add_nodes(graph.node_begin(), graph.node_end(), 
 				CS207::PoissonColor(), CS207::PoissonPosition(), node_map);
 			  viewer.add_edges(graph.edge_begin(), g.edge_end(), node_map);
 			  viewer.center_view();
-			  */
 			}
+			/**
 			template<typename T>
 			bool finished(const T& r) { return super::finished(r); };
-			/**
+			*/
 			template<typename T>
 			bool finished(const T& r) {
 				bool ret = super::finished(r);
 				update_viewer();
 				return ret;
 			}
-			*/
 	};
 }
 
