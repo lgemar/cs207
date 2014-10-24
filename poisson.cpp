@@ -136,7 +136,6 @@ class GraphSymmetricMatrix {
 						sum += 1.0 * v[adj_node.index()];
 				}
 				Assign::apply(w[i], sum);
-				n.value().poisson = sum;
 			}
 		}
 
@@ -312,10 +311,17 @@ int main(int argc, char** argv)
 
   cg(A, x, b, P, iter);
 
-  // Display the results
+  /** Display the results for sanities sake
   std::cout << "b matrix: " << b << std::endl;
   b = A * x;
   std::cout << "A * x: " << b << std::endl;
+  */
+
+  // Set the values of the nodes to the corresponding solutions
+  for(auto it = graph.node_begin(); it != graph.node_end(); ++it) {
+  	Node n = (*it);
+	n.value().poisson = x[n.index()];
+  }
 
   // Launch a viewer
   CS207::SDLViewer viewer;
@@ -323,7 +329,8 @@ int main(int argc, char** argv)
 
   // Create a graph
   auto node_map = viewer.empty_node_map(graph);
-  viewer.add_nodes(graph.node_begin(), graph.node_end(), node_map);
+  viewer.add_nodes(graph.node_begin(), graph.node_end(), 
+  					CS207::DefaultColor(), CS207::PoissonPosition(), node_map);
   viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
   viewer.center_view();
 
