@@ -51,7 +51,9 @@ struct DefaultColor {
 struct PoissonColor {
 	template<typename NODE>
 	Color operator()(const NODE& n) {
-		return Color(n.value().poisson);
+		double u = n.value().poisson;
+		double u_normalized = (u + 0.3) / 1.4;
+		return Color::make_heat(u_normalized);
 	}
 };
 

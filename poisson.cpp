@@ -330,7 +330,7 @@ int main(int argc, char** argv)
   // Create a graph
   auto node_map = viewer.empty_node_map(graph);
   viewer.add_nodes(graph.node_begin(), graph.node_end(), 
-  					CS207::DefaultColor(), CS207::PoissonPosition(), node_map);
+  					CS207::PoissonColor(), CS207::PoissonPosition(), node_map);
   viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
   viewer.center_view();
 
