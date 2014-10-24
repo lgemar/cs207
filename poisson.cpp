@@ -80,12 +80,13 @@ class GraphSymmetricMatrix {
 		 * [x] Figure out why "mtl" is an undeclared identifier
 		 * [x] Solve dummy A * 0 = 0 equation to make sure there are no 
 		 	wierd segfaults with indices
+		 * [x] construct the b vector in the main function
+		 * [x] implement the f and g functions
+		 * [x] provide conditional branch in g function base on whether node
+		 		is a boundary node
 		 * [ ] Take advantage of the fact that A is symmetric to reduce
 		 	multiplications from O(N^2) to O(N)
-		 * [ ] construct the b vector in the main function
-		 * [x] implement the f and g functions
-		 * [ ] provide conditional branch in g function base on whether node
-		 		is a boundary node
+				--> This is actually necessary because my solver is too slow
 		 */
 		 /** Calculate the A(i, j) value for indices i and j */
 
@@ -98,12 +99,17 @@ class GraphSymmetricMatrix {
 		void mult(const VectorIn& v, VectorOut& w, Assign) const {
 			assert( size(v) == size(w) );
 			assert( g->size() == size(v) );
+			w = 0;
 
+			// w must be a vector of all zeros
 			size_t highest_index = g->size();
 			for (size_t i = 0; i < highest_index; i++) {
-				double sum = 0;
-				for (size_t j = 0; j < highest_index; j++) {
-					sum += calculate_A(i, j) * v[j];
+				double sum = calculate_A(i, i);
+				Node n = g->node(i);
+				for(auto it = n.edge_begin(); it != n.edge_end(); ++it) {
+					Node adj_node = (*it).node2();
+					sum += calculate_A(n.index(), adj_node.index());
+					std::cout << "i: " << n.index() << " j: " << adj_node.index() << std::endl;
 				}
 				Assign::apply(w[i], sum);
 			}
@@ -122,7 +128,7 @@ class GraphSymmetricMatrix {
 			return 1.0;
 		 else if( i != j && 
 				(g->node(i).value().boundary || g->node(j).value().boundary)) {
-			return 0;
+			return 0.0;
 		 }
 		 else
 			return calculate_L(i,j);
@@ -134,7 +140,7 @@ class GraphSymmetricMatrix {
 		 else if( g->has_edge( g->node(i), g->node(j) ))
 			return 1.0;
 		 else
-			return 0;
+			return 0.0;
 		}
 
 };
@@ -315,7 +321,7 @@ int main(int argc, char** argv)
 
   cg(A, x, b, P, iter);
   std::cout << b << std::endl;
-  std::cout << x << std::endl;
+  std::cout << A * x << std::endl;
 
   // Launch a viewer
   CS207::SDLViewer viewer;
