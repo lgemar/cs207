@@ -144,11 +144,11 @@ namespace itl {
 
 		void update_viewer() {
 		  // Create a graph
+		  viewer.clear();
 		  auto node_map = viewer.empty_node_map(graph);
 		  viewer.add_nodes(graph.node_begin(), graph.node_end(), 
 		  	CS207::PoissonColor(), CS207::PoissonPosition(), node_map);
 		  viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
-		  viewer.center_view();
 		}
 		public: 
 			template <class Vector>
@@ -158,15 +158,26 @@ namespace itl {
 							 super(r0, max_iter, tol_, atol_, cycle_, out), 
 							 graph(g) {
 			  // Launch a viewer
+			  /**
 			  CS207::SDLViewer viewer;
 			  viewer.launch();
+			  auto node_map = viewer.empty_node_map(graph);
+			  viewer.add_nodes(graph.node_begin(), graph.node_end(), 
+				CS207::PoissonColor(), CS207::PoissonPosition(), node_map);
+			  viewer.add_edges(graph.edge_begin(), g.edge_end(), node_map);
+			  viewer.center_view();
+			  */
 			}
+			template<typename T>
+			bool finished(const T& r) { return super::finished(r); };
+			/**
 			template<typename T>
 			bool finished(const T& r) {
 				bool ret = super::finished(r);
 				update_viewer();
 				return ret;
 			}
+			*/
 	};
 }
 
@@ -313,17 +324,6 @@ int main(int argc, char** argv)
   	Node n = (*it);
 	n.value().poisson = x[n.index()];
   }
-
-  // Launch a viewer
-  CS207::SDLViewer viewer;
-  viewer.launch();
-
-  // Create a graph
-  auto node_map = viewer.empty_node_map(graph);
-  viewer.add_nodes(graph.node_begin(), graph.node_end(), 
-  					CS207::PoissonColor(), CS207::PoissonPosition(), node_map);
-  viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
-  viewer.center_view();
 
   return 0;
 }
