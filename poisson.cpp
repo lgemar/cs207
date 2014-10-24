@@ -152,6 +152,7 @@ namespace itl {
 		  viewer.add_nodes(graph.node_begin(), graph.node_end(), 
 		  	CS207::PoissonColor(), CS207::PoissonPosition(), node_map);
 		  viewer.add_edges(graph.edge_begin(), graph.edge_end(), node_map);
+		  viewer.center_view();
 		}
 		public: 
 			template <class Vector>
