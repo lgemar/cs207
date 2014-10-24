@@ -108,8 +108,7 @@ class GraphSymmetricMatrix {
 				Node n = g->node(i);
 				for(auto it = n.edge_begin(); it != n.edge_end(); ++it) {
 					Node adj_node = (*it).node2();
-					sum += calculate_A(n.index(), adj_node.index());
-					std::cout << "i: " << n.index() << " j: " << adj_node.index() << std::endl;
+					sum += calculate_A(n.index(), adj_node.index()) * v[adj_node.index()];
 				}
 				Assign::apply(w[i], sum);
 			}
@@ -320,8 +319,11 @@ int main(int argc, char** argv)
   itl::cyclic_iteration<double> iter(b, 200, 1e-10, 0, 1, std::cout);
 
   cg(A, x, b, P, iter);
-  std::cout << b << std::endl;
-  std::cout << A * x << std::endl;
+
+  // Display the results
+  std::cout << "b matrix: " << b << std::endl;
+  b = A * x;
+  std::cout << "A * x: " << b << std::endl;
 
   // Launch a viewer
   CS207::SDLViewer viewer;
