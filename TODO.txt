@@ -1,0 +1,22 @@
+basics: Erik thursday
+< > constructors
+< > add triangle
+< > private data
+< > triangle class
+
+iterators:
+< > mesh iterator
+< > adjacent iterator
+< > begin end functions
+
+functionality:
+< > find triangle
+< > num triangles
+< > num connections
+
+math:
+< > normal
+< > area
+
+shallow water:
+< > ???
