@@ -291,7 +291,7 @@ int main(int argc, char** argv) {
   viewer.center_view();
 
   // Begin the mass-spring simulation
-  double dt = 0.001;
+  double dt = 0.1;
   double t_start = 0.0;
   double t_end   = 5.0;
 
