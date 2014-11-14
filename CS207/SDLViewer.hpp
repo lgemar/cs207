@@ -61,6 +61,7 @@ struct PoissonColor {
 struct DefaultPosition {
   template <typename NODE>
   Point operator()(const NODE& node) {
+	std::cout << "The triangle position is: " << node.position() << std::endl;
     return node.position();
   }
 };
@@ -278,6 +279,14 @@ class SDLViewer {
   template <typename G>
   std::map<typename G::node_type, unsigned> empty_node_map(const G&) const {
     return std::map<typename G::node_type, unsigned>();
+  }
+
+  /** Return an empty triangle map designed for the input graph.
+   *
+   * Node maps are passed to, and modified by, add_nodes() and add_edges(). */
+  template <typename G>
+  std::map<typename G::tri_type, unsigned> empty_triangle_map(const G&) const {
+    return std::map<typename G::tri_type, unsigned>();
   }
 
   /** Add the nodes in the range [first, last) to the display.
