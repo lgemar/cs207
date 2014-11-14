@@ -48,7 +48,8 @@ public:
 
 	// Define synonyms for the iterators
 	class TriangleIterator;
-	typedef typename TriGraph::NodeIterator triangle_iterator;
+	typedef TriangleIterator triangle_iterator;
+	//typedef typename TriGraph::NodeIterator triangle_iterator;
 	
 	class AdjacentIterator; 
 	typedef AdjacentIterator adjacent_iterator;
@@ -57,7 +58,7 @@ public:
 	typedef typename VertGraph::edge_iterator edge_iterator;
 
 	typedef vert_node node_type;
-	typedef tri_node tri_type;
+	typedef Triangle tri_type;
 
 	/** triangle stores 3 vertices and user triangle data*/
 	typedef struct triangle_data {
@@ -133,7 +134,7 @@ public:
 		}
 
 		/** returns one of the 3 vertices of the triangle */
-		vert_node vertex(size_type i) {
+		vert_node vertex(size_type i) const {
 			switch(i) {
 			case 1:
 				return mesh_->triangle_graph_.node(uid_).value().n1_;
@@ -175,7 +176,6 @@ public:
 			return uid_ < x.uid_;
 		}
 
-		/** Return the midpoint of the triangle
 		Point position() const {
 			double x_mid = (vertex(1).position().x + vertex(2).position().x
 						 	+ vertex(3).position().x) / 3.0;
@@ -185,11 +185,6 @@ public:
 						 	+ vertex(3).position().z) / 3.0;
 			return Point(x_mid, y_mid, z_mid);
 		}
-		*/
-		 Point position() const {
-			std::cout << "I'm returning a position with x coord" << vertex(1).position().x << std::endl;
-		 	return Point(vertex(1).position().x, vertex(1).position().y, vertex(1).position().z);
-		 }
 
 	private:
 		friend class Mesh;
@@ -402,12 +397,12 @@ public:
 
 	/** Returns an iterator to the first triangle in the graph */
 	triangle_iterator triangles_begin() const {
-		return Triangle(this, triangle_graph_.node_begin());
+		return TriangleIterator(this, triangle_graph_.node_begin());
 	}
 
 	/** Returns an iterator to the last triangle in the graph */
 	triangle_iterator triangles_end() const {
-		return triangle_graph_.node_end();
+		return TriangleIterator(this, triangle_graph_.node_end());
 	}
 
 

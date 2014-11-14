@@ -48,6 +48,13 @@ struct DefaultColor {
   }
 };
 
+struct RedColor {
+  template <typename NODE>
+  Color operator()(const NODE&) {
+    return Color(1, 0, 0);
+  }
+};
+
 struct PoissonColor {
 	template<typename NODE>
 	Color operator()(const NODE& n) {

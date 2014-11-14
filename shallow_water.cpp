@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
 
   // HW4B: Need to define Mesh::node_type and node/edge iterator
   // before these can be used!
-#if 0
+#if 1
   auto node_map = viewer.empty_node_map(mesh);
   viewer.add_nodes(mesh.node_begin(), mesh.node_end(),
                    CS207::DefaultColor(), NodePosition(), node_map);
@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
   	std::cout << "Triangle has position: " << (*it).position() << std::endl;
   }
   viewer.add_nodes(mesh.triangles_begin(), mesh.triangles_end(),
-                   CS207::DefaultColor(), NodePosition(), triangle_map);
+                   CS207::RedColor(), NodePosition(), triangle_map);
 #endif
   viewer.center_view();
 
