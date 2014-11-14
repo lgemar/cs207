@@ -13,6 +13,7 @@
 
 #include <fstream>
 #include <cmath>
+#include <set>
 
 #include "CS207/SDLViewer.hpp"
 #include "CS207/Util.hpp"
@@ -26,7 +27,7 @@ class Mesh {
 	// HW3: YOUR CODE HERE
 	// Write all typedefs, public member functions, private member functions,
 	//   inner classes, private member data, etc.
-
+public:
 	/** Data members that will be inside the 2 graphs */
 	struct triangle_data;
 	struct link_data;
@@ -39,10 +40,10 @@ class Mesh {
 	typedef Graph<vertex_data, edge_data> VertGraph;
 
 	// inner nodes and edges
-	typedef TriGraph::node_type tri_node;
-	typedef TriGraph::edge_type tri_edge;
-	typedef VertGraph::node_type vert_node;
-	typedef VertGraph::edge_type vert_edge;
+	typedef typename TriGraph::node_type tri_node;
+	typedef typename TriGraph::edge_type tri_edge;
+	typedef typename VertGraph::node_type vert_node;
+	typedef typename VertGraph::edge_type vert_edge;
 
 	/** triangle stores 3 vertices and user triangle data*/
 	typedef struct triangle_data {
@@ -50,7 +51,7 @@ class Mesh {
 		vert_node n2_;
 		vert_node n3_;
 		UserTriData data_;
-		triangle_data(vert_node n1, vert_node n2, vert_node n3, UserTriData d) :
+		triangle_data(vert_node n1, vert_node n2, vert_node n3, UserTriData d = UserTriData()) :
 			n1_(n1), n2_(n2), n3_(n3), data_(d) {}
 	} triangle_data;
 
@@ -58,36 +59,44 @@ class Mesh {
 	typedef struct link_data {
 		vert_edge dual_;
 		UserEdgeData data_;
+		link_data(vert_edge dual, UserEdgeData data = UserEdgeData()) : dual_(dual), data_(data) {}
 	} link_data;
 
 	/** vertex stores its triangles, node data */
 	typedef struct vertex_data {
-		std::vector<Triangle> triangles_;
+		std::set<Triangle> triangles_;
 		UserNodeData data_;
+		vertex_data(UserNodeData data = UserNodeData()) : data_(data) {/* triangles starts empty*/}
 	} vertex_data;
 
 	/** edge just stores its dual link */
 	typedef struct edge_data {
 		tri_edge dual_;
+		edge_data(tri_edge dual) : dual_(dual) {}
 	} edge_data;
 
-public:
+
 	/** Type of indexes and sizes. Return type of Mesh::num_nodes(). */
 	typedef unsigned size_type;
 
 	/** Return the number of nodes in the mesh. */
 	size_type num_nodes() const {
-		return 0;
+		return vertex_graph_.num_nodes();
 	}
 
 	/** Return the number of edges in the mesh. */
 	size_type num_edges() const {
-		return 0;
+		return vertex_graph_.num_edges();
 	}
 
 	/** Return the number of triangles in the mesh. */
 	size_type num_triangles() const {
-		return 0;
+		return triangle_graph_.num_nodes();
+	}
+
+	/** Return number of triangle-triangle connections in the mesh. */
+	size_type num_links() const {
+		return triangle_graph_.num_edges();
 	}
 
 	/** Triangle Type
@@ -103,7 +112,7 @@ public:
 		}
 
 		/** returns one of the 3 vertices of the triangle */
-		vert_node vertex(size_t i) {
+		vert_node vertex(size_type i) {
 			switch(i) {
 			case 1:
 				return mesh_->triangle_graph_.node(uid_).value().n1_;
@@ -118,20 +127,44 @@ public:
 			}
 		}
 
+		/** calculates area of triangle from nodes using .5 |ab x ac | */
+		double area() const {
+			return 0.5 * norm(cross(vertex(2).position() - vertex(1).position(),
+					vertex(3).position() - vertex(1).position()));
+		}
+
 		/** returns the user's value for the triangle. NOT our value! */
 		UserTriData value() {
 			return mesh_->triangle_graph_.node(uid_).value().data_;
 		}
+		const UserTriData& value() const {
+			return mesh_->triangle_graph_.node(uid_).value().data_;
+		}
+
+		/** returns how many connections this triangle has */
+		size_type degree() const {
+			return mesh_->triangle_graph_.node(uid_).degree();
+		}
+
+		/** comparison operators forward to underlying graph */
+		bool operator==(const Triangle& x) const {
+			return mesh_->triangle_graph_.node(uid_) == x.mesh_->triangle_graph_.node(x.uid_);
+		}
+		bool operator<(const Triangle& x) const {
+			return mesh_->triangle_graph_.node(uid_) < x.mesh_->triangle_graph_.node(x.uid_);
+		}
+
+
 
 	private:
 		friend class Mesh;
 
 		// private data
 		const Mesh* mesh_;
-		size_t uid_;
+		size_type uid_;
 
 		// private constructor, for Mesh functions
-		Triangle(const Mesh* mesh, const size_t uid) : mesh_(mesh), uid_(uid) {}
+		Triangle(const Mesh* mesh, const size_type uid) : mesh_(mesh), uid_(uid) {}
 		Triangle(const Mesh* mesh, const tri_node tn) : mesh_(mesh), uid_(tn.uid_) {}
 
 	};
@@ -167,8 +200,40 @@ public:
 	 */
 	Triangle add_triangle(vert_node n1, vert_node n2, vert_node n3, UserTriData d = UserTriData()) {
 
+		// check for existing triangles
+		Triangle existing = get_triangle(n1, n2, n3);
+		if (existing != Triangle()) {
+			existing.value() = d;
+			return existing;
+		}
+
 		// creating in private data
 		tri_node tn = triangle_graph_.add_node(Point(),tri_data(n1,n2,n3,d));
+
+		//adding edges: some might already exist
+		vert_edge e12 = vertex_graph_.add_edge(n1, n2);
+		vert_edge e23 = vertex_graph_.add_edge(n2, n3);
+		vert_edge e31 = vertex_graph_.add_edge(n3, n1);
+
+		// find neighbors, create links and maintain duals
+		std::set<Triangle> adj12 = common_triangles(n1, n2);
+		if (adj12.size() != 0) {
+			tri_edge temp = triangle_graph_.add_edge(tn, *adj12.begin());
+			temp.value() = link_data(e12);
+			e12.value().dual_ = temp;
+		}
+		std::set<Triangle> adj23 = common_triangles(n2, n3);
+		if (adj23.size() != 0) {
+			tri_edge temp = triangle_graph_.add_edge(tn, *adj23.begin());
+			temp.value() = link_data(e23);
+			e23.value().dual_ = temp;
+		}
+		std::set<Triangle> adj31 = common_triangles(n3, n1);
+		if (adj31.size() != 0) {
+			tri_edge temp = triangle_graph_.add_edge(tn, *adj31.begin());
+			temp.value() = link_data(e31);
+			e31.value().dual_ = temp;
+		}
 
 		// creating Triangle object
 		Triangle tri = Triangle(this, tn);
@@ -178,14 +243,86 @@ public:
 		n2.value().triangles_.push_back(tri);
 		n3.value().triangles_.push_back(tri);
 
-		// creating edges
+		return tri;
+	}
 
-		// creating links
+	/** Returns all of the triangles that the vertices have in common */
+	std::set<Triangle> common_triangles(vert_node n1, vert_node n2) const {
+		std::set<Triangle> overlap;
+		std::set_intersection(
+				n1.value().triangles_.begin(), n1.value().triangles_.end(),
+				n2.value().triangles_.begin(), n2.value().triangles_.end(),
+				std::back_inserter(overlap));
+		return overlap;
+	}
+
+	/** Return triangle that all 3 vertices have in common
+	 * @pre A triangle exists that has all 3 nodes
+	 * */
+	Triangle get_triangle(vert_node n1, vert_node n2, vert_node n3) const {
+		std::set<Triangle> overlap1;
+		std::set_intersection(
+			n1.value().triangles_.begin(), n1.value().triangles_.end(),
+			n2.value().triangles_.begin(), n2.value().triangles_.end(),
+			std::back_inserter(overlap1));
+
+		// finding intersection of intersection
+		std::set<Triangle> overlap2;
+		std::set_intersection(
+			overlap1.begin(), overlap1.end(),
+			n3.value().triangles_.begin(), n3.value().triangles_.end(),
+			std::back_inserter(overlap1));
+
+		// 1 or 0
+		if (overlap2.begin() != overlap2.end())
+			return *overlap2.begin();
+		else
+			return Triangle();
+	}
+
+	/** checks whether 3 nodes form a triangle */
+	bool has_triangle(vert_node n1, vert_node n2, vert_node n3) const {
+		Triangle t = get_triangle(n1, n2, n3);
+		return t != Triangle();
+	}
+
+	/** returns the normal of the edge between t1 and t2, pointing towards t2
+	 * ONLY IN THE XY plane
+	 * */
+	Point normal(Triangle t1, Triangle t2) const {
+		vert_edge edge = get_link(t1, t2).value().dual_;
+		Point edge_vec = edge.node1().position() - edge.node2().position();
+		Point normal = cross(edge_vec, Point(0,0,1));
+
+		// check if it points away from t1
+		Point towards_t1 = get_unused(t1, edge) - edge.node1();
+		if (dot(normal, towards_t1) > 0)
+			normal = -1 * normal;
+
+		return normal;
+
 
 	}
 
+
 private:
 	friend class Triangle;
+
+	/** private utility functions */
+	tri_edge get_link(Triangle t1, Triangle t2) const {
+		return triangle_graph_.edge(get_tri_node(t1), get_tri_node(t2));
+	}
+	tri_node get_tri_node(Triangle t) const {
+		return triangle_graph_.node(t.uid_);
+	}
+	tri_node get_unused(Triangle t, vert_edge e) const {
+		int i = 1;
+		while (t.vertex(i) == e.node1() || t.vertex(i) == e.node2())
+			++i;
+		return t.vertex(i);
+
+	}
+
 	/** Private data members */
 	TriGraph triangle_graph_;
 	VertGraph vertex_graph_;

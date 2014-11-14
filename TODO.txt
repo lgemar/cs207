@@ -1,8 +1,9 @@
 basics: Erik thursday
-< > constructors
-< > add triangle
-< > private data
-< > triangle class
+<X> constructors
+<X> add triangle
+<X> private data
+<X> triangle class
+< > Test
 
 iterators:
 < > mesh iterator
@@ -11,13 +12,15 @@ iterators:
 < > begin end functions
 
 functionality:
-< > find triangle
-< > num triangles
-< > num connections
+<X> find triangle
+<X> num triangles
+<X> num connections
+< > Test
 
 math:
-< > normal
-< > area
+<X> normal
+<X> area
+< > Test
 
 shallow water:
 < > ???
