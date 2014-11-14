@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
 #if 1
   std::vector<typename MeshType::node_type> mesh_node;
 #endif
-
+  std::cerr << "started 1" << std::endl;
   // Read all Points and add them to the Mesh
   std::ifstream nodes_file(argv[1]);
   Point p;
@@ -148,6 +148,7 @@ int main(int argc, char* argv[])
     mesh_node.push_back(mesh.add_node(p));
 #endif
   }
+  std::cerr << "started 2" << std::endl;
 
   // Read all mesh triangles and add them to the Mesh
   std::ifstream tris_file(argv[2]);
@@ -158,6 +159,8 @@ int main(int argc, char* argv[])
     mesh.add_triangle(mesh_node[t[0]], mesh_node[t[1]], mesh_node[t[2]]);
 #endif
   }
+
+  std::cerr << "started 3" << std::endl;
 
   // Print out the stats
   std::cout << mesh.num_nodes() << " "
