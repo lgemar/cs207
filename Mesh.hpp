@@ -45,6 +45,8 @@ public:
 	typedef typename VertGraph::node_type vert_node;
 	typedef typename VertGraph::edge_type vert_edge;
 
+	typedef vert_node node_type;
+
 	/** triangle stores 3 vertices and user triangle data*/
 	typedef struct triangle_data {
 		vert_node n1_;
@@ -53,6 +55,7 @@ public:
 		UserTriData data_;
 		triangle_data(vert_node n1, vert_node n2, vert_node n3, UserTriData d = UserTriData()) :
 			n1_(n1), n2_(n2), n3_(n3), data_(d) {}
+		triangle_data() {}
 	} triangle_data;
 
 	/** link stores its dual edge, and user edge data*/
@@ -60,6 +63,7 @@ public:
 		vert_edge dual_;
 		UserEdgeData data_;
 		link_data(vert_edge dual, UserEdgeData data = UserEdgeData()) : dual_(dual), data_(data) {}
+		link_data() {}
 	} link_data;
 
 	/** vertex stores its triangles, node data */
@@ -73,6 +77,7 @@ public:
 	typedef struct edge_data {
 		tri_edge dual_;
 		edge_data(tri_edge dual) : dual_(dual) {}
+		edge_data() {};
 	} edge_data;
 
 
@@ -134,7 +139,7 @@ public:
 		}
 
 		/** returns the user's value for the triangle. NOT our value! */
-		UserTriData value() {
+		UserTriData& value() {
 			return mesh_->triangle_graph_.node(uid_).value().data_;
 		}
 		const UserTriData& value() const {
@@ -165,7 +170,7 @@ public:
 
 		// private constructor, for Mesh functions
 		Triangle(const Mesh* mesh, const size_type uid) : mesh_(mesh), uid_(uid) {}
-		Triangle(const Mesh* mesh, const tri_node tn) : mesh_(mesh), uid_(tn.uid_) {}
+		Triangle(const Mesh* mesh, const tri_node tn) : mesh_(mesh), uid_(tn.index()) {}
 
 	};
 
@@ -208,7 +213,7 @@ public:
 		}
 
 		// creating in private data
-		tri_node tn = triangle_graph_.add_node(Point(),tri_data(n1,n2,n3,d));
+		tri_node tn = triangle_graph_.add_node(Point(),triangle_data(n1,n2,n3,d));
 
 		//adding edges: some might already exist
 		vert_edge e12 = vertex_graph_.add_edge(n1, n2);
@@ -218,19 +223,19 @@ public:
 		// find neighbors, create links and maintain duals
 		std::set<Triangle> adj12 = common_triangles(n1, n2);
 		if (adj12.size() != 0) {
-			tri_edge temp = triangle_graph_.add_edge(tn, *adj12.begin());
+			tri_edge temp = triangle_graph_.add_edge(tn, get_tri_node(*adj12.begin()));
 			temp.value() = link_data(e12);
 			e12.value().dual_ = temp;
 		}
 		std::set<Triangle> adj23 = common_triangles(n2, n3);
 		if (adj23.size() != 0) {
-			tri_edge temp = triangle_graph_.add_edge(tn, *adj23.begin());
+			tri_edge temp = triangle_graph_.add_edge(tn, get_tri_node(*adj23.begin()));
 			temp.value() = link_data(e23);
 			e23.value().dual_ = temp;
 		}
 		std::set<Triangle> adj31 = common_triangles(n3, n1);
 		if (adj31.size() != 0) {
-			tri_edge temp = triangle_graph_.add_edge(tn, *adj31.begin());
+			tri_edge temp = triangle_graph_.add_edge(tn, get_tri_node(*adj31.begin()));
 			temp.value() = link_data(e31);
 			e31.value().dual_ = temp;
 		}
@@ -239,9 +244,9 @@ public:
 		Triangle tri = Triangle(this, tn);
 
 		// attaching this triangle to each node
-		n1.value().triangles_.push_back(tri);
-		n2.value().triangles_.push_back(tri);
-		n3.value().triangles_.push_back(tri);
+		n1.value().triangles_.insert(tri);
+		n2.value().triangles_.insert(tri);
+		n3.value().triangles_.insert(tri);
 
 		return tri;
 	}
@@ -252,7 +257,7 @@ public:
 		std::set_intersection(
 				n1.value().triangles_.begin(), n1.value().triangles_.end(),
 				n2.value().triangles_.begin(), n2.value().triangles_.end(),
-				std::back_inserter(overlap));
+				std::inserter(overlap, overlap.begin()));
 		return overlap;
 	}
 
@@ -264,14 +269,14 @@ public:
 		std::set_intersection(
 			n1.value().triangles_.begin(), n1.value().triangles_.end(),
 			n2.value().triangles_.begin(), n2.value().triangles_.end(),
-			std::back_inserter(overlap1));
+			std::inserter(overlap1, overlap1.begin()));
 
 		// finding intersection of intersection
 		std::set<Triangle> overlap2;
 		std::set_intersection(
 			overlap1.begin(), overlap1.end(),
 			n3.value().triangles_.begin(), n3.value().triangles_.end(),
-			std::back_inserter(overlap1));
+			std::inserter(overlap2, overlap2.begin()));
 
 		// 1 or 0
 		if (overlap2.begin() != overlap2.end())
@@ -320,7 +325,6 @@ private:
 		while (t.vertex(i) == e.node1() || t.vertex(i) == e.node2())
 			++i;
 		return t.vertex(i);
-
 	}
 
 	/** Private data members */

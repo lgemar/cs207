@@ -101,7 +101,7 @@ class Graph {
 
   typedef struct edge_data {
   	
-	edge_data(uid_type u, scalar len) : uid(u), rest_length(len) {
+	edge_data(uid_type u, scalar len, edge_value_type ev) : uid(u), rest_length(len), v(ev) {
 	}
 
   	uid_type uid;
@@ -495,7 +495,7 @@ class Graph {
    *
    * Complexity: No more than O(num_nodes() + num_edges()), hopefully less
    */
-  Edge add_edge(const Node& a, const Node& b) {
+  Edge add_edge(const Node& a, const Node& b, const edge_value_type& ev = edge_value_type()) {
 	assert(a.uid_ < nodes_.size() && b.uid_ < nodes_.size() );
 	assert(a.index() != b.index());
 	assert(a.index() < size() && b.index() < size());
@@ -508,8 +508,8 @@ class Graph {
 		// This is the case where a and b have more than 0 edges
 		// Insert a and b into each others adjacency lists
 		scalar rest_length = distance(nodes_[uid_a].p, nodes_[uid_b].p);
-		edge_data edge_a_data (uid_a, rest_length);
-		edge_data edge_b_data (uid_b, rest_length);
+		edge_data edge_a_data (uid_a, rest_length, ev);
+		edge_data edge_b_data (uid_b, rest_length, ev);
 		edges_[uid_a].adj_list.push_back( edge_b_data );
 		edges_[uid_b].adj_list.push_back( edge_a_data );
 		num_edges_++;

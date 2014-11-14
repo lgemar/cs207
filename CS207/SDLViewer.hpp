@@ -442,8 +442,8 @@ class SDLViewer {
       return;
     }
 
-    window_width_ = 640;
-    window_height_ = 480;
+    window_width_ = 1500;
+    window_height_ = 1000;
 
     int bits_per_pixel = 32;
 

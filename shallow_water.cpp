@@ -42,7 +42,7 @@ struct QVar {
 // HW4B: Placeholder for Mesh Type!
 // Define NodeData, EdgeData, TriData, etc
 // or redefine for your particular Mesh
-typedef Mesh<int,int,int> MeshType;
+typedef Mesh<char,char,char> MeshType;
 
 
 /** Function object for calculating shallow-water flux.
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
 
   MeshType mesh;
   // HW4B: Need node_type before this can be used!
-#if 0
+#if 1
   std::vector<typename MeshType::node_type> mesh_node;
 #endif
 
@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
   Point p;
   while (CS207::getline_parsed(nodes_file, p)) {
     // HW4B: Need to implement add_node before this can be used!
-#if 0
+#if 1
     mesh_node.push_back(mesh.add_node(p));
 #endif
   }
@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
   std::array<int,3> t;
   while (CS207::getline_parsed(tris_file, t)) {
     // HW4B: Need to implement add_triangle before this can be used!
-#if 0
+#if 1
     mesh.add_triangle(mesh_node[t[0]], mesh_node[t[1]], mesh_node[t[2]]);
 #endif
   }
