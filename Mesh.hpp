@@ -35,6 +35,7 @@ public:
 	struct edge_data;
 	class Triangle;
 
+
 	// inner graphs themselves
 	typedef Graph<triangle_data, link_data> TriGraph;
 	typedef Graph<vertex_data, edge_data> VertGraph;
@@ -44,6 +45,13 @@ public:
 	typedef typename TriGraph::edge_type tri_edge;
 	typedef typename VertGraph::node_type vert_node;
 	typedef typename VertGraph::edge_type vert_edge;
+
+	// Define synonyms for the iterators
+	typedef typename TriGraph::node_iterator triangle_iterator;
+	class AdjacentIterator; 
+	typedef AdjacentIterator adjacent_iterator;
+	typedef typename VertGraph::node_iterator vertex_iterator;
+	typedef typename VertGraph::edge_iterator edge_iterator;
 
 	typedef vert_node node_type;
 
@@ -163,7 +171,16 @@ public:
 			return uid_ < x.uid_;
 		}
 
-
+		/** Return the midpoint of the triangle */
+		Point position() const {
+			double x_mid = (vertex(1).position().x + vertex(2).position().x
+						 	+ vertex(3).position().x) / 3.0;
+			double y_mid = (vertex(1).position().y + vertex(2).position().y
+						 	+ vertex(3).position().y) / 3.0;
+			double z_mid = (vertex(1).position().z + vertex(2).position().z
+						 	+ vertex(3).position().z) / 3.0;
+			return Point(x_mid, y_mid, z_mid);
+		}
 
 	private:
 		friend class Mesh;
@@ -312,6 +329,68 @@ public:
 		return normal;
 
 
+	}
+
+	/** Returns an iterator to the first vertex in the graph */
+	vertex_iterator node_begin() const {
+		return vertex_graph_.node_begin();
+	}
+
+	/** Returns an iterator to the last vertex in the graph */
+	vertex_iterator node_end() const {
+		return vertex_graph_.node_end();
+	}
+
+	/** Return an iterator to the first edge in the graph */
+	edge_iterator edge_begin() const {
+		return vertex_graph_.edge_begin();
+	}
+	
+	/** Returns an iterator to the last edge in the graph */
+	edge_iterator edge_end() const {
+		return vertex_graph_.edge_end();
+	}
+
+	/** Returns an iterator to the first triangle in the graph */
+	triangle_iterator triangles_begin() const {
+		return triangle_graph_.node_begin();
+	}
+
+	/** Returns an iterator to the last triangle in the graph */
+	triangle_iterator triangles_end() const {
+		return triangle_graph_.node_end();
+	}
+
+	// Thin wrapper around the edge iterator
+	class AdjacentIterator : private totally_ordered<AdjacentIterator> {
+		public:
+			// These type definitions help us use STL's iterator_traits.
+			/** Element type. */
+			typedef Triangle value_type;
+			/** Type of pointers to elements. */
+			typedef Triangle* pointer;
+			/** Type of references to elements. */
+			typedef Triangle& reference;
+			/** Iterator category. */
+			typedef std::input_iterator_tag iterator_category;
+			/** Difference between iterators */
+			typedef std::ptrdiff_t difference_type;
+
+			/** Construct an invalid TriangleIterator. */
+			AdjacentIterator() {
+			}
+		private:
+			friend class Mesh;
+			const Mesh* mesh_;
+	};
+
+	adjacent_iterator adjacent_triangles_begin() const {
+	}
+
+	adjacent_iterator adjacent_triangles_end() const {
+	}
+
+	adjacent_iterator adjacent_triangles(Triangle t) {
 	}
 
 

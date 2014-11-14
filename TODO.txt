@@ -5,9 +5,15 @@ basics: Erik thursday
 <X> triangle class
 < > Test
 
-iterators:
-< > mesh iterator
+iterators: Lukas friday
+< > triangle iterator
 < > adjacent iterator
+ [ ] add the adjacent_triangles function to the public interface
+ [x] add the triangles_begin() and triangles_end() functions to public interface
+ [x] implement the triangles_begin and triangles_end functions
+ 	[x] define the traingle_iterator type
+ [x] define types for vertex and edge iterators
+ [ ] implement vertex_begin and vertex_end functionality
 < > tell erik about andy's 21st birthday
 < > begin end functions
 
