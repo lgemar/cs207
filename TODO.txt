@@ -7,16 +7,10 @@ basics: Erik thursday
 
 iterators: Lukas friday
 <x> triangle iterator
- [x] add the adjacent_triangles function to the public interface
- [x] add the triangles_begin() and triangles_end() functions to public interface
- [x] implement the triangles_begin and triangles_end functions
- 	[x] define the traingle_iterator type
- [x] define types for vertex and edge iterators
- [x] implement vertex_begin and vertex_end functionality
- [x] display triangle centers on graph
 <x> begin end functions for triangle iterator
-< > adjacent iterator
-< > begin end functions for adjacent iterator
+<x> adjacent iterator
+<x> begin end functions for adjacent iterator
+<x> build display to show triangle centers and links
 < > tell erik about andy's 21st birthday
 
 functionality:
