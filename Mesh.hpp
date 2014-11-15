@@ -36,9 +36,9 @@ public:
 	class Triangle;
 	class Vertex;
 	class Edge;
-	class TriangleIterator;
+	class Link;
 	class AdjacentIterator;
-	class VertexIterator;
+
 	template <typename IT, typename RET>
 	class TransformIterator;
 
@@ -61,9 +61,11 @@ public:
 	typedef typename VertGraph::edge_iterator vert_edge_iterator;
 	typedef typename VertGraph::incident_iterator incident_iterator;
 	typedef typename TriGraph::node_iterator tri_node_iterator;
+	typedef typename TriGraph::edge_iterator tri_edge_iterator;
 
 	// Define synonyms for the iterators and iterator types
 	typedef TransformIterator<tri_node_iterator, Triangle> triangle_iterator;
+	typedef TransformIterator<tri_edge_iterator, Link> link_iterator;
 	typedef TransformIterator<vert_node_iterator, Vertex> vertex_iterator;
 	typedef TransformIterator<vert_edge_iterator, Edge> edge_iterator;
 	typedef AdjacentIterator adjacent_iterator;
@@ -171,6 +173,30 @@ public:
 			const vert_node v_;
 			Vertex(const Mesh* mesh, const vert_node v) : 
 					mesh_(mesh), v_(v) {}
+	};
+
+	/** Link type
+	 * Used as a thin wrapper around Graph edges
+	 */
+	class Link : private totally_ordered<Link> {
+		public:
+			Link() {};
+			Triangle node1() const {return Triangle(mesh_, e_.node1());}
+			Triangle node2() const {return Triangle(mesh_, e_.node2());}
+			UserEdgeData value() const {
+				return e_.value().data_;
+			}
+			bool operator==(const Link& other) const {
+				return e_ == other.e_;
+			}
+			bool operator<(const Link& other) const {
+				return e_ < other.e_;
+			}
+		private: 
+			friend class Mesh;
+			const Mesh* mesh_;
+			tri_edge e_;
+			Link(const Mesh* mesh, tri_edge e) : mesh_(mesh), e_(e) {}
 	};
 
 	/** Edge type
@@ -482,8 +508,15 @@ public:
 		return triangle_iterator(this, triangle_graph_.node_end());
 	}
 
+	link_iterator link_begin() const {
+		return link_iterator(this, triangle_graph_.edge_begin());
+	}
 
-	// Thin wrapper around the edge iterator
+	link_iterator link_end() const {
+		return link_iterator(this, triangle_graph_.edge_end());
+	}
+
+	/** Iterates over triangles adjacent to a Vertex */
 	class AdjacentIterator : private totally_ordered<AdjacentIterator> {
 		public:
 			// These type definitions help us use STL's iterator_traits.

@@ -188,6 +188,7 @@ int main(int argc, char* argv[])
   auto triangle_map = viewer.empty_triangle_map(mesh);
   viewer.add_nodes(mesh.triangles_begin(), mesh.triangles_end(),
                    CS207::RedColor(), NodePosition(), triangle_map);
+  viewer.add_edges(mesh.link_begin(), mesh.link_end(), triangle_map);
 #endif
   viewer.center_view();
 
