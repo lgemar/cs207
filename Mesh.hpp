@@ -58,13 +58,15 @@ public:
 
 	// Iterator types
 	typedef typename VertGraph::node_iterator vert_node_iterator;
-	typedef typename VertGraph::edge_iterator edge_iterator;
+	typedef typename VertGraph::edge_iterator vert_edge_iterator;
 	typedef typename VertGraph::incident_iterator incident_iterator;
+	typedef typename TriGraph::node_iterator tri_node_iterator;
 
 	// Define synonyms for the iterators and iterator types
-	typedef TriangleIterator triangle_iterator;
-	typedef AdjacentIterator adjacent_iterator;
+	typedef TransformIterator<tri_node_iterator, Triangle> triangle_iterator;
 	typedef TransformIterator<vert_node_iterator, Vertex> vertex_iterator;
+	typedef TransformIterator<vert_edge_iterator, Edge> edge_iterator;
+	typedef AdjacentIterator adjacent_iterator;
 
 
 	// Externally visible node and triangle types, used in viewer maps
@@ -194,6 +196,7 @@ public:
 			vert_edge e_;
 			Edge(const Mesh* mesh, vert_edge e) : mesh_(mesh), e_(e) {}
 	};
+
 	/** Triangle Type
 	 * used as a proxy pattern to access nodes in our triangle_graph_
 	 *
@@ -435,8 +438,8 @@ public:
 			TransformIterator() {
 			}
 
-			Vertex operator*() const {return RET(mesh_, *it_);}
-			vertex_iterator& operator++() {++it_; return *this;}
+			RET operator*() const {return RET(mesh_, *it_);}
+			TransformIterator<IT, RET>& operator++() {++it_; return *this;}
 			bool operator==(const TransformIterator& other_) const {
 				return it_ == other_.it_;
 			}
@@ -448,36 +451,6 @@ public:
 				mesh_(mesh), it_(it) {}
 	};
 
-	class VertexIterator : private totally_ordered<VertexIterator> {
-		public:
-			// These type definitions help us use STL's iterator_traits.
-			/** Element type. */
-			typedef Vertex value_type;
-			/** Type of pointers to elements. */
-			typedef Vertex* pointer;
-			/** Type of references to elements. */
-			typedef Vertex& reference;
-			/** Iterator category. */
-			typedef std::input_iterator_tag iterator_category;
-			/** Difference between iterators */
-			typedef std::ptrdiff_t difference_type;
-
-			/** Construct an invalid NodeIterator. */
-			VertexIterator() {
-			}
-
-			Vertex operator*() const {return Vertex(mesh_, *it_);}
-			vertex_iterator& operator++() {++it_; return *this;}
-			bool operator==(const VertexIterator& other_) const {
-				return it_ == other_.it_;
-			}
-		private: 
-			friend class Mesh;
-			const Mesh* mesh_;
-			vert_node_iterator it_;
-			VertexIterator(const Mesh* mesh, vert_node_iterator it) :
-				mesh_(mesh), it_(it) {}
-	};
 
 	/** Returns an iterator to the first vertex in the graph */
 	vertex_iterator vertex_begin() const {
@@ -491,59 +464,22 @@ public:
 
 	/** Return an iterator to the first edge in the graph */
 	edge_iterator edge_begin() const {
-		return vertex_graph_.edge_begin();
+		return edge_iterator(this, vertex_graph_.edge_begin());
 	}
 	
 	/** Returns an iterator to the last edge in the graph */
 	edge_iterator edge_end() const {
-		return vertex_graph_.edge_end();
+		return edge_iterator(this, vertex_graph_.edge_end());
 	}
-
-	/** Contains a reference to the NodeIterator but differs in operator* */
-	class TriangleIterator : private totally_ordered<TriangleIterator> {
-		public:
-			// These type definitions help us use STL's iterator_traits.
-			/** Element type. */
-			typedef Triangle value_type;
-			/** Type of pointers to elements. */
-			typedef Triangle* pointer;
-			/** Type of references to elements. */
-			typedef Triangle& reference;
-			/** Iterator category. */
-			typedef std::input_iterator_tag iterator_category;
-			/** Difference between iterators */
-			typedef std::ptrdiff_t difference_type;
-			typedef typename TriGraph::NodeIterator tri_node_iterator;
-
-			TriangleIterator() {} 
-
-			Triangle operator*() const {
-				return m_->get_triangle((*it_).value().n1_, (*it_).value().n2_, 
-									(*it_).value().n3_);
-			}
-			
-			triangle_iterator& operator++() { ++it_; return *this; }
-
-			bool operator==(const triangle_iterator& other_) const {
-				return it_ == other_.it_;
-			}
-
-		private: 
-			friend class Mesh;
-			const Mesh* m_;
-			tri_node_iterator it_;
-			TriangleIterator(const Mesh* m, tri_node_iterator it) : 
-					m_(m), it_(it) {}
-	};
 
 	/** Returns an iterator to the first triangle in the graph */
 	triangle_iterator triangles_begin() const {
-		return TriangleIterator(this, triangle_graph_.node_begin());
+		return triangle_iterator(this, triangle_graph_.node_begin());
 	}
 
 	/** Returns an iterator to the last triangle in the graph */
 	triangle_iterator triangles_end() const {
-		return TriangleIterator(this, triangle_graph_.node_end());
+		return triangle_iterator(this, triangle_graph_.node_end());
 	}
 
 
