@@ -36,6 +36,9 @@ public:
 	class Triangle;
 
 
+	// Primitive types
+	typedef unsigned idx_type
+
 	// inner graphs themselves
 	typedef Graph<triangle_data, link_data> TriGraph;
 	typedef Graph<vertex_data, edge_data> VertGraph;
@@ -46,19 +49,20 @@ public:
 	typedef typename VertGraph::node_type vert_node;
 	typedef typename VertGraph::edge_type vert_edge;
 
-	// Define synonyms for the iterators
+	// Define synonyms for the iterators and iterator types
 	class TriangleIterator;
 	typedef TriangleIterator triangle_iterator;
-	//typedef typename TriGraph::NodeIterator triangle_iterator;
-	
 	class AdjacentIterator; 
 	typedef AdjacentIterator adjacent_iterator;
 
 	typedef typename VertGraph::node_iterator vertex_iterator;
 	typedef typename VertGraph::edge_iterator edge_iterator;
+	typedef typename VertGraph::incident_iterator incident_iterator;
 
+	// Externally visible node and triangle types, used in viewer maps
 	typedef vert_node node_type;
 	typedef Triangle tri_type;
+	typedef Vertex vert_type;
 
 	/** triangle stores 3 vertices and user triangle data*/
 	typedef struct triangle_data {
@@ -118,6 +122,40 @@ public:
 		return triangle_graph_.num_edges();
 	}
 
+	/** Vertex Type
+	 * Used as a thin wrapper around Node
+	 */
+	class Vertex : private totally_ordered<Vertex> {
+		public:
+			Node() {};
+			const Point& position const {v_.position();}
+			idx_type index() const { v_.index();}
+			bool operator==(const Vertex& other) const {return v_ == other.v_;}
+			bool operator<(const Vertex& other) const { return v_ < other.v_;}
+			UserNodeData& value() {return v_.value().data_;}
+			size_type degree() const {return v_.degree();}
+			incident_iterator edge_begin() {return v_.edge_begin();}
+			incident_iterator edge_end() {return v_.edge_end();}
+
+			/** Return an iterator to the first element in the adjacent 
+			 * 	triangles set
+			 */
+			adjacent_iterator triangles_begin() {
+				return AdjacentIterator(mesh_, v_.value().triangles_.begin());
+			}
+
+			/** Return an iterator to the last element in the adjacent 
+			 * 	triangles set
+			 */
+			adjacent_iterator triangles_end() {
+				return AdjacentIterator(mesh_, v_.value().triangles_.end());
+			}
+		private:
+			friend class Mesh;
+			const vert_node v_;
+			Vertex(const Mesh* mesh_, const vert_node v) : 
+					mesh_(mesh), v_(v) {}
+	};
 	/** Triangle Type
 	 * used as a proxy pattern to access nodes in our triangle_graph_
 	 *
@@ -311,6 +349,13 @@ public:
 			return Triangle();
 	}
 
+	/** Return a triangle that is bounded by the two edges
+	 * @pre A triangle exists that contains the two edges
+	 */
+	Triangle get_triangle(vert_edge e1, vert_edge e2) const {
+		return get_triangle(e1.node1(), e1.node2(), e2.node());
+	}
+
 	/** checks whether 3 nodes form a triangle */
 	bool has_triangle(vert_node n1, vert_node n2, vert_node n3) const {
 		Triangle t = get_triangle(n1, n2, n3);
@@ -331,8 +376,6 @@ public:
 			normal = -1 * normal;
 
 		return normal;
-
-
 	}
 
 	/** Returns an iterator to the first vertex in the graph */
@@ -354,6 +397,9 @@ public:
 	edge_iterator edge_end() const {
 		return vertex_graph_.edge_end();
 	}
+	class VertexIterator : private totally_ordered<VertexIterator> {
+	};
+
 	/** Contains a reference to the NodeIterator but differs in operator* */
 	class TriangleIterator : private totally_ordered<TriangleIterator> {
 		public:
@@ -370,18 +416,14 @@ public:
 			typedef std::ptrdiff_t difference_type;
 			typedef typename TriGraph::NodeIterator tri_node_iterator;
 
-			TriangleIterator() {
-			}
+			TriangleIterator() {} 
 
 			Triangle operator*() const {
 				return m_->get_triangle((*it_).value().n1_, (*it_).value().n2_, 
 									(*it_).value().n3_);
 			}
 			
-			triangle_iterator& operator++() {
-				++it_;
-				return *this;
-			}
+			triangle_iterator& operator++() { ++it_; return *this; }
 
 			bool operator==(const triangle_iterator& other_) const {
 				return it_ == other_.it_;
@@ -420,16 +462,23 @@ public:
 			typedef std::input_iterator_tag iterator_category;
 			/** Difference between iterators */
 			typedef std::ptrdiff_t difference_type;
+			typedef typename VertGraph::IncidentIterator vert_incident_iterator;
 
-			/** Construct an invalid TriangleIterator. */
+			/** Construct an invalid AdjacentIterator. */
 			AdjacentIterator() {
 			}
+
 		private:
 			friend class Mesh;
 			const Mesh* mesh_;
+			vert_incident_iterator it_;
+			AdjacentIterator(const Mesh m, vert_incident_iterator it) :
+					m_(m), it_(it) {
+			}
 	};
 
 	adjacent_iterator adjacent_triangles_begin() const {
+		return 
 	}
 
 	adjacent_iterator adjacent_triangles_end() const {

@@ -183,12 +183,9 @@ int main(int argc, char* argv[])
                    CS207::DefaultColor(), NodePosition(), node_map);
   viewer.add_edges(mesh.edge_begin(), mesh.edge_end(), node_map);
 #endif
-// Add triangles to the the graph to test the triangle iterators
+// Add triangles to the the graph to test the triangle iterator
 #if 1
   auto triangle_map = viewer.empty_triangle_map(mesh);
-  for( auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
-  	std::cout << "Triangle has position: " << (*it).position() << std::endl;
-  }
   viewer.add_nodes(mesh.triangles_begin(), mesh.triangles_end(),
                    CS207::RedColor(), NodePosition(), triangle_map);
 #endif
