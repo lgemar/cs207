@@ -37,10 +37,10 @@ public:
 	class Vertex;
 	class Edge;
 	class Link;
-	class AdjacentIterator;
 
-	template <typename IT, typename RET>
-	class TransformIterator;
+	// Iterator Clases
+	template <typename IT> class AdjacentIterator;
+	template <typename IT, typename RET> class TransformIterator;
 
 
 	// Primitive types
@@ -62,13 +62,14 @@ public:
 	typedef typename VertGraph::incident_iterator incident_iterator;
 	typedef typename TriGraph::node_iterator tri_node_iterator;
 	typedef typename TriGraph::edge_iterator tri_edge_iterator;
+	typedef typename std::set<Triangle>::iterator adj_triangle_iterator;
 
 	// Define synonyms for the iterators and iterator types
 	typedef TransformIterator<tri_node_iterator, Triangle> triangle_iterator;
 	typedef TransformIterator<tri_edge_iterator, Link> link_iterator;
 	typedef TransformIterator<vert_node_iterator, Vertex> vertex_iterator;
 	typedef TransformIterator<vert_edge_iterator, Edge> edge_iterator;
-	typedef AdjacentIterator adjacent_iterator;
+	typedef TransformIterator<adj_triangle_iterator,Triangle> adjacent_iterator;
 
 
 	// Externally visible node and triangle types, used in viewer maps
@@ -153,20 +154,17 @@ public:
 			/** Return an iterator to the first element in the adjacent 
 			 * 	triangles set
 			 */
-			/**
 			adjacent_iterator triangles_begin() {
-				return AdjacentIterator(mesh_, v_.value().triangles_.begin());
+				return adjacent_iterator(mesh_, v_.value().triangles_.begin());
 			}
-			*/
 
 			/** Return an iterator to the last element in the adjacent 
 			 * 	triangles set
 			 */
-			/*	
 			adjacent_iterator triangles_end() {
-				return AdjacentIterator(mesh_, v_.value().triangles_.end());
+				return adjacent_iterator(mesh_, v_.value().triangles_.end());
 			}
-			*/
+
 		private:
 			friend class Mesh;
 			const Mesh* mesh_;
@@ -445,29 +443,37 @@ public:
 		return normal;
 	}
 
-	template <class IT, class RET>
-	class TransformIterator : private totally_ordered<TransformIterator<IT,RET>> {
+	/** Creates a new iterator from an existing iterator IT by templating on 
+	  * 	a arbitrary value type built from the value type of IT 
+	  */
+	template <class IT, class VALUE_TYPE>
+	class TransformIterator : private totally_ordered<TransformIterator<IT,VALUE_TYPE>> {
 		public:
 			// These type definitions help us use STL's iterator_traits.
 			/** Element type. */
-			typedef RET value_type;
+			typedef VALUE_TYPE value_type;
 			/** Type of pointers to elements. */
-			typedef RET* pointer;
+			typedef VALUE_TYPE* pointer;
 			/** Type of references to elements. */
-			typedef RET& reference;
+			typedef VALUE_TYPE& reference;
 			/** Iterator category. */
 			typedef std::input_iterator_tag iterator_category;
 			/** Difference between iterators */
 			typedef std::ptrdiff_t difference_type;
+			/** Define the type of this iterator */
+			typedef TransformIterator<IT, value_type> this_type;
 
 			/** Construct an invalid NodeIterator. */
 			TransformIterator() {
 			}
 
-			RET operator*() const {return RET(mesh_, *it_);}
-			TransformIterator<IT, RET>& operator++() {++it_; return *this;}
-			bool operator==(const TransformIterator& other_) const {
+			value_type operator*() const {return value_type(mesh_, *it_);}
+			this_type& operator++() {++it_; return *this;}
+			bool operator==(const this_type& other_) const {
 				return it_ == other_.it_;
+			}
+			bool operator<(const this_type& other_) const {
+				return it_ < other_.it_;
 			}
 		private: 
 			friend class Mesh;
@@ -508,50 +514,14 @@ public:
 		return triangle_iterator(this, triangle_graph_.node_end());
 	}
 
+	/** Returns an iterator to the first link in the triangle graph */
 	link_iterator link_begin() const {
 		return link_iterator(this, triangle_graph_.edge_begin());
 	}
 
+	/** Returns an iterator to the last link in the triangle graph */
 	link_iterator link_end() const {
 		return link_iterator(this, triangle_graph_.edge_end());
-	}
-
-	/** Iterates over triangles adjacent to a Vertex */
-	class AdjacentIterator : private totally_ordered<AdjacentIterator> {
-		public:
-			// These type definitions help us use STL's iterator_traits.
-			/** Element type. */
-			typedef Triangle value_type;
-			/** Type of pointers to elements. */
-			typedef Triangle* pointer;
-			/** Type of references to elements. */
-			typedef Triangle& reference;
-			/** Iterator category. */
-			typedef std::input_iterator_tag iterator_category;
-			/** Difference between iterators */
-			typedef std::ptrdiff_t difference_type;
-			typedef typename VertGraph::IncidentIterator vert_incident_iterator;
-
-			/** Construct an invalid AdjacentIterator. */
-			AdjacentIterator() {
-			}
-
-		private:
-			friend class Mesh;
-			const Mesh* mesh_;
-			vert_incident_iterator it_;
-			AdjacentIterator(const Mesh m, vert_incident_iterator it) :
-					mesh_(m), it_(it) {
-			}
-	};
-
-	adjacent_iterator adjacent_triangles_begin() const {
-	}
-
-	adjacent_iterator adjacent_triangles_end() const {
-	}
-
-	adjacent_iterator adjacent_triangles(Triangle t) {
 	}
 
 
