@@ -36,6 +36,9 @@ public:
 	class Triangle;
 	class Vertex;
 	class Edge;
+	class TriangleIterator;
+	class AdjacentIterator;
+	class VertexIterator;
 
 
 	// Primitive types
@@ -52,12 +55,11 @@ public:
 	typedef typename VertGraph::edge_type vert_edge;
 
 	// Define synonyms for the iterators and iterator types
-	class TriangleIterator;
 	typedef TriangleIterator triangle_iterator;
-	class AdjacentIterator; 
 	typedef AdjacentIterator adjacent_iterator;
+	typedef VertexIterator vertex_iterator;
 
-	typedef typename VertGraph::node_iterator vertex_iterator;
+	typedef typename VertGraph::node_iterator vert_node_iterator;
 	typedef typename VertGraph::edge_iterator edge_iterator;
 	typedef typename VertGraph::incident_iterator incident_iterator;
 
@@ -131,7 +133,7 @@ public:
 	class Vertex : private totally_ordered<Vertex> {
 		public:
 			Vertex() {};
-			const Point& position() const {v_.position();}
+			const Point& position() const {return v_.position();}
 			idx_type index() const { v_.index();}
 			bool operator==(const Vertex& other) const {return v_ == other.v_;}
 			bool operator<(const Vertex& other) const { return v_ < other.v_;}
@@ -429,26 +431,30 @@ public:
 			}
 
 			Vertex operator*() const {return Vertex(mesh_, *it_);}
-			vertex_iterator& operator++() {++it_;}
+			vertex_iterator& operator++() {++it_; return *this;}
 			bool operator==(const VertexIterator& other_) const {
 				return it_ == other_.it_;
 			}
 		private: 
-			Mesh* mesh_;
-			vertex_iterator it_;
-			VertexIterator(const Mesh* mesh, vertex_iterator it) :
+			friend class Mesh;
+			const Mesh* mesh_;
+			vert_node_iterator it_;
+			VertexIterator(const Mesh* mesh, vert_node_iterator it) :
 				mesh_(mesh), it_(it) {}
 	};
 
 	/** Returns an iterator to the first vertex in the graph */
 	vertex_iterator vertex_begin() const {
-		return vertex_graph_.node_begin();
+		return VertexIterator(this, vertex_graph_.node_begin());
 	}
 
 	/** Returns an iterator to the last vertex in the graph */
 	vertex_iterator vertex_end() const {
-		return vertex_graph_.node_end();
+		return VertexIterator(this, vertex_graph_.node_end());
 	}
+
+	class EdgeIterator : private totally_ordered<EdgeIterator> {
+	};
 
 	/** Return an iterator to the first edge in the graph */
 	edge_iterator edge_begin() const {
