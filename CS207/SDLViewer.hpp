@@ -290,10 +290,18 @@ class SDLViewer {
 
   /** Return an empty triangle map designed for the input graph.
    *
-   * Node maps are passed to, and modified by, add_nodes() and add_edges(). */
+   * Tri maps are passed to, and modified by, add_nodes() and add_edges(). */
   template <typename G>
   std::map<typename G::tri_type, unsigned> empty_triangle_map(const G&) const {
     return std::map<typename G::tri_type, unsigned>();
+  }
+
+  /** Return an empty vertex map designed for the input graph.
+   *
+   * Vertex maps are passed to, and modified by, add_nodes() and add_edges(). */
+  template <typename G>
+  std::map<typename G::vert_type, unsigned> empty_vertex_map(const G&) const {
+    return std::map<typename G::vert_type, unsigned>();
   }
 
   /** Add the nodes in the range [first, last) to the display.

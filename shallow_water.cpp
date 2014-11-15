@@ -178,10 +178,10 @@ int main(int argc, char* argv[])
   // HW4B: Need to define Mesh::node_type and node/edge iterator
   // before these can be used!
 #if 1
-  auto node_map = viewer.empty_node_map(mesh);
-  viewer.add_nodes(mesh.node_begin(), mesh.node_end(),
-                   CS207::DefaultColor(), NodePosition(), node_map);
-  viewer.add_edges(mesh.edge_begin(), mesh.edge_end(), node_map);
+  auto vertex_map = viewer.empty_vertex_map(mesh);
+  viewer.add_nodes(mesh.vertex_begin(), mesh.vertex_end(),
+                   CS207::DefaultColor(), NodePosition(), vertex_map);
+  viewer.add_edges(mesh.edge_begin(), mesh.edge_end(), vertex_map);
 #endif
 // Add triangles to the the graph to test the triangle iterator
 #if 1

@@ -34,10 +34,12 @@ public:
 	struct vertex_data;
 	struct edge_data;
 	class Triangle;
+	class Vertex;
+	class Edge;
 
 
 	// Primitive types
-	typedef unsigned idx_type
+	typedef unsigned idx_type;
 
 	// inner graphs themselves
 	typedef Graph<triangle_data, link_data> TriGraph;
@@ -63,6 +65,7 @@ public:
 	typedef vert_node node_type;
 	typedef Triangle tri_type;
 	typedef Vertex vert_type;
+	typedef Edge edge_type;
 
 	/** triangle stores 3 vertices and user triangle data*/
 	typedef struct triangle_data {
@@ -127,8 +130,8 @@ public:
 	 */
 	class Vertex : private totally_ordered<Vertex> {
 		public:
-			Node() {};
-			const Point& position const {v_.position();}
+			Vertex() {};
+			const Point& position() const {v_.position();}
 			idx_type index() const { v_.index();}
 			bool operator==(const Vertex& other) const {return v_ == other.v_;}
 			bool operator<(const Vertex& other) const { return v_ < other.v_;}
@@ -140,21 +143,50 @@ public:
 			/** Return an iterator to the first element in the adjacent 
 			 * 	triangles set
 			 */
+			/**
 			adjacent_iterator triangles_begin() {
 				return AdjacentIterator(mesh_, v_.value().triangles_.begin());
 			}
+			*/
 
 			/** Return an iterator to the last element in the adjacent 
 			 * 	triangles set
 			 */
+			/*	
 			adjacent_iterator triangles_end() {
 				return AdjacentIterator(mesh_, v_.value().triangles_.end());
 			}
+			*/
 		private:
 			friend class Mesh;
+			const Mesh* mesh_;
 			const vert_node v_;
-			Vertex(const Mesh* mesh_, const vert_node v) : 
+			Vertex(const Mesh* mesh, const vert_node v) : 
 					mesh_(mesh), v_(v) {}
+	};
+
+	/** Edge type
+	 * Used as a thin wrapper around Graph edges
+	 */
+	class Edge : private totally_ordered<Edge> {
+		public:
+			Edge() {};
+			Vertex node1() const {return Vertex(mesh_, e_.node1());}
+			Vertex node2() const {return Vertex(mesh_, e_.node2());}
+			UserEdgeData value() const {
+				return e_.value().data_;
+			}
+			bool operator==(const Edge& other) const {
+				return e_ == other.e_;
+			}
+			bool operator<(const Edge& other) const {
+				return e_ < other.e_;
+			}
+		private: 
+			friend class Mesh;
+			const Mesh* mesh_;
+			vert_edge e_;
+			Edge(const Mesh* mesh, vert_edge e) : mesh_(mesh), e_(e) {}
 	};
 	/** Triangle Type
 	 * used as a proxy pattern to access nodes in our triangle_graph_
@@ -378,13 +410,43 @@ public:
 		return normal;
 	}
 
+	class VertexIterator : private totally_ordered<VertexIterator> {
+		public:
+			// These type definitions help us use STL's iterator_traits.
+			/** Element type. */
+			typedef Vertex value_type;
+			/** Type of pointers to elements. */
+			typedef Vertex* pointer;
+			/** Type of references to elements. */
+			typedef Vertex& reference;
+			/** Iterator category. */
+			typedef std::input_iterator_tag iterator_category;
+			/** Difference between iterators */
+			typedef std::ptrdiff_t difference_type;
+
+			/** Construct an invalid NodeIterator. */
+			VertexIterator() {
+			}
+
+			Vertex operator*() const {return Vertex(mesh_, *it_);}
+			vertex_iterator& operator++() {++it_;}
+			bool operator==(const VertexIterator& other_) const {
+				return it_ == other_.it_;
+			}
+		private: 
+			Mesh* mesh_;
+			vertex_iterator it_;
+			VertexIterator(const Mesh* mesh, vertex_iterator it) :
+				mesh_(mesh), it_(it) {}
+	};
+
 	/** Returns an iterator to the first vertex in the graph */
-	vertex_iterator node_begin() const {
+	vertex_iterator vertex_begin() const {
 		return vertex_graph_.node_begin();
 	}
 
 	/** Returns an iterator to the last vertex in the graph */
-	vertex_iterator node_end() const {
+	vertex_iterator vertex_end() const {
 		return vertex_graph_.node_end();
 	}
 
@@ -397,8 +459,6 @@ public:
 	edge_iterator edge_end() const {
 		return vertex_graph_.edge_end();
 	}
-	class VertexIterator : private totally_ordered<VertexIterator> {
-	};
 
 	/** Contains a reference to the NodeIterator but differs in operator* */
 	class TriangleIterator : private totally_ordered<TriangleIterator> {
@@ -473,12 +533,11 @@ public:
 			const Mesh* mesh_;
 			vert_incident_iterator it_;
 			AdjacentIterator(const Mesh m, vert_incident_iterator it) :
-					m_(m), it_(it) {
+					mesh_(m), it_(it) {
 			}
 	};
 
 	adjacent_iterator adjacent_triangles_begin() const {
-		return 
 	}
 
 	adjacent_iterator adjacent_triangles_end() const {
