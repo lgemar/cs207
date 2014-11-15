@@ -39,6 +39,8 @@ public:
 	class TriangleIterator;
 	class AdjacentIterator;
 	class VertexIterator;
+	template <typename IT, typename RET>
+	class TransformIterator;
 
 
 	// Primitive types
@@ -54,14 +56,16 @@ public:
 	typedef typename VertGraph::node_type vert_node;
 	typedef typename VertGraph::edge_type vert_edge;
 
-	// Define synonyms for the iterators and iterator types
-	typedef TriangleIterator triangle_iterator;
-	typedef AdjacentIterator adjacent_iterator;
-	typedef VertexIterator vertex_iterator;
-
+	// Iterator types
 	typedef typename VertGraph::node_iterator vert_node_iterator;
 	typedef typename VertGraph::edge_iterator edge_iterator;
 	typedef typename VertGraph::incident_iterator incident_iterator;
+
+	// Define synonyms for the iterators and iterator types
+	typedef TriangleIterator triangle_iterator;
+	typedef AdjacentIterator adjacent_iterator;
+	typedef TransformIterator<vert_node_iterator, Vertex> vertex_iterator;
+
 
 	// Externally visible node and triangle types, used in viewer maps
 	typedef vert_node node_type;
@@ -412,6 +416,38 @@ public:
 		return normal;
 	}
 
+	template <class IT, class RET>
+	class TransformIterator : private totally_ordered<TransformIterator<IT,RET>> {
+		public:
+			// These type definitions help us use STL's iterator_traits.
+			/** Element type. */
+			typedef RET value_type;
+			/** Type of pointers to elements. */
+			typedef RET* pointer;
+			/** Type of references to elements. */
+			typedef RET& reference;
+			/** Iterator category. */
+			typedef std::input_iterator_tag iterator_category;
+			/** Difference between iterators */
+			typedef std::ptrdiff_t difference_type;
+
+			/** Construct an invalid NodeIterator. */
+			TransformIterator() {
+			}
+
+			Vertex operator*() const {return RET(mesh_, *it_);}
+			vertex_iterator& operator++() {++it_; return *this;}
+			bool operator==(const TransformIterator& other_) const {
+				return it_ == other_.it_;
+			}
+		private: 
+			friend class Mesh;
+			const Mesh* mesh_;
+			IT it_;
+			TransformIterator(const Mesh* mesh, IT it) :
+				mesh_(mesh), it_(it) {}
+	};
+
 	class VertexIterator : private totally_ordered<VertexIterator> {
 		public:
 			// These type definitions help us use STL's iterator_traits.
@@ -445,16 +481,13 @@ public:
 
 	/** Returns an iterator to the first vertex in the graph */
 	vertex_iterator vertex_begin() const {
-		return VertexIterator(this, vertex_graph_.node_begin());
+		return vertex_iterator(this, vertex_graph_.node_begin());
 	}
 
 	/** Returns an iterator to the last vertex in the graph */
 	vertex_iterator vertex_end() const {
-		return VertexIterator(this, vertex_graph_.node_end());
+		return vertex_iterator(this, vertex_graph_.node_end());
 	}
-
-	class EdgeIterator : private totally_ordered<EdgeIterator> {
-	};
 
 	/** Return an iterator to the first edge in the graph */
 	edge_iterator edge_begin() const {
