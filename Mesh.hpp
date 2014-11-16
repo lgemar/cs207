@@ -524,6 +524,10 @@ public:
 		return link_iterator(this, triangle_graph_.edge_end());
 	}
 
+	/** Gets a Link object from two Triangles */
+	Link link(Triangle t1, Triangle t2) const {
+		return Link(this, get_link(t1, t2));
+	}
 
 private:
 	friend class Triangle;
