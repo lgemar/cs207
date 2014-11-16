@@ -448,8 +448,6 @@ public:
 	 * ONLY IN THE XY plane
 	 * */
 	Point normal(Triangle t1, Triangle t2) {
-		tri_edge link = get_link(t1, t2);
-		link_data ld = link.value();
 		vert_edge edge = get_link(t1, t2).value().dual_;
 		Point edge_vec = edge.node1().position() - edge.node2().position();
 		Point normal = cross(edge_vec, Point(0,0,1));

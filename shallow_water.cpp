@@ -17,8 +17,13 @@
 #include "Point.hpp"
 #include "Mesh.hpp"
 
-void db(std::string s) {
-	std::cerr << s << std::endl;
+template <typename in>
+void db(in s) {
+	std::cout << s << std::endl;
+}
+
+void db(Point p) {
+	std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
 }
 
 /** Water column characteristics */
@@ -148,13 +153,7 @@ struct NodePosition {
 struct VertexPosition {
 	template<typename VERTEX>
 	Point operator()(VERTEX& v) const {
-		double sum = 0;
-		int counter = 0;
-		for(auto it = v.triangles_begin(); it != v.triangles_end(); ++it) {
-			sum += (*it).value().qvar_.h;
-			++counter;
-		}
-		return Point(v.position().x, v.position().y, sum / counter);
+		return Point(v.position().x, v.position().y, v.value().h);
 	}
 };
 
@@ -178,8 +177,27 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 			else
 				normal = -(*link).value().normal_;
 
+			normal = m.normal(*tri, (*link).triangle2());
+
+			db("getting normal");
+			db(normal.x);
+			db(normal.y);
+			db("this triangle");
+			db((*tri).value().qvar_.h);
+			db((*tri).value().qvar_.hx);
+			db((*tri).value().qvar_.hy);
+			db("other triangle");
+			db((*link).triangle2().value().qvar_.h);
+			db((*link).triangle2().value().qvar_.hx);
+			db((*link).triangle2().value().qvar_.hy);
+
 			// getting the flux
-			flux = flux + f(normal.x, normal.y, dt, (*tri).value().qvar_, (*link).triangle2().value().qvar_);
+			QVar temp = f(normal.x, normal.y, dt, (*tri).value().qvar_, (*link).triangle2().value().qvar_);
+			db("temp");
+			db(temp.h);
+			db(temp.hx);
+			db(temp.hy);
+			flux = flux + temp;
 		}
 		// saving the flux
 		flux_list.push_back(flux);
@@ -206,8 +224,6 @@ void post_process(MESH& m) {
 		}
 		(*vit).value().h = total_h / count;
 	}
-
-  (void) m;
 }
 
 
@@ -305,25 +321,23 @@ int main(int argc, char* argv[])
   }
   // Compute the normals for all of the links
   for(auto it = mesh.link_begin(); it != mesh.link_end(); ++it) {
-	db("link");
   	Link this_link = (*it);
-  	db("derefenced");
 
   	Triangle t1 = this_link.triangle1();
   	Triangle t2 = this_link.triangle2();
-  	db("got tris");
-
-
 
 	if(this_link.triangle1() < this_link.triangle2()) {
-		db("compared");
 		this_link.value().normal_ = mesh.normal(this_link.triangle1(), this_link.triangle2());
 	}
 	else {
-		db("compared");
 		this_link.value().normal_ = mesh.normal(this_link.triangle2(), this_link.triangle1());
 	}
-	db("called normal");
+
+	db("precompute done");
+	db(mesh.normal(this_link.triangle1(), this_link.triangle2()));
+	db(this_link.value().normal_);
+
+
   }
   // Precompute the Qvars in the triangles
   for(auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
@@ -334,17 +348,32 @@ int main(int argc, char* argv[])
 		this_triangle.value().qvar_ = QVar(1.0, 0, 0);
   }
 
+  for (auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
+	  db("precomputed:");
+	  db((*it).value().qvar_.h);
+  }
+
   // Begin the time stepping
   for (double t = t_start; t < t_end; t += dt) {
     // Step forward in time with forward Euler
     hyperbolic_step(mesh, f, t, dt);
 
+    for (auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
+    	  db("after hyperbolic:");
+    	  db((*it).value().qvar_.h);
+      }
+
     // Update node values with triangle-averaged values
     post_process(mesh);
 
+    for (auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
+    	  db("after post process:");
+    	  db((*it).value().qvar_.h);
+      }
+
     // Update the viewer with new node positions
     // HW4B: Need to define node_iterators before these can be used!
-#if 0
+#if 1
     viewer.add_nodes(mesh.vertex_begin(), mesh.vertex_end(),
                      CS207::DefaultColor(), VertexPosition(), vertex_map);
 #endif
