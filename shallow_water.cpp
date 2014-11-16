@@ -74,11 +74,15 @@ typedef struct my_link_data {
 	Point normal_;
 } my_link_data;
 
+typedef struct my_vertex_data {
+	double h;
+} my_vertex_data;
+
 
 // HW4B: Placeholder for Mesh Type!
 // Define NodeData, EdgeData, TriData, etc
 // or redefine for your particular Mesh
-typedef Mesh<char, my_link_data, my_triangle_data> MeshType;
+typedef Mesh<my_vertex_data, my_link_data, my_triangle_data> MeshType;
 typedef MeshType::Link Link;
 typedef MeshType::Triangle Triangle;
 

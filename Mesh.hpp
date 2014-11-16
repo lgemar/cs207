@@ -279,12 +279,12 @@ public:
 
 		adj_link_iterator link_begin() const {
 			return adj_link_iterator(mesh_, 
-					mesh_->get_tri_node(uid_).edge_begin());
+					mesh_->get_tri_node(*this).edge_begin());
 		}
 
 		adj_link_iterator link_end() const {
 			return adj_link_iterator(mesh_, 
-					mesh_->get_tri_node(uid_).edge_end());
+					mesh_->get_tri_node(*this).edge_end());
 		}
 
 		/** comparison operators forward to underlying graph */
@@ -315,6 +315,8 @@ public:
 		// private constructor, for Mesh functions
 		Triangle(const Mesh* mesh, const size_type uid) : mesh_(mesh), uid_(uid) {}
 		Triangle(const Mesh* mesh, const tri_node tn) : mesh_(mesh), uid_(tn.index()) {}
+		Triangle(const Mesh* mesh, const Triangle t) : mesh_(mesh), uid_(t.uid_)
+			{}
 
 	};
 
