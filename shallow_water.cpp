@@ -34,9 +34,15 @@ struct QVar {
   QVar(double h_, double hx_, double hy_)
       : h(h_), hx(hx_), hy(hy_) {
   }
-  // More operators?
-  // TODO: add the operator+
-  // TODO: add a constructor
+
+  /** sum up two Qs*/
+  QVar operator+(QVar o) const {
+	  return QVar(h + o.h, hx + o.hx, hy + o.hy);
+  }
+
+  QVar operator*(double s) const {
+	  return QVar(h*s, hx*s, hy*s);
+  }
 };
 
 // Standard gravity (average gravity at Earth's surface) in meters/sec^2
@@ -59,6 +65,10 @@ typedef struct my_link_data {
 typedef Mesh<char, my_link_data, my_triangle_data> MeshType;
 typedef MeshType::Link Link;
 typedef MeshType::Triangle Triangle;
+
+typedef MeshType::Link LinkType;
+
+typedef MeshType::triangle_iterator triangle_iterator;
 
 
 /** Function object for calculating shallow-water flux.
@@ -107,57 +117,62 @@ struct EdgeFluxCalculator {
 struct NodePosition {
   template <typename NODE>
   Point operator()(const NODE& n) {
-    // HW4B: You may change this to plot something other than the
-    // positions of the nodes
-	// TODO: n.value().h
-    return n.position();
+    return Point(n.position().x, n.position().y, n.value().qvar_.h);
   }
 };
 
-
-// TODO: precompute normals and Q-values
 
 /** Integrate a hyperbolic conservation law defined over the mesh m
  * with flux functor f by dt in time.
  */
 template <typename MESH, typename FLUX>
 double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
-  // HW4B: YOUR CODE HERE
-  // Step the finite volume model in time by dt.
+	// HW4B: YOUR CODE HERE
+	// Step the finite volume model in time by dt.
+	EdgeFluxCalculator flux_calc;
 
-  /** Pseudocode: TODO:
-  // Compute all fluxes. (before updating any triangle Q_bars)
-	 for each triangle in all triangles:
-	 	for all adj_triangles to triangle:
-			normal = normal between the two triangles;
-			flux += 
-					EdgeFluxCalculator(normal.x, normal.y, dt, triangle.value().Q, adj_triangle.value().Q);
-		flux_list.append(flux);
-	for each flux, triangle in fluxes, triangles:
-		triangle.value().Q -= (flux) * dt / triangle.area();
-  // For each triangle, update Q_bar using the fluxes as in Equation 8.
-  /  NOTE: Much like symp_euler_step, this may require TWO for-loops
-  */
-  (void) m; (void) f;
-  return t + dt;
+	std::vector<QVar> flux_list;
+	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
+		QVar flux = QVar(0,0,0);
+		for (auto adj = (*tri).adjacent_begin(); adj != (*tri).adjacent_end(); ++adj) {
+
+			// getting the normal
+			LinkType l1 = m.link(*tri, *adj);
+			Point normal;
+			if(*tri < *adj)
+				normal = l1.value().normal_;
+			else
+				normal = -l1.value().normal_;
+
+			// getting the flux
+			flux = flux + flux_calc(normal.x, normal.y, dt, (*tri).value().qvar_, (*adj).value().qvar_);
+		}
+		// saving the flux
+		flux_list.push_back(flux);
+	}
+
+	// now updating all fluxes
+	auto fli = flux_list.begin();
+	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri, ++fli ) {
+		(*tri).value().qvar_ -= (*fli) * dt / (*tri).value().area_;
+	}
+
+	return t + dt;
 }
 
 /** Convert the triangle-averaged values to node-averaged values for viewing. */
 template <typename MESH>
 void post_process(MESH& m) {
-  // HW4B: Post-processing step
-  // Translate the triangle-averaged values to node-averaged values
-  // Implement Equation 9 from your pseudocode here
-  /* Psueucode
-  TODO: update the positions
- 	for each vertex in vertices: 
-		total_height = 0;
-		counter = 0;
-		for each triangle adjacent to vertex:
-			total_height += triangle.value().Q.h;
-			++counter;
-		vertex.value().h = total_height / counter;
-  */
+	for (auto vit = m.vertex_begin(); vit != m.vertex_end(); ++vit) {
+		double total_h = 0;
+		int count = 0;
+		for (auto adj = (*vit).triangles_begin(); adj != (*vit).triangles_end(); ++adj) {
+			total_h += (*adj).value().qvar_.h;
+			++count;
+		}
+		(*vit).value().h = total_h / count;
+	}
+
   (void) m;
 }
 
