@@ -627,11 +627,6 @@ class Graph {
     return Edge(this,uid1,uid2);
   }
 
-  Edge edge(Node n1, Node n2) const {
-	  assert(has_edge(n1, n2));
-	  return Edge(this, n1.uid_, n2.uid_);
-  }
-
 
 
   /** Removes an edge from the graph
