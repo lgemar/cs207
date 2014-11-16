@@ -642,8 +642,11 @@ class Graph {
 	return *it;
   }
 
+  /* @pre nodes a and b must be valid nodes in the graph and there is 
+   * a valid connection between them 
+   */
   Edge edge(Node a, Node b) {
-  	return add_edge(a, b);
+  	return Edge(this, a, b);
   }
 
   ///////////////
