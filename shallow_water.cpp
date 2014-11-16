@@ -39,6 +39,7 @@ struct QVar {
   }
   // More operators?
   // TODO: add the operator+
+  // TODO: add a constructor
 };
 
 // HW4B: Placeholder for Mesh Type!
@@ -255,6 +256,10 @@ int main(int argc, char* argv[])
 		else
 			triangle.value().Q.h = 1;
   */
+  // cache the areas of triangles  	
+  for(auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
+	(*it).value().area = (*it).area();
+  }
 
   // Begin the time stepping
   for (double t = t_start; t < t_end; t += dt) {
@@ -267,8 +272,8 @@ int main(int argc, char* argv[])
     // Update the viewer with new node positions
     // HW4B: Need to define node_iterators before these can be used!
 #if 1
-    viewer.add_nodes(mesh.node_begin(), mesh.node_end(),
-                     CS207::DefaultColor(), NodePosition(), node_map);
+    viewer.add_nodes(mesh.vertex_begin(), mesh.vertex_end(),
+                     CS207::DefaultColor(), NodePosition(), vertex_map);
 #endif
     viewer.set_label(t);
 

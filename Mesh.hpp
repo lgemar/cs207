@@ -62,6 +62,7 @@ public:
 	typedef typename VertGraph::incident_iterator incident_iterator;
 	typedef typename TriGraph::node_iterator tri_node_iterator;
 	typedef typename TriGraph::edge_iterator tri_edge_iterator;
+	typedef typename TriGraph::incident_iterator tri_incident_iterator;
 	typedef typename std::set<Triangle>::iterator adj_triangle_iterator;
 
 	// Define synonyms for the iterators and iterator types
@@ -70,6 +71,7 @@ public:
 	typedef TransformIterator<vert_node_iterator, Vertex> vertex_iterator;
 	typedef TransformIterator<vert_edge_iterator, Edge> edge_iterator;
 	typedef TransformIterator<adj_triangle_iterator,Triangle> adjacent_iterator;
+	typedef TransformIterator<tri_incident_iterator,Link> adj_link_iterator;
 
 
 	// Externally visible node and triangle types, used in viewer maps
