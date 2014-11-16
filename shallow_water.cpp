@@ -50,12 +50,12 @@ static constexpr double grav = 9.80665;
 
 typedef struct my_triangle_data {
 	// TODO: Qvar stuff
-	double area;
+	double area_;
 	QVar qvar_;
 } my_triangle_data;
 
 typedef struct my_link_data {
-	Point normal;
+	Point normal_;
 } my_link_data;
 
 
@@ -116,7 +116,7 @@ struct EdgeFluxCalculator {
 /** Node position function object for use in the SDLViewer. */
 struct NodePosition {
   template <typename NODE>
-  Point operator()(const NODE& n) {
+  Point operator()(const NODE& n) const {
     return Point(n.position().x, n.position().y, n.value().qvar_.h);
   }
 };
@@ -286,16 +286,16 @@ int main(int argc, char* argv[])
   */
   // cache the areas of triangles  	
   for(auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
-	(*it).value().area = (*it).area();
+	(*it).value().area_ = (*it).area();
   }
   // Compute the normals for all of the links
   for(auto it = mesh.link_begin(); it != mesh.link_end(); ++it) {
   	Link this_link = (*it);
 	if(this_link.triangle1() < this_link.triangle2()) {
-		this_link.value().normal = mesh.normal(this_link.triangle1(), this_link.triangle2());
+		this_link.value().normal_ = mesh.normal(this_link.triangle1(), this_link.triangle2());
 	}
 	else {
-		this_link.value().normal = mesh.normal(this_link.triangle2(), this_link.triangle1());
+		this_link.value().normal_ = mesh.normal(this_link.triangle2(), this_link.triangle1());
 	}
   }
   // Precompute the Qvars in the triangles
