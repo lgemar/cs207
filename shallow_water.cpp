@@ -161,7 +161,6 @@ template <typename MESH, typename FLUX>
 double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 	// HW4B: YOUR CODE HERE
 	// Step the finite volume model in time by dt.
-	EdgeFluxCalculator flux_calc;
 
 	std::vector<QVar> flux_list;
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
@@ -176,7 +175,7 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 				normal = -(*link).value().normal_;
 
 			// getting the flux
-			flux = flux + flux_calc(normal.x, normal.y, dt, (*tri).value().qvar_, (*link).triangle2().value().qvar_);
+			flux = flux + f(normal.x, normal.y, dt, (*tri).value().qvar_, (*link).triangle2().value().qvar_);
 		}
 		// saving the flux
 		flux_list.push_back(flux);
@@ -276,12 +275,14 @@ int main(int argc, char* argv[])
 #endif
   viewer.center_view();
 
+
   // HW4B: Timestep
   // CFL stability condition requires dt <= dx / max|velocity|
   // For the shallow water equations with u = v = 0 initial conditions
   //   we can compute the minimum edge length and maximum original water height
   //   to set the time-step
   // Compute the minimum edge length and maximum water height for computing dt
+
 #if 0
   double dt = 0.25 * min_edge_length / (sqrt(grav * max_height));
 #else
@@ -294,27 +295,6 @@ int main(int argc, char* argv[])
   // Preconstruct a Flux functor
   EdgeFluxCalculator f;
 
-  // TODO: precompute all the normals and areas (put the normals in UserLinkData)
-  /** Psuedocode
-	// Pre-Compute all the areas
-  	for triangle in triangles:
-		triangle.value().area = triangle.area();
-	// Pre-compute the normals
-	for link in links:
-		triangle1 = link.triangle1();
-		triangle2 = link.triangle2();
-		// RI: normal always points from triangle with smaller index to triangle with greater index
-		if(triangle1 < triangle2)
-			link.value().normal = normal(triangle1, triangle2);
-		else 
-			link.value().normal = normal(triangle2, triangle1);
-	// Pre-compute the Q's
-	for triangle in triangles:
-		if triangle.position().x < 0:
-			triangle.value().Q.h = 1.75;
-		else
-			triangle.value().Q.h = 1;
-  */
   // cache the areas of triangles  	
   for(auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
 	(*it).value().area_ = (*it).area();
@@ -359,6 +339,7 @@ int main(int argc, char* argv[])
     if (mesh.num_nodes() < 100)
       CS207::sleep(0.05);
   }
+
 
   return 0;
 }

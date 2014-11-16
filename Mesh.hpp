@@ -88,7 +88,7 @@ public:
 		UserTriData data_;
 		triangle_data(vert_node n1, vert_node n2, vert_node n3, UserTriData d = UserTriData()) :
 			n1_(n1), n2_(n2), n3_(n3), data_(d) {}
-		triangle_data() {std::cerr << "made empty triangle data " << std::endl;}
+		triangle_data() {}
 	} triangle_data;
 
 	/** link stores its dual edge, and user edge data*/
@@ -96,7 +96,7 @@ public:
 		vert_edge dual_;
 		UserEdgeData data_;
 		link_data(vert_edge dual, UserEdgeData data = UserEdgeData()) : dual_(dual), data_(data) {}
-		link_data() {std::cerr << "made empty link data " << std::endl;}
+		link_data() {}
 	} link_data;
 
 	/** vertex stores its triangles, node data */
@@ -104,14 +104,13 @@ public:
 		std::set<Triangle> triangles_;
 		UserNodeData data_;
 		vertex_data(UserNodeData data = UserNodeData()) : data_(data) {/* triangles starts empty*/}
-		//vertex_data() {std::cerr << "made empty vertex data " << std::endl;}
 	} vertex_data;
 
 	/** edge just stores its dual link */
 	typedef struct edge_data {
 		tri_edge dual_;
 		edge_data(tri_edge dual) : dual_(dual) {}
-		edge_data() {std::cerr << "made empty edge data " << std::endl;};
+		edge_data() {};
 	} edge_data;
 
 
@@ -355,7 +354,6 @@ public:
 		// check for existing triangles
 		Triangle existing = get_triangle(n1, n2, n3);
 		if (existing != Triangle()) {
-			std::cerr << "warning: tri already existed" << std::endl;
 			existing.value() = d;
 			return existing;
 		}
@@ -552,6 +550,7 @@ private:
 
 	/** private utility functions */
 	tri_edge get_link(Triangle t1, Triangle t2) {
+		assert (triangle_graph_.has_edge(get_tri_node(t1), get_tri_node(t2)));
 		return triangle_graph_.edge(get_tri_node(t1), get_tri_node(t2));
 	}
 	tri_node get_tri_node(Triangle t) const {
