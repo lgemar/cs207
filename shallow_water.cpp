@@ -21,6 +21,7 @@
 static constexpr double grav = 9.80665;
 
 /** Water column characteristics */
+// This goes in as the UserTriangleData
 struct QVar {
   double h;   // Height of column
   double hx;  // Height times average x velocity of column
@@ -37,6 +38,7 @@ struct QVar {
       : h(h_), hx(hx_), hy(hy_) {
   }
   // More operators?
+  // TODO: add the operator+
 };
 
 // HW4B: Placeholder for Mesh Type!
@@ -93,10 +95,13 @@ struct NodePosition {
   Point operator()(const NODE& n) {
     // HW4B: You may change this to plot something other than the
     // positions of the nodes
+	// TODO: n.value().h
     return n.position();
   }
 };
 
+
+// TODO: precompute normals and Q-values
 
 /** Integrate a hyperbolic conservation law defined over the mesh m
  * with flux functor f by dt in time.
@@ -106,10 +111,19 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
   // HW4B: YOUR CODE HERE
   // Step the finite volume model in time by dt.
 
-  // Pseudocode:
+  /** Pseudocode: TODO:
   // Compute all fluxes. (before updating any triangle Q_bars)
+	 for each triangle in all triangles:
+	 	for all adj_triangles to triangle:
+			normal = normal between the two triangles;
+			flux += 
+					EdgeFluxCalculator(normal.x, normal.y, dt, triangle.value().Q, adj_triangle.value().Q);
+		flux_list.append(flux);
+	for each flux, triangle in fluxes, triangles:
+		triangle.value().Q -= (flux) * dt / triangle.area();
   // For each triangle, update Q_bar using the fluxes as in Equation 8.
-  //  NOTE: Much like symp_euler_step, this may require TWO for-loops
+  /  NOTE: Much like symp_euler_step, this may require TWO for-loops
+  */
   (void) m; (void) f;
   return t + dt;
 }
@@ -120,6 +134,16 @@ void post_process(MESH& m) {
   // HW4B: Post-processing step
   // Translate the triangle-averaged values to node-averaged values
   // Implement Equation 9 from your pseudocode here
+  /* Psueucode
+  TODO: update the positions
+ 	for each vertex in vertices: 
+		total_height = 0;
+		counter = 0;
+		for each triangle adjacent to vertex:
+			total_height += triangle.value().Q.h;
+			++counter;
+		vertex.value().h = total_height / counter;
+  */
   (void) m;
 }
 
@@ -210,6 +234,28 @@ int main(int argc, char* argv[])
   // Preconstruct a Flux functor
   EdgeFluxCalculator f;
 
+  // TODO: precompute all the normals and areas (put the normals in UserLinkData)
+  /** Psuedocode
+	// Pre-Compute all the areas
+  	for triangle in triangles:
+		triangle.value().area = triangle.area();
+	// Pre-compute the normals
+	for link in links:
+		triangle1 = link.triangle1();
+		triangle2 = link.triangle2();
+		// RI: normal always points from triangle with smaller index to triangle with greater index
+		if(triangle1 < triangle2)
+			link.value().normal = normal(triangle1, triangle2);
+		else 
+			link.value().normal = normal(triangle2, triangle1);
+	// Pre-compute the Q's
+	for triangle in triangles:
+		if triangle.position().x < 0:
+			triangle.value().Q.h = 1.75;
+		else
+			triangle.value().Q.h = 1;
+  */
+
   // Begin the time stepping
   for (double t = t_start; t < t_end; t += dt) {
     // Step forward in time with forward Euler
@@ -220,7 +266,7 @@ int main(int argc, char* argv[])
 
     // Update the viewer with new node positions
     // HW4B: Need to define node_iterators before these can be used!
-#if 0
+#if 1
     viewer.add_nodes(mesh.node_begin(), mesh.node_end(),
                      CS207::DefaultColor(), NodePosition(), node_map);
 #endif
