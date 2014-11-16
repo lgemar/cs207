@@ -148,13 +148,13 @@ struct NodePosition {
 struct VertexPosition {
 	template<typename VERTEX>
 	Point operator()(VERTEX& v) const {
-		Point sum = Point(0, 0, 0);
+		double sum = 0;
 		int counter = 0;
 		for(auto it = v.triangles_begin(); it != v.triangles_end(); ++it) {
-			sum += (*it).position();
+			sum += (*it).value().qvar_.h;
 			++counter;
 		}
-		return Point(sum.x / counter, sum.y / counter, sum.z / counter);
+		return Point(v.position().x, v.position().y, sum / counter);
 	}
 };
 
@@ -344,7 +344,7 @@ int main(int argc, char* argv[])
 
     // Update the viewer with new node positions
     // HW4B: Need to define node_iterators before these can be used!
-#if 1
+#if 0
     viewer.add_nodes(mesh.vertex_begin(), mesh.vertex_end(),
                      CS207::DefaultColor(), VertexPosition(), vertex_map);
 #endif
