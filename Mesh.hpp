@@ -148,7 +148,7 @@ public:
 			idx_type index() const { v_.index();}
 			bool operator==(const Vertex& other) const {return v_ == other.v_;}
 			bool operator<(const Vertex& other) const { return v_ < other.v_;}
-			UserNodeData& value() {return v_.value().data_;}
+			UserNodeData& value() const {return v_.value().data_;}
 			size_type degree() const {return v_.degree();}
 			incident_iterator edge_begin() {return v_.edge_begin();}
 			incident_iterator edge_end() {return v_.edge_end();}
