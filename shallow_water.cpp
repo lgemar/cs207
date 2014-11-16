@@ -140,13 +140,6 @@ struct EdgeFluxCalculator {
   }
 };
 
-/** For debugging purposes */
-typedef struct Tilt {
-	QVar operator()(double nx, double ny, double dt, const QVar& qk, const QVar& qm) {
-		return qk;
-	}
-} Tilt;
-
 /** Node position function object for use in the SDLViewer. */
 struct NodePosition {
   template <typename NODE>
@@ -172,6 +165,7 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 	std::vector<QVar> flux_list;
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
 		QVar flux = QVar(0,0,0);
+		int num_links = 0;
 		for (auto link = (*tri).link_begin(); link != (*tri).link_end(); ++link) {
 			// getting the normal
 			Point normal;
@@ -201,7 +195,12 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 			db(temp.hx);
 			db(temp.hy);
 			flux = flux + temp;
+			++num_links;
 		}
+		// Deal with the nodes that are on a boundary
+		if( num_links < 2 ) {
+		}
+			
 		// saving the flux
 		flux_list.push_back(flux);
 	}
@@ -225,8 +224,9 @@ void post_process(MESH& m) {
 			total_h += (*adj).value().qvar_.h;
 			++count;
 		}
-		// (*vit).value().h = total_h / count;
-		(*vit).value().h += (*vit).position().y;
+		(*vit).value().h = total_h / count; // old computation
+		// Predictable evolution in time by increasing the height by the y-val
+		// (*vit).value().h += (*vit).position().y;
 	}
 }
 
@@ -307,7 +307,16 @@ int main(int argc, char* argv[])
   //   to set the time-step
   // Compute the minimum edge length and maximum water height for computing dt
 
-#if 0
+#if 1
+  double min_edge_length = 0;
+  double max_height = 1.75; // hardcoded from knowledge about initial conditions
+  for(auto it = mesh.link_begin(); it != mesh.link_end(); ++it) {
+	double this_edge_length = distance((*it).triangle1().position(), (*it).triangle2().position());
+  	if( it == mesh.link_begin() )
+		min_edge_length = this_edge_length;
+  	if(this_edge_length < min_edge_length)
+		min_edge_length = this_edge_length;
+  }
   double dt = 0.25 * min_edge_length / (sqrt(grav * max_height));
 #else
   // Placeholder!! Delete me when min_edge_length and max_height can be computed!
