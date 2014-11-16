@@ -642,6 +642,10 @@ class Graph {
 	return *it;
   }
 
+  Edge edge(Node a, Node b) const {
+  	return add_edge(a, b);
+  }
+
   ///////////////
   // Iterators //
   ///////////////

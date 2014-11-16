@@ -183,7 +183,9 @@ public:
 			Link() {};
 			Triangle node1() const {return Triangle(mesh_, e_.node1());}
 			Triangle node2() const {return Triangle(mesh_, e_.node2());}
-			UserEdgeData value() const {
+			Triangle triangle1() const {return node1();};
+			Triangle triangle2() const {return node2();};
+			UserEdgeData& value() {
 				return e_.value().data_;
 			}
 			bool operator==(const Link& other) const {
@@ -207,6 +209,8 @@ public:
 			Edge() {};
 			Vertex node1() const {return Vertex(mesh_, e_.node1());}
 			Vertex node2() const {return Vertex(mesh_, e_.node2());}
+			Vertex vertex1() const {return node1();}
+			Vertex vertex2() const {return node2();}
 			UserEdgeData value() const {
 				return e_.value().data_;
 			}
@@ -271,6 +275,16 @@ public:
 		/** returns how many connections this triangle has */
 		size_type degree() const {
 			return mesh_->triangle_graph_.node(uid_).degree();
+		}
+
+		adj_link_iterator link_begin() const {
+			return adj_link_iterator(mesh_, 
+					mesh_->get_tri_node(uid_).edge_begin());
+		}
+
+		adj_link_iterator link_end() const {
+			return adj_link_iterator(mesh_, 
+					mesh_->get_tri_node(uid_).edge_end());
 		}
 
 		/** comparison operators forward to underlying graph */
@@ -432,13 +446,13 @@ public:
 	/** returns the normal of the edge between t1 and t2, pointing towards t2
 	 * ONLY IN THE XY plane
 	 * */
-	Point normal(Triangle t1, Triangle t2) const {
+	Point normal(Triangle t1, Triangle t2) {
 		vert_edge edge = get_link(t1, t2).value().dual_;
 		Point edge_vec = edge.node1().position() - edge.node2().position();
 		Point normal = cross(edge_vec, Point(0,0,1));
 
 		// check if it points away from t1
-		Point towards_t1 = get_unused(t1, edge) - edge.node1();
+		Point towards_t1 = get_unused(t1, edge).position() - edge.node1().position();
 		if (dot(normal, towards_t1) > 0)
 			normal = -1 * normal;
 
@@ -531,13 +545,13 @@ private:
 	friend class Triangle;
 
 	/** private utility functions */
-	tri_edge get_link(Triangle t1, Triangle t2) const {
-		return triangle_graph_.edge(get_tri_node(t1), get_tri_node(t2));
+	tri_edge get_link(Triangle t1, Triangle t2) {
+		return triangle_graph_.add_edge(get_tri_node(t1), get_tri_node(t2));
 	}
 	tri_node get_tri_node(Triangle t) const {
 		return triangle_graph_.node(t.uid_);
 	}
-	tri_node get_unused(Triangle t, vert_edge e) const {
+	vert_node get_unused(Triangle t, vert_edge e) const {
 		int i = 1;
 		while (t.vertex(i) == e.node1() || t.vertex(i) == e.node2())
 			++i;
