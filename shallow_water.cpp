@@ -66,7 +66,7 @@ typedef Mesh<char, my_link_data, my_triangle_data> MeshType;
 typedef MeshType::Link Link;
 typedef MeshType::Triangle Triangle;
 
-typedef MeshType::Link LinkType;
+typedef MeshType::Link Link;
 
 typedef MeshType::triangle_iterator triangle_iterator;
 
@@ -117,8 +117,21 @@ struct EdgeFluxCalculator {
 struct NodePosition {
   template <typename NODE>
   Point operator()(const NODE& n) const {
-    return Point(n.position().x, n.position().y, n.value().qvar_.h);
+    return n.position();
   }
+};
+
+struct VertexPosition {
+	template<typename VERTEX>
+	Point operator()(const VERTEX& v) const {
+		Point sum = Point(0, 0, 0);
+		int counter = 0;
+		for(auto it = v.triangles_begin(); it != v.triangles_end(); ++it) {
+			sum += (*it).position();
+			++counter;
+		}
+		return Point(sum.x / counter, sum.y / counter, sum.z / counter);
+	}
 };
 
 
@@ -134,18 +147,18 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 	std::vector<QVar> flux_list;
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
 		QVar flux = QVar(0,0,0);
-		for (auto adj = (*tri).adjacent_begin(); adj != (*tri).adjacent_end(); ++adj) {
+		for (auto adj = (*tri).link_begin(); adj != (*tri).link_end(); ++adj) {
 
 			// getting the normal
-			LinkType l1 = m.link(*tri, *adj);
+			Link l1 = m.link(*tri, (*adj).triangle2());
 			Point normal;
-			if(*tri < *adj)
+			if(*tri < (*adj).triangle2())
 				normal = l1.value().normal_;
 			else
 				normal = -l1.value().normal_;
 
 			// getting the flux
-			flux = flux + flux_calc(normal.x, normal.y, dt, (*tri).value().qvar_, (*adj).value().qvar_);
+			flux = flux + flux_calc(normal.x, normal.y, dt, (*tri).value().qvar_, (*adj).triangle2().value().qvar_);
 		}
 		// saving the flux
 		flux_list.push_back(flux);
@@ -319,7 +332,7 @@ int main(int argc, char* argv[])
     // HW4B: Need to define node_iterators before these can be used!
 #if 1
     viewer.add_nodes(mesh.vertex_begin(), mesh.vertex_end(),
-                     CS207::DefaultColor(), NodePosition(), vertex_map);
+                     CS207::DefaultColor(), VertexPosition(), vertex_map);
 #endif
     viewer.set_label(t);
 
