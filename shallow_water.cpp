@@ -17,6 +17,10 @@
 #include "Point.hpp"
 #include "Mesh.hpp"
 
+void db(std::string s) {
+	std::cerr << s << std::endl;
+}
+
 /** Water column characteristics */
 // This goes in as the UserTriangleData
 struct QVar {
@@ -301,13 +305,25 @@ int main(int argc, char* argv[])
   }
   // Compute the normals for all of the links
   for(auto it = mesh.link_begin(); it != mesh.link_end(); ++it) {
+	db("link");
   	Link this_link = (*it);
+  	db("derefenced");
+
+  	Triangle t1 = this_link.triangle1();
+  	Triangle t2 = this_link.triangle2();
+  	db("got tris");
+
+
+
 	if(this_link.triangle1() < this_link.triangle2()) {
+		db("compared");
 		this_link.value().normal_ = mesh.normal(this_link.triangle1(), this_link.triangle2());
 	}
 	else {
+		db("compared");
 		this_link.value().normal_ = mesh.normal(this_link.triangle2(), this_link.triangle1());
 	}
+	db("called normal");
   }
   // Precompute the Qvars in the triangles
   for(auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {

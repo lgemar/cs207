@@ -627,6 +627,10 @@ class Graph {
     return Edge(this,uid1,uid2);
   }
 
+  Edge edge(const Node& n1, const Node& n2) const {
+	  return Edge(this, n1.uid_, n2.uid_);
+  }
+
 
 
   /** Removes an edge from the graph

@@ -91,7 +91,9 @@ public:
 		triangle_data() {}
 	} triangle_data;
 
-	/** link stores its dual edge, and user edge data*/
+	/** link stores its dual edge, and user edge data
+	 * link must have dual
+	 * */
 	typedef struct link_data {
 		vert_edge dual_;
 		UserEdgeData data_;
@@ -106,7 +108,9 @@ public:
 		vertex_data(UserNodeData data = UserNodeData()) : data_(data) {/* triangles starts empty*/}
 	} vertex_data;
 
-	/** edge just stores its dual link */
+	/** edge just stores its dual link
+	 * edges don't necessarily have dual
+	 * */
 	typedef struct edge_data {
 		tri_edge dual_;
 		edge_data(tri_edge dual) : dual_(dual) {}
@@ -368,20 +372,17 @@ public:
 		// find neighbors, create links and maintain duals
 		std::set<Triangle> adj12 = common_triangles(n1, n2);
 		if (adj12.size() != 0) {
-			tri_edge temp = triangle_graph_.add_edge(tn, get_tri_node(*adj12.begin()));
-			temp.value() = link_data(e12);
+			tri_edge temp = triangle_graph_.add_edge(tn, get_tri_node(*adj12.begin()), link_data(e12));
 			e12.value().dual_ = temp;
 		}
 		std::set<Triangle> adj23 = common_triangles(n2, n3);
 		if (adj23.size() != 0) {
-			tri_edge temp = triangle_graph_.add_edge(tn, get_tri_node(*adj23.begin()));
-			temp.value() = link_data(e23);
+			tri_edge temp = triangle_graph_.add_edge(tn, get_tri_node(*adj23.begin()), link_data(e23));
 			e23.value().dual_ = temp;
 		}
 		std::set<Triangle> adj31 = common_triangles(n3, n1);
 		if (adj31.size() != 0) {
-			tri_edge temp = triangle_graph_.add_edge(tn, get_tri_node(*adj31.begin()));
-			temp.value() = link_data(e31);
+			tri_edge temp = triangle_graph_.add_edge(tn, get_tri_node(*adj31.begin()), link_data(e31));
 			e31.value().dual_ = temp;
 		}
 
@@ -447,6 +448,8 @@ public:
 	 * ONLY IN THE XY plane
 	 * */
 	Point normal(Triangle t1, Triangle t2) {
+		tri_edge link = get_link(t1, t2);
+		link_data ld = link.value();
 		vert_edge edge = get_link(t1, t2).value().dual_;
 		Point edge_vec = edge.node1().position() - edge.node2().position();
 		Point normal = cross(edge_vec, Point(0,0,1));
