@@ -546,7 +546,7 @@ private:
 
 	/** private utility functions */
 	tri_edge get_link(Triangle t1, Triangle t2) {
-		return triangle_graph_.add_edge(get_tri_node(t1), get_tri_node(t2));
+		return triangle_graph_.edge(get_tri_node(t1), get_tri_node(t2));
 	}
 	tri_node get_tri_node(Triangle t) const {
 		return triangle_graph_.node(t.uid_);

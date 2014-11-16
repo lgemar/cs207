@@ -642,7 +642,7 @@ class Graph {
 	return *it;
   }
 
-  Edge edge(Node a, Node b) const {
+  Edge edge(Node a, Node b) {
   	return add_edge(a, b);
   }
 
