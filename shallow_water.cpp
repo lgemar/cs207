@@ -40,8 +40,24 @@ struct QVar {
 	  return QVar(h + o.h, hx + o.hx, hy + o.hy);
   }
 
+  QVar operator-(QVar o) const {
+	  return QVar(h - o.h, hx - o.hx, hy - o.hy);
+  }
+
+  void operator+=(QVar o) {
+	  *this = (*this + o);
+  }
+
+  void operator-=(QVar o) {
+	  *this = (*this - o);
+  }
+
   QVar operator*(double s) const {
 	  return QVar(h*s, hx*s, hy*s);
+  }
+
+  QVar operator/(double s) const {
+	  return *this * 1/s;
   }
 };
 
@@ -134,18 +150,17 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 	std::vector<QVar> flux_list;
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
 		QVar flux = QVar(0,0,0);
-		for (auto adj = (*tri).adjacent_begin(); adj != (*tri).adjacent_end(); ++adj) {
+		for (auto link = (*tri).link_begin(); link != (*tri).link_end(); ++link) {
 
 			// getting the normal
-			LinkType l1 = m.link(*tri, *adj);
 			Point normal;
-			if(*tri < *adj)
-				normal = l1.value().normal_;
+			if(*tri < (*link).triangle2())
+				normal = (*link).value().normal_;
 			else
-				normal = -l1.value().normal_;
+				normal = -(*link).value().normal_;
 
 			// getting the flux
-			flux = flux + flux_calc(normal.x, normal.y, dt, (*tri).value().qvar_, (*adj).value().qvar_);
+			flux = flux + flux_calc(normal.x, normal.y, dt, (*tri).value().qvar_, (*link).triangle2().value().qvar_);
 		}
 		// saving the flux
 		flux_list.push_back(flux);
@@ -154,7 +169,7 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 	// now updating all fluxes
 	auto fli = flux_list.begin();
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri, ++fli ) {
-		(*tri).value().qvar_ -= (*fli) * dt / (*tri).value().area_;
+		(*tri).value().qvar_ -= (*fli) * (dt / (*tri).value().area_);
 	}
 
 	return t + dt;
