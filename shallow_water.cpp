@@ -17,18 +17,6 @@
 #include "Point.hpp"
 #include "Mesh.hpp"
 
-// Standard gravity (average gravity at Earth's surface) in meters/sec^2
-static constexpr double grav = 9.80665;
-
-typedef struct my_triangle_data {
-	// TODO: Qvar stuff
-	double area;
-} my_triangle_data;
-
-typedef struct my_link_data {
-	Point normal;
-} my_link_data;
-
 /** Water column characteristics */
 // This goes in as the UserTriangleData
 struct QVar {
@@ -51,11 +39,26 @@ struct QVar {
   // TODO: add a constructor
 };
 
+// Standard gravity (average gravity at Earth's surface) in meters/sec^2
+static constexpr double grav = 9.80665;
+
+typedef struct my_triangle_data {
+	// TODO: Qvar stuff
+	double area;
+	QVar qvar_;
+} my_triangle_data;
+
+typedef struct my_link_data {
+	Point normal;
+} my_link_data;
+
+
 // HW4B: Placeholder for Mesh Type!
 // Define NodeData, EdgeData, TriData, etc
 // or redefine for your particular Mesh
 typedef Mesh<char, my_link_data, my_triangle_data> MeshType;
 typedef MeshType::Link Link;
+typedef MeshType::Triangle Triangle;
 
 
 /** Function object for calculating shallow-water flux.
@@ -279,6 +282,14 @@ int main(int argc, char* argv[])
 	else {
 		this_link.value().normal = mesh.normal(this_link.triangle2(), this_link.triangle1());
 	}
+  }
+  // Precompute the Qvars in the triangles
+  for(auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
+  	Triangle this_triangle = (*it);
+	if( this_triangle.position().x < 0)
+		this_triangle.value().qvar_ = QVar(1.75, 0, 0);
+	else
+		this_triangle.value().qvar_ = QVar(1.0, 0, 0);
   }
 
   // Begin the time stepping
