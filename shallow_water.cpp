@@ -19,11 +19,11 @@
 
 template <typename in>
 void db(in s) {
-	std::cout << s << std::endl;
+	// std::cout << s << std::endl;
 }
 
 void db(Point p) {
-	std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
+	// std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
 }
 
 /** Water column characteristics */
@@ -94,9 +94,7 @@ typedef struct my_vertex_data {
 typedef Mesh<my_vertex_data, my_link_data, my_triangle_data> MeshType;
 typedef MeshType::Link Link;
 typedef MeshType::Triangle Triangle;
-
-typedef MeshType::Link Link;
-
+typedef MeshType::Vertex Vertex;
 typedef MeshType::triangle_iterator triangle_iterator;
 
 
@@ -142,6 +140,13 @@ struct EdgeFluxCalculator {
   }
 };
 
+/** For debugging purposes */
+typedef struct Tilt {
+	QVar operator()(double nx, double ny, double dt, const QVar& qk, const QVar& qm) {
+		return qk;
+	}
+} Tilt;
+
 /** Node position function object for use in the SDLViewer. */
 struct NodePosition {
   template <typename NODE>
@@ -151,8 +156,7 @@ struct NodePosition {
 };
 
 struct VertexPosition {
-	template<typename VERTEX>
-	Point operator()(VERTEX& v) const {
+	Point operator()(Vertex& v) const {
 		return Point(v.position().x, v.position().y, v.value().h);
 	}
 };
@@ -169,7 +173,6 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
 		QVar flux = QVar(0,0,0);
 		for (auto link = (*tri).link_begin(); link != (*tri).link_end(); ++link) {
-
 			// getting the normal
 			Point normal;
 			if(*tri < (*link).triangle2())
@@ -222,7 +225,8 @@ void post_process(MESH& m) {
 			total_h += (*adj).value().qvar_.h;
 			++count;
 		}
-		(*vit).value().h = total_h / count;
+		// (*vit).value().h = total_h / count;
+		(*vit).value().h += (*vit).position().y;
 	}
 }
 

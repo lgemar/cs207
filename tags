@@ -222,9 +222,8 @@ DivisionRing	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/new_con
 DivisionRing	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/old_concepts.hpp	/^  : DivisionRing<Element>,$/;"	m	namespace:math
 DotProduct	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/vector_concepts.hpp	/^struct DotProduct$/;"	s	namespace:math
 ELEMENT_STRUCTURE_ALGORITHMS	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/element_structure_algorithms.hpp	3;"	d
-Edge	Graph.hpp	/^  	Edge(const Graph* graph, Node node1, Node node2) {$/;"	f	class:Graph::Edge
-Edge	Graph.hpp	/^  	Edge(const Graph* graph, uid_type uid1, uid_type uid2) : $/;"	f	class:Graph::Edge
 Edge	Graph.hpp	/^    Edge() {$/;"	f	class:Graph::Edge
+Edge	Graph.hpp	/^    Edge(const Graph* graph, size_type n1_id, size_type n2_id)$/;"	f	class:Graph::Edge
 Edge	Graph.hpp	/^  class Edge : private totally_ordered<Edge> {$/;"	c	class:Graph
 Edge	Mesh.hpp	/^			Edge() {};$/;"	f	class:Mesh::Edge
 Edge	Mesh.hpp	/^			Edge(const Mesh* mesh, vert_edge e) : mesh_(mesh), e_(e) {}$/;"	f	class:Mesh::Edge
@@ -232,13 +231,13 @@ Edge	Mesh.hpp	/^	class Edge : private totally_ordered<Edge> {$/;"	c	class:Mesh
 Edge	mass_spring.cpp	/^typedef typename GraphType::edge_type Edge;$/;"	t	file:
 Edge	poisson.cpp	/^typedef typename GraphType::edge_type Edge;$/;"	t	file:
 Edge	test_edges.cpp	/^typedef GraphType::edge_type Edge;$/;"	t	file:
+EdgeData	Graph.hpp	/^  struct EdgeData : private equality_comparable<EdgeData>{$/;"	s	class:Graph
 EdgeData	mass_spring.cpp	/^struct EdgeData {$/;"	s	file:
 EdgeData	poisson.cpp	/^typedef struct EdgeData {$/;"	s	file:
 EdgeFluxCalculator	shallow_water.cpp	/^struct EdgeFluxCalculator {$/;"	s	file:
-EdgeIterator	Graph.hpp	/^	EdgeIterator(const Graph* graph) {$/;"	f	class:Graph::EdgeIterator
-EdgeIterator	Graph.hpp	/^	EdgeIterator(const Graph* graph, node_iterator n, $/;"	f	class:Graph::EdgeIterator
 EdgeIterator	Graph.hpp	/^    EdgeIterator() {$/;"	f	class:Graph::EdgeIterator
-EdgeIterator	Graph.hpp	/^  class EdgeIterator : private totally_ordered<EdgeIterator> {$/;"	c	class:Graph
+EdgeIterator	Graph.hpp	/^    EdgeIterator(const Graph* graph, size_type n1_ind, size_type n2_ind)$/;"	f	class:Graph::EdgeIterator
+EdgeIterator	Graph.hpp	/^  class EdgeIterator : private equality_comparable<EdgeIterator>{$/;"	c	class:Graph
 FIRST_PRIME	primes.cpp	3;"	d	file:
 Field	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/algebraic_concepts.hpp	/^    struct Field$/;"	s	namespace:algebra
 FireBall	mass_spring.cpp	/^struct FireBall : public Rule {$/;"	s	file:
@@ -332,10 +331,9 @@ ITL_TFQMR_INCLUDE	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/krylov/tfqmr.
 ITL_WOLF_INCLUDE	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/stepper/wolf.hpp	14;"	d
 IdentityMatrix	mtl_test.cpp	/^	IdentityMatrix(int m, int n) : m(m), n(n), s(m * n) {$/;"	f	struct:IdentityMatrix
 IdentityMatrix	mtl_test.cpp	/^struct IdentityMatrix {$/;"	s	file:
-IncidentIterator	Graph.hpp	/^	IncidentIterator(const Graph* graph, uid_type uid) {$/;"	f	class:Graph::IncidentIterator
-IncidentIterator	Graph.hpp	/^	IncidentIterator(const Graph* graph, uid_type uid, adj_list_iterator pos) :$/;"	f	class:Graph::IncidentIterator
 IncidentIterator	Graph.hpp	/^    IncidentIterator() {$/;"	f	class:Graph::IncidentIterator
-IncidentIterator	Graph.hpp	/^  class IncidentIterator : private totally_ordered<IncidentIterator> {$/;"	c	class:Graph
+IncidentIterator	Graph.hpp	/^    IncidentIterator(const Graph* graph, size_type n1_ind, size_type n2_ind)$/;"	f	class:Graph::IncidentIterator
+IncidentIterator	Graph.hpp	/^  class IncidentIterator : private equality_comparable<IncidentIterator> {$/;"	c	class:Graph
 Info	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^	    double               Control[UMFPACK_CONTROL], Info[UMFPACK_INFO];$/;"	m	class:mtl::mat::umfpack::solver
 Info	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^	    double              Control[UMFPACK_CONTROL], Info[UMFPACK_INFO];$/;"	m	class:mtl::mat::umfpack::solver
 InnerProduct	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/vector_concepts.hpp	/^  : InnerProduct<I, Vector, Scalar>,$/;"	m	namespace:math
@@ -371,7 +369,6 @@ Link	Mesh.hpp	/^			Link() {};$/;"	f	class:Mesh::Link
 Link	Mesh.hpp	/^			Link(const Mesh* mesh, tri_edge e) : mesh_(mesh), e_(e) {}$/;"	f	class:Mesh::Link
 Link	Mesh.hpp	/^	class Link : private totally_ordered<Link> {$/;"	c	class:Mesh
 Link	shallow_water.cpp	/^typedef MeshType::Link Link;$/;"	t	file:
-LinkType	shallow_water.cpp	/^typedef MeshType::Link LinkType;$/;"	t	file:
 MAP	poisson.cpp	/^		typedef typename std::map<typename GraphType::node_type, unsigned> MAP;$/;"	t	class:itl::visual_iteration	file:
 MARKED_CURRENT	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/imf_algorithms.hpp	/^enum Status { UNMARKED, DIAGONAL, MARKED_CURRENT, REMOVED, NON_DIAGONAL };$/;"	e	enum:itl::pc::Status
 MATH_ACCUMULATE_INCLUDE	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/accumulate.hpp	15;"	d
@@ -827,7 +824,7 @@ Matrix	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/concept/matrix.hpp	/^   
 Matrix	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/morton_dense.hpp	/^	typedef morton_dense<Elt, BitMask, Parameters>        Matrix;$/;"	t	struct:mtl::traits::range_generator
 MatrixInserter	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/concept/matrix.hpp	/^    struct MatrixInserter$/;"	s	namespace:mtl
 Mesh	Mesh.hpp	/^class Mesh {$/;"	c
-MeshType	shallow_water.cpp	/^typedef Mesh<char, my_link_data, my_triangle_data> MeshType;$/;"	t	file:
+MeshType	shallow_water.cpp	/^typedef Mesh<my_vertex_data, my_link_data, my_triangle_data> MeshType;$/;"	t	file:
 Metrics	Examples/Metrics.hpp	/^namespace Metrics {$/;"	n
 MinConnectedNodesEstimation	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/imf_algorithms.hpp	/^struct MinConnectedNodesEstimation {$/;"	s	namespace:itl::pc
 MinorTraversableMatrix	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/concept/matrix.hpp	/^    struct MinorTraversableMatrix$/;"	s	namespace:mtl
@@ -875,18 +872,19 @@ MyColorFunc	shortest_path.cpp	/^struct MyColorFunc {$/;"	s	file:
 MyComparator	shortest_path.cpp	/^   MyComparator(const Point& p) : p_(p) {$/;"	f	struct:MyComparator
 MyComparator	shortest_path.cpp	/^struct MyComparator {$/;"	s	file:
 NON_DIAGONAL	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/imf_algorithms.hpp	/^enum Status { UNMARKED, DIAGONAL, MARKED_CURRENT, REMOVED, NON_DIAGONAL };$/;"	e	enum:itl::pc::Status
-Node	Graph.hpp	/^	Node(const Graph* graph, const uid_type uid) : graph_(graph), uid_(uid) {$/;"	f	class:Graph::Node
 Node	Graph.hpp	/^    Node() {$/;"	f	class:Graph::Node
+Node	Graph.hpp	/^    Node(const Graph* graph, size_type uid)$/;"	f	class:Graph::Node
 Node	Graph.hpp	/^  class Node : private totally_ordered<Node> {$/;"	c	class:Graph
 Node	mass_spring.cpp	/^typedef typename GraphType::node_type Node;$/;"	t	file:
 Node	poisson.cpp	/^typedef typename GraphType::node_type Node;$/;"	t	file:
 Node	test_edges.cpp	/^typedef GraphType::node_type Node;$/;"	t	file:
 Node	test_nodes.cpp	/^typedef GraphType::node_type Node;$/;"	t	file:
+NodeData	Graph.hpp	/^   struct NodeData : private equality_comparable<NodeData>{$/;"	s	class:Graph
 NodeData	mass_spring.cpp	/^struct NodeData {$/;"	s	file:
 NodeData	poisson.cpp	/^typedef struct NodeData {$/;"	s	file:
-NodeIterator	Graph.hpp	/^  	NodeIterator(const Graph* graph, idx_type index) {$/;"	f	class:Graph::NodeIterator
 NodeIterator	Graph.hpp	/^    NodeIterator() {$/;"	f	class:Graph::NodeIterator
-NodeIterator	Graph.hpp	/^  class NodeIterator : private totally_ordered<NodeIterator> {$/;"	c	class:Graph
+NodeIterator	Graph.hpp	/^    NodeIterator(const Graph* graph, size_type idx)$/;"	f	class:Graph::NodeIterator
+NodeIterator	Graph.hpp	/^  class NodeIterator : private equality_comparable<NodeIterator> {$/;"	c	class:Graph
 NodePosition	shallow_water.cpp	/^struct NodePosition {$/;"	s	file:
 NonDegeneracy	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/vector_concepts.hpp	/^    axiom NonDegeneracy(I inner, Vector v, Vector w, Scalar s)$/;"	f	struct:math::InnerProduct
 NonNegativity	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/vector_concepts.hpp	/^    axiom NonNegativity(I inner, Vector v, MagnitudeType<Scalar>::type magnitude)$/;"	f	struct:math::InnerProduct
@@ -1007,6 +1005,7 @@ Symbolic	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solv
 Symbolic	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^	    void                *Symbolic, *Numeric;$/;"	m	class:mtl::mat::umfpack::solver
 SymmetricOperator	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/linear_operator.hpp	/^    struct SymmetricOperator$/;"	s	namespace:math
 TableTop	mass_spring.cpp	/^struct TableTop : public Rule {$/;"	s	file:
+Tilt	shallow_water.cpp	/^struct Tilt {$/;"	s	file:
 Time	Examples/Metrics.hpp	/^typedef Unit<0, 0,  1, double>  Time;$/;"	t	namespace:Metrics
 Timer	Examples/openmp.cpp	/^  Timer(const std::string& s) : msg(s) {$/;"	f	struct:Timer
 Timer	Examples/openmp.cpp	/^struct Timer {$/;"	s	file:
@@ -1018,6 +1017,7 @@ TraversableCollection	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/concept/m
 TraversableMutableCollection	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/concept/collection.hpp	/^    struct TraversableMutableCollection$/;"	s	namespace:mtl
 TriGraph	Mesh.hpp	/^	typedef Graph<triangle_data, link_data> TriGraph;$/;"	t	class:Mesh
 Triangle	Mesh.hpp	/^		Triangle() {$/;"	f	class:Mesh::Triangle
+Triangle	Mesh.hpp	/^		Triangle(const Mesh* mesh, const Triangle t) : mesh_(mesh), uid_(t.uid_)$/;"	f	class:Mesh::Triangle
 Triangle	Mesh.hpp	/^		Triangle(const Mesh* mesh, const size_type uid) : mesh_(mesh), uid_(uid) {}$/;"	f	class:Mesh::Triangle
 Triangle	Mesh.hpp	/^		Triangle(const Mesh* mesh, const tri_node tn) : mesh_(mesh), uid_(tn.index()) {}$/;"	f	class:Mesh::Triangle
 Triangle	Mesh.hpp	/^	class Triangle : private totally_ordered<Triangle> {$/;"	c	class:Mesh
@@ -1090,13 +1090,13 @@ add	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/operators.hpp	/^
 add_const_to_all	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/add_const.hpp	/^struct add_const_to_all$/;"	s	namespace:mtl::traits
 add_const_to_data	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/add_const.hpp	/^struct add_const_to_data$/;"	s	namespace:mtl::traits
 add_const_to_root	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/add_const.hpp	/^struct add_const_to_root$/;"	s	namespace:mtl::traits
-add_edge	Graph.hpp	/^  Edge add_edge(const Node& a, const Node& b, const edge_value_type& ev = edge_value_type()) {$/;"	f	class:Graph
+add_edge	Graph.hpp	/^  Edge add_edge(const Node& a, const Node& b, const edge_value_type& val = edge_value_type()) {$/;"	f	class:Graph
 add_edges	CS207/SDLViewer.hpp	/^  void add_edges(InputIterator first, InputIterator last, const Map& node_map) {$/;"	f	class:CS207::SDLViewer
 add_event	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/papi.hpp	/^    int add_event(const char* name) { return 0;}$/;"	f	struct:mtl::utility::papi_t
 add_event	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/papi.hpp	/^    int add_event(const char* name)$/;"	f	class:mtl::utility::papi_t
 add_mult	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/block_diagonal2D.hpp	/^    void add_mult(const VectorIn& x, VectorOut& y) const $/;"	f	class:mtl::mat::block_diagonal2D
 add_neighbors	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/element.hpp	/^    void add_neighbors(element* n1, element* n2= 0, element* n3= 0,$/;"	f	class:mtl::mat::element
-add_node	Graph.hpp	/^  Node add_node(const Point& position, $/;"	f	class:Graph
+add_node	Graph.hpp	/^  Node add_node(const Point& position, const node_value_type& val = node_value_type()) {$/;"	f	class:Graph
 add_node	Mesh.hpp	/^	vert_node add_node(Point p, UserNodeData d = UserNodeData()) {$/;"	f	class:Mesh
 add_nodes	CS207/SDLViewer.hpp	/^  void add_nodes(InputIterator first, InputIterator last,$/;"	f	class:CS207::SDLViewer
 add_triangle	Mesh.hpp	/^	Triangle add_triangle(vert_node n1, vert_node n2, vert_node n3, UserTriData d = UserTriData()) {$/;"	f	class:Mesh
@@ -1116,11 +1116,10 @@ address_major	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/compressed
 address_minor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/compressed2D.hpp	/^    const size_type* address_minor() const { check(); return &indices[0]; }$/;"	f	class:mtl::mat::compressed2D
 address_minor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/compressed2D.hpp	/^    size_type* address_minor() { check(); return &indices[0]; }$/;"	f	class:mtl::mat::compressed2D
 adj_link_iterator	Mesh.hpp	/^	typedef TransformIterator<tri_incident_iterator,Link> adj_link_iterator;$/;"	t	class:Mesh
-adj_list	Graph.hpp	/^	mutable std::list<edge_data> adj_list;$/;"	m	struct:Graph::adjacency_data
-adj_list_iterator	Graph.hpp	/^  typedef typename std::list<edge_data>::iterator adj_list_iterator;$/;"	t	class:Graph
+adj_list_	Graph.hpp	/^  adj_list__type adj_list_;$/;"	m	class:Graph
+adj_list__subtype	Graph.hpp	/^  typedef std::vector<EdgeData> adj_list__subtype;$/;"	t	class:Graph
+adj_list__type	Graph.hpp	/^  typedef std::vector<adj_list__subtype> adj_list__type;$/;"	t	class:Graph
 adj_triangle_iterator	Mesh.hpp	/^	typedef typename std::set<Triangle>::iterator adj_triangle_iterator;$/;"	t	class:Mesh
-adjacency_data	Graph.hpp	/^  typedef struct adjacency_data {$/;"	s	class:Graph
-adjacency_data	Graph.hpp	/^  } adjacency_data;$/;"	t	class:Graph	typeref:struct:Graph::adjacency_data
 adjacent_iterator	Mesh.hpp	/^	typedef TransformIterator<adj_triangle_iterator,Triangle> adjacent_iterator;$/;"	t	class:Mesh
 adjoint	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/adjoint.hpp	/^    struct adjoint$/;"	s	namespace:mtl::mat::traits
 adjoint	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/adjoint.hpp	/^inline adjoint(const LinOp& A)$/;"	f	class:mtl::mat::traits::adjoint
@@ -1416,6 +1415,7 @@ at	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/vec_scal_aop_expr.hpp
 at	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/vec_vec_aop_expr.hpp	/^    value_type& at(size_type i) const { $/;"	f	struct:mtl::vec::vec_vec_aop_expr
 atol	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iteration.hpp	/^    Real atol() const { return atol_; }$/;"	f	class:itl::basic_iteration
 atol_	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iteration.hpp	/^    Real         rtol_, atol_, resid_;$/;"	m	class:itl::basic_iteration
+available_uids_	Graph.hpp	/^  std::vector<size_type> available_uids_;$/;"	m	class:Graph
 axiom	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/pseudo_concept.hpp	/^struct axiom {};$/;"	s
 b	CS207/Color.hpp	/^  value_type r, g, b;$/;"	m	struct:CS207::Color
 b	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/givens.hpp	/^    value_type a, b;$/;"	m	class:mtl::vec::givens
@@ -2324,10 +2324,14 @@ data	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/sparse_vector.hpp	/
 data	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/strided_vector_ref.hpp	/^    pointer     data;$/;"	m	class:mtl::vec::strided_vector_ref
 data	Point.hpp	/^  const_iterator  data() const { return elem; }$/;"	f	struct:Point
 data	Point.hpp	/^  iterator        data()       { return elem; }$/;"	f	struct:Point
-data_	Graph.hpp	/^	edge_data data_() const {$/;"	f	class:Graph::Edge
 data_	Mesh.hpp	/^		UserEdgeData data_;$/;"	m	struct:Mesh::link_data
 data_	Mesh.hpp	/^		UserNodeData data_;$/;"	m	struct:Mesh::vertex_data
 data_	Mesh.hpp	/^		UserTriData data_;$/;"	m	struct:Mesh::triangle_data
+db	shallow_water.cpp	/^void db(Point p) {$/;"	f
+db	shallow_water.cpp	/^void db(in s) {$/;"	f
+debug	Graph.hpp	/^	void debug() const {$/;"	f	class:Graph::IncidentIterator
+debug	Graph.hpp	/^    void debug() const {$/;"	f	class:Graph::EdgeIterator
+debug_uid	Graph.hpp	/^	void debug_uid(size_type uid) const {$/;"	f	class:Graph
 decrement_it	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/decrementer.hpp	/^    void decrement_it(Vector& tgt) const$/;"	f	struct:mtl::vec::decrementer
 decrement_it	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/mat_cvec_multiplier.hpp	/^    void decrement_it(VectorOut& w) const$/;"	f	struct:mtl::vec::mat_cvec_multiplier
 decrementer	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/decrementer.hpp	/^struct decrementer : decrementer_base$/;"	s	namespace:mtl::vec
@@ -2335,7 +2339,7 @@ decrementer_base	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/decreme
 default_generator	CS207/Util.hpp	/^static std::mt19937 default_generator;$/;"	m	namespace:CS207
 default_map	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/matrix_type_generator.hpp	/^	    >                                            default_map;$/;"	t	struct:mtl::type_para::matrix_default_density
 default_omega	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/smoother/relaxation_parameter.hpp	/^struct default_omega$/;"	s	namespace:itl
-degree	Graph.hpp	/^	size_type degree() const {$/;"	f	class:Graph::Node
+degree	Graph.hpp	/^    size_type degree() const {$/;"	f	class:Graph::Node
 degree	Mesh.hpp	/^			size_type degree() const {return v_.degree();}$/;"	f	class:Mesh::Vertex
 degree	Mesh.hpp	/^		size_type degree() const {$/;"	f	class:Mesh::Triangle
 delay_assign	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/mat_mat_op_expr.hpp	/^    void delay_assign() const {}$/;"	f	struct:mtl::mat::mat_mat_op_expr
@@ -2505,6 +2509,7 @@ diagonal	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/diagonal.hpp
 diagonal_setup	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/diagonal_setup.hpp	/^inline void diagonal_setup(Matrix& matrix, const Value& value)$/;"	f	namespace:mtl::mat
 diagonals	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/sparse_banded.hpp	/^    std::vector<std::vector<Value> >  diagonals;$/;"	m	struct:mtl::mat::sparse_banded_inserter
 diff_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/zipped_sort.hpp	/^    typedef long                 diff_type;$/;"	t	struct:mtl::utility::zip_it
+difference	Graph.hpp	/^    Point difference() const {$/;"	f	class:Graph::Edge
 difference_type	Graph.hpp	/^    typedef std::ptrdiff_t difference_type;$/;"	t	class:Graph::EdgeIterator
 difference_type	Graph.hpp	/^    typedef std::ptrdiff_t difference_type;$/;"	t	class:Graph::IncidentIterator
 difference_type	Graph.hpp	/^    typedef std::ptrdiff_t difference_type;$/;"	t	class:Graph::NodeIterator
@@ -2713,32 +2718,28 @@ dynamic_assign	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/vec_vec_a
 dynamic_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/mult_assign_mode.hpp	/^    typedef typename mult_assign_mode<FunctorDynamic, Assign>::type              dynamic_type;$/;"	t	struct:mtl::assign::mult_assign_mode
 e_	Mesh.hpp	/^			tri_edge e_;$/;"	m	class:Mesh::Link
 e_	Mesh.hpp	/^			vert_edge e_;$/;"	m	class:Mesh::Edge
-edge	Graph.hpp	/^  Edge edge(Node a, Node b) {$/;"	f	class:Graph
-edge	Graph.hpp	/^  Edge edge(size_type i) const {$/;"	f	class:Graph
-edge_begin	Graph.hpp	/^	IncidentIterator edge_begin() const {$/;"	f	class:Graph::Node
-edge_begin	Graph.hpp	/^  EdgeIterator edge_begin() const {$/;"	f	class:Graph
+edge	Graph.hpp	/^  Edge edge(const Node& n1, const Node& n2) const {$/;"	f	class:Graph
+edge	Graph.hpp	/^  Edge edge(size_type uid1, size_type uid2) const {$/;"	f	class:Graph
+edge_begin	Graph.hpp	/^    incident_iterator edge_begin() const {$/;"	f	class:Graph::Node
+edge_begin	Graph.hpp	/^  edge_iterator edge_begin() const {$/;"	f	class:Graph
 edge_begin	Mesh.hpp	/^			incident_iterator edge_begin() {return v_.edge_begin();}$/;"	f	class:Mesh::Vertex
 edge_begin	Mesh.hpp	/^	edge_iterator edge_begin() const {$/;"	f	class:Mesh
-edge_data	Graph.hpp	/^	edge_data(uid_type u, scalar len, edge_value_type ev) : uid(u), rest_length(len), v(ev) {$/;"	f	struct:Graph::edge_data
-edge_data	Graph.hpp	/^  typedef struct edge_data {$/;"	s	class:Graph
-edge_data	Graph.hpp	/^  } edge_data;$/;"	t	class:Graph	typeref:struct:Graph::edge_data
-edge_data	Mesh.hpp	/^		edge_data() {std::cerr << "made empty edge data " << std::endl;};$/;"	f	struct:Mesh::edge_data
+edge_count_	Graph.hpp	/^  size_type edge_count_;$/;"	m	class:Graph
+edge_data	Mesh.hpp	/^		edge_data() {};$/;"	f	struct:Mesh::edge_data
 edge_data	Mesh.hpp	/^		edge_data(tri_edge dual) : dual_(dual) {}$/;"	f	struct:Mesh::edge_data
 edge_data	Mesh.hpp	/^	typedef struct edge_data {$/;"	s	class:Mesh
 edge_data	Mesh.hpp	/^	} edge_data;$/;"	t	class:Mesh	typeref:struct:Mesh::edge_data
 edge_data	poisson.cpp	/^} edge_data;$/;"	t	typeref:struct:EdgeData	file:
-edge_end	Graph.hpp	/^	IncidentIterator edge_end() const {$/;"	f	class:Graph::Node
-edge_end	Graph.hpp	/^  EdgeIterator edge_end() const {$/;"	f	class:Graph
+edge_end	Graph.hpp	/^    incident_iterator edge_end() const {$/;"	f	class:Graph::Node
+edge_end	Graph.hpp	/^  edge_iterator edge_end() const {$/;"	f	class:Graph
 edge_end	Mesh.hpp	/^			incident_iterator edge_end() {return v_.edge_end();}$/;"	f	class:Mesh::Vertex
 edge_end	Mesh.hpp	/^	edge_iterator edge_end() const {$/;"	f	class:Mesh
-edge_idx_type	Graph.hpp	/^  typedef int edge_idx_type;$/;"	t	class:Graph
 edge_iterator	Graph.hpp	/^  typedef EdgeIterator edge_iterator;$/;"	t	class:Graph
 edge_iterator	Mesh.hpp	/^	typedef TransformIterator<vert_edge_iterator, Edge> edge_iterator;$/;"	t	class:Mesh
 edge_type	Graph.hpp	/^  typedef Edge edge_type;$/;"	t	class:Graph
 edge_type	Mesh.hpp	/^	typedef Edge edge_type;$/;"	t	class:Mesh
 edge_value_type	Graph.hpp	/^  typedef E edge_value_type;$/;"	t	class:Graph
 edges_	CS207/SDLViewer.hpp	/^  std::vector<unsigned> edges_;$/;"	m	class:CS207::SDLViewer
-edges_	Graph.hpp	/^	std::vector<adjacency_data> edges_;$/;"	m	class:Graph
 eigenvalue_solver	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/eigenvalue.hpp	/^    eigenvalue_solver(const Matrix& IN) : ncols(num_cols(IN)), nrows(num_rows(IN)) {$/;"	f	class:mtl::mat::eigenvalue_solver
 eigenvalue_solver	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/eigenvalue.hpp	/^class eigenvalue_solver {$/;"	c	namespace:mtl::mat
 eigenvalue_symmetric	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/eigenvalue_symmetric.hpp	/^inline eigenvalue_symmetric(const Matrix& A)$/;"	f	class:mtl::mat::mtl::vec
@@ -3091,7 +3092,6 @@ first_update	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/assign_m
 first_update	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/mat_vec_mult.hpp	/^    void first_update(VectorOut& w, SizeType i, const TBlock& tmp, Assign as) const$/;"	f	struct:mtl::mat::crs_cvec_mult_block
 first_update	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/mat_vec_mult.hpp	/^    void first_update(VectorOut& w, SizeType i, const TBlock& tmp, Assign) const$/;"	f	struct:mtl::mat::crs_cvec_mult_block
 first_value_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/mat_mat_times_expr.hpp	/^    typedef typename Collection<E1>::value_type  first_value_type;$/;"	t	struct:mtl::mat::mat_mat_times_expr
-fix	Graph.hpp	/^	void fix() {$/;"	f	class:Graph::EdgeIterator
 fix	subgraph.cpp	/^  void fix() {$/;"	f	class:filter_iterator	file:
 fixed	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/dimension.hpp	/^namespace fixed$/;"	n	namespace:mtl
 fixed	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/mtl_fwd.hpp	/^	namespace fixed {$/;"	n	namespace:mtl::vec
@@ -3120,6 +3120,7 @@ for_i	Point.hpp	11;"	d
 for_i	Point.hpp	239;"	d
 forces_	mass_spring.cpp	/^	f_composition forces_;$/;"	m	struct:Force	file:
 forward	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/fused_expr.hpp	/^    typedef boost::mpl::and_<traits::forward_index_evaluatable<T>, traits::forward_index_evaluatable<U> >   forward;$/;"	t	struct:mtl::fused_expr
+forward_edge	Graph.hpp	/^	bool forward_edge(size_type i, size_type j) const {$/;"	f	class:Graph
 forward_eval_loop	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/fused_expr.hpp	/^    void forward_eval_loop(const TT& const_first_eval, const UU& const_second_eval, boost::mpl::false_)$/;"	f	struct:mtl::fused_expr
 forward_eval_loop	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/fused_expr.hpp	/^    void forward_eval_loop(const TT& const_first_eval, const UU& const_second_eval, boost::mpl::true_)$/;"	f	struct:mtl::fused_expr
 forward_index_evaluatable	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/index_evaluatable.hpp	/^struct forward_index_evaluatable $/;"	s	namespace:mtl::traits
@@ -3307,16 +3308,17 @@ grad_f	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/secular.hpp	/^
 gradient	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/gradient.hpp	/^struct gradient $/;"	s	namespace:mtl::traits
 gradient	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/gradient.hpp	/^struct gradient<mtl::dense_vector<Value, Para> >$/;"	s	namespace:mtl::traits
 graph	poisson.cpp	/^		const GraphType& graph;$/;"	m	class:itl::visual_iteration	file:
-graph_	Graph.hpp	/^	const Graph* graph_;$/;"	m	class:Graph::Edge
-graph_	Graph.hpp	/^	const Graph* graph_;$/;"	m	class:Graph::EdgeIterator
-graph_	Graph.hpp	/^	const Graph* graph_;$/;"	m	class:Graph::IncidentIterator
-graph_	Graph.hpp	/^	const Graph* graph_;$/;"	m	class:Graph::Node
-graph_	Graph.hpp	/^	const Graph* graph_;$/;"	m	class:Graph::NodeIterator
+graph_	Graph.hpp	/^	Graph* graph_;$/;"	m	class:Graph::IncidentIterator
+graph_	Graph.hpp	/^    Graph* graph_;$/;"	m	class:Graph::Edge
+graph_	Graph.hpp	/^    Graph* graph_;$/;"	m	class:Graph::EdgeIterator
+graph_	Graph.hpp	/^    Graph* graph_;$/;"	m	class:Graph::Node
+graph_	Graph.hpp	/^    Graph* graph_;$/;"	m	class:Graph::NodeIterator
 graph_type	Graph.hpp	/^  typedef Graph graph_type;$/;"	t	class:Graph
 grav	mass_spring.cpp	/^static constexpr double grav = 9.81;$/;"	v	file:
 grav	shallow_water.cpp	/^static constexpr double grav = 9.80665;$/;"	v	file:
 greater_0	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/zipped_sort.hpp	/^struct greater_0$/;"	s	namespace:mtl::utility
 greedy_extract_element_structure	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/element_structure_algorithms.hpp	/^void greedy_extract_element_structure(Element_struct& es,  Matrix& M , std::string& output) {$/;"	f	namespace:imf
+h	shallow_water.cpp	/^	double h;$/;"	m	struct:my_vertex_data	file:
 h	shallow_water.cpp	/^  double h;   \/\/ Height of column$/;"	m	struct:QVar	file:
 half_splitter	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/dim_splitter.hpp	/^    explicit half_splitter(Matrix const& matrix) $/;"	f	struct:mtl::recursion::half_splitter
 half_splitter	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/dim_splitter.hpp	/^struct half_splitter$/;"	s	namespace:mtl::recursion
@@ -3324,8 +3326,8 @@ handle_event	CS207/SDLViewer.hpp	/^  void handle_event(SDL_Event event) {$/;"	f	
 has_1D_layout	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^struct has_1D_layout : virtual dense {};$/;"	s	namespace:mtl::tag
 has_2D_layout	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^struct has_2D_layout : virtual dense {};$/;"	s	namespace:mtl::tag
 has_cursor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^struct has_cursor : virtual universe {};$/;"	s	namespace:mtl::tag
-has_edge	Graph.hpp	/^   bool has_edge(const Node& a, const Node& b) const {$/;"	f	class:Graph
-has_edge	Graph.hpp	/^   bool has_edge(const uid_type uid_a, const uid_type uid_b) const {$/;"	f	class:Graph
+has_edge	Graph.hpp	/^  bool has_edge(const Node& n1, const Node& n2) const {$/;"	f	class:Graph
+has_edge	Graph.hpp	/^  bool has_edge(const size_type uid1, const size_type uid2) const$/;"	f	class:Graph
 has_fast_ra_cursor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^struct has_fast_ra_cursor : virtual has_ra_cursor {};$/;"	s	namespace:mtl::tag
 has_fast_ra_iterator	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^struct has_fast_ra_iterator : virtual has_ra_iterator {};$/;"	s	namespace:mtl::tag
 has_iterator	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^struct has_iterator : virtual universe {};$/;"	s	namespace:mtl::tag
@@ -3366,8 +3368,6 @@ hy	shallow_water.cpp	/^  double hy;  \/\/ Height times average y velocity of col
 hyperbolic_step	shallow_water.cpp	/^double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {$/;"	f
 i	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iteration.hpp	/^    int          error, i;$/;"	m	class:itl::basic_iteration
 i	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/dilated_int.hpp	/^    T i;$/;"	m	struct:mtl::dilated::dilated_int
-i2u_	Graph.hpp	/^	uid_type i2u_(idx_type index) const { $/;"	f	class:Graph
-i2u_vect_	Graph.hpp	/^	mutable std::vector<uid_type> i2u_vect_;$/;"	m	class:Graph
 i_order_mask	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/bit_masking.hpp	/^struct i_order_mask$/;"	s	namespace:mtl
 i_order_mask	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/bit_masking.hpp	/^template<> struct i_order_mask<0> : public lsb_mask<0> {};  \/\/ set to 0$/;"	s	namespace:mtl
 ic_0	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/ic_0.hpp	/^    ic_0(const Matrix& A) : f(A, U), L(trans(U)), lower_solver(L), upper_solver(U) {}$/;"	f	class:itl::pc::ic_0
@@ -3403,8 +3403,7 @@ idr_s_solver	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/krylov/idr_s.hpp	/
 idr_s_solver	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/krylov/idr_s.hpp	/^    idr_s_solver(const LinearOperator& A, size_t s, const Preconditioner& L) : A(A), s(s), L(L), R(A) {}$/;"	f	class:itl::idr_s_solver
 idr_s_solver	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/krylov/idr_s.hpp	/^    idr_s_solver(const LinearOperator& A, size_t s, const Preconditioner& L, const RightPreconditioner& R) $/;"	f	class:itl::idr_s_solver
 idr_s_solver	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/krylov/idr_s.hpp	/^class idr_s_solver$/;"	c	namespace:itl
-idx	Graph.hpp	/^  	idx_type idx;$/;"	m	struct:Graph::node_data
-idx_type	Graph.hpp	/^  typedef unsigned idx_type;$/;"	t	class:Graph
+idx_	Graph.hpp	/^    size_type idx_;$/;"	m	class:Graph::NodeIterator
 idx_type	Mesh.hpp	/^	typedef unsigned idx_type;$/;"	t	class:Mesh
 if_c	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/compose_view.hpp	/^	typename boost::mpl::if_c<$/;"	t	class:mtl::traits::matrix_compose_view::boost::mpl
 if_c	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/compose_view.hpp	/^    typedef typename boost::mpl::if_c<$/;"	t	class:mtl::traits::matrix_compose_view::boost::mpl
@@ -3437,7 +3436,6 @@ imag_view	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/map_view.hpp	/
 imag_view	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/map_view.hpp	/^    imag_view (const self& that) : base(that) {}$/;"	f	struct:mtl::vec::imag_view
 imag_view	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/map_view.hpp	/^    imag_view (self&& that) : base(that) {}$/;"	f	struct:mtl::vec::imag_view
 imag_view	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/map_view.hpp	/^struct imag_view$/;"	s	namespace:mtl::vec
-imap_idx_type	Graph.hpp	/^  typedef unsigned imap_idx_type;$/;"	t	class:Graph
 imax	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/irange.hpp	/^    const std::size_t imax= std::numeric_limits<std::size_t>::max();$/;"	m	namespace:mtl
 imf	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/element_structure_algorithms.hpp	/^namespace imf {$/;"	n
 imf_apply	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/imf_algorithms.hpp	/^Vector imf_preconditioner<ValType>::imf_apply(const Vector& rhs) const$/;"	f	class:itl::pc::imf_preconditioner
@@ -3482,7 +3480,7 @@ increment_it	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/incrementer
 increment_it	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/mat_cvec_multiplier.hpp	/^    void increment_it(VectorOut& w) const$/;"	f	struct:mtl::vec::mat_cvec_multiplier
 incrementer	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/incrementer.hpp	/^struct incrementer : incrementer_base$/;"	s	namespace:mtl::vec
 incrementer_base	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/incrementer.hpp	/^struct incrementer_base {};$/;"	s	namespace:mtl::vec
-index	Graph.hpp	/^    idx_type index() const {$/;"	f	class:Graph::Node
+index	Graph.hpp	/^    size_type index() const {$/;"	f	class:Graph::Node
 index	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/index.hpp	/^namespace mtl { namespace index {$/;"	n	namespace:mtl
 index	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^	template <typename Value> struct index $/;"	s	namespace:mtl::mat::umfpack
 index	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/parameter.hpp	/^    typedef Index       index;$/;"	t	struct:mtl::mat::parameters
@@ -3569,7 +3567,6 @@ indices	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/compressed2D.hpp
 indices	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/ell_matrix.hpp	/^    std::vector<size_type>  indices;$/;"	m	class:mtl::mat::ell_matrix
 indices	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/iset.hpp	/^	std::vector<size_type> indices;$/;"	m	class:mtl::iset
 indices	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/sparse_vector.hpp	/^    sv_type     indices;$/;"	m	class:mtl::vec::sparse_vector
-indices_	Graph.hpp	/^	std::vector<imap_idx_type> indices_;$/;"	m	class:Graph
 indirect	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/indirect.hpp	/^    indirect(const Matrix& ref, const iset& rows, const iset& cols) : ref(ref), rows(rows), cols(cols) {}$/;"	f	struct:mtl::mat::indirect
 indirect	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/indirect.hpp	/^struct indirect$/;"	s	namespace:mtl::mat
 induced_norm_t	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/vector_concepts.hpp	/^struct induced_norm_t$/;"	s	namespace:math
@@ -3619,9 +3616,6 @@ init_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/assign_m
 init_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/assign_mode.hpp	/^    static const bool init_to_zero= true;$/;"	m	struct:mtl::assign::assign_sum
 initialize	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^	    void initialize()$/;"	f	class:mtl::mat::umfpack::solver
 inner_cursor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/coordinate2D.hpp	/^    typedef coordinate_minor_cursor<Value, Parameters>   inner_cursor;$/;"	t	struct:mtl::mat::coordinate_major_cursor
-inner_end_	Graph.hpp	/^	bool inner_end_() {$/;"	f	class:Graph::EdgeIterator
-inner_it_type	Graph.hpp	/^	typedef incident_iterator inner_it_type;$/;"	t	class:Graph::EdgeIterator
-inner_pos_	Graph.hpp	/^	inner_it_type inner_pos_;$/;"	m	class:Graph::EdgeIterator
 inner_prod	Point.hpp	/^double inner_prod(const Point& a, const Point& b) {$/;"	f
 ins	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/crtp_base_matrix.hpp	/^	inserter<Matrix> ins;$/;"	m	struct:mtl::mat::crtp_matrix_assign::scalar_assign
 ins	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/mapped_inserter.hpp	/^    BaseInserter ins;$/;"	m	class:mtl::mat::mapped_inserter
@@ -3807,7 +3801,6 @@ it_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/masked_dilation_
 iter	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/mtl_fwd.hpp	/^	namespace iter {}$/;"	n	namespace:mtl::tag
 iter	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^    namespace iter {$/;"	n	namespace:mtl::tag
 iterations	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iteration.hpp	/^    int iterations() const { return i; }$/;"	f	class:itl::basic_iteration
-iterator	Graph.hpp	/^	typedef std::vector<uid_type>::iterator iterator;$/;"	t	class:Graph::IncidentIterator
 iterator	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/strided_vector_ref.hpp	/^    typedef mtl::strided_dense_el_iterator<Value>                                    iterator;$/;"	t	class:mtl::vec::strided_vector_ref
 iterator	Point.hpp	/^  typedef double*         iterator;$/;"	t	struct:Point
 iterator_adaptor	Examples/iterator_adaptor.cpp	/^  explicit iterator_adaptor(const base_type& b)$/;"	f	class:iterator_adaptor
@@ -3985,7 +3978,7 @@ left_scale_inplace	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/le
 left_scale_inplace	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/left_scale_inplace.hpp	/^	inline Collection& left_scale_inplace(const Factor& alpha, tag::matrix, Collection& c)$/;"	f	namespace:mtl::impl
 left_scale_inplace	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/left_scale_inplace.hpp	/^	inline left_scale_inplace(const Factor& alpha, Matrix& A)$/;"	f	class:mtl::mat::mtl::traits::enable_if_matrix
 left_scale_inplace	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/left_scale_inplace.hpp	/^	inline left_scale_inplace(const Factor& alpha, Vector& v)$/;"	f	class:mtl::vec::mtl::traits::enable_if_vector
-length	Graph.hpp	/^	scalar length() const {$/;"	f	class:Graph::Edge
+length	Graph.hpp	/^    double length() const {$/;"	f	class:Graph::Edge
 length	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/static_vector.hpp	/^	static const std::size_t                                 length= 1;$/;"	m	struct:mtl::static_vector
 length	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/static_vector.hpp	/^	static const std::size_t                                 length= sizeof...(Values) + 1;$/;"	m	struct:mtl::static_vector
 length	MTL-4.0.9555-Linux/usr/share/mtl/tools/cmake/VARIADIC_TEMPLATE_CHECK.cpp	/^    static const std::size_t length= sizeof...(Values) + 1;$/;"	m	struct:static_vector	file:
@@ -4025,7 +4018,7 @@ linear_operator	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/linear_
 link	Mesh.hpp	/^	Link link(Triangle t1, Triangle t2) const {$/;"	f	class:Mesh
 link_begin	Mesh.hpp	/^		adj_link_iterator link_begin() const {$/;"	f	class:Mesh::Triangle
 link_begin	Mesh.hpp	/^	link_iterator link_begin() const {$/;"	f	class:Mesh
-link_data	Mesh.hpp	/^		link_data() {std::cerr << "made empty link data " << std::endl;}$/;"	f	struct:Mesh::link_data
+link_data	Mesh.hpp	/^		link_data() {}$/;"	f	struct:Mesh::link_data
 link_data	Mesh.hpp	/^		link_data(vert_edge dual, UserEdgeData data = UserEdgeData()) : dual_(dual), data_(data) {}$/;"	f	struct:Mesh::link_data
 link_data	Mesh.hpp	/^	typedef struct link_data {$/;"	s	class:Mesh
 link_data	Mesh.hpp	/^	} link_data;$/;"	t	class:Mesh	typeref:struct:Mesh::link_data
@@ -4033,7 +4026,6 @@ link_end	Mesh.hpp	/^		adj_link_iterator link_end() const {$/;"	f	class:Mesh::Tri
 link_end	Mesh.hpp	/^	link_iterator link_end() const {$/;"	f	class:Mesh
 link_iterator	Mesh.hpp	/^	typedef TransformIterator<tri_edge_iterator, Link> link_iterator;$/;"	t	class:Mesh
 list_events	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/papi.hpp	/^    void list_events()$/;"	f	class:mtl::utility::papi_t
-list_it_type	Graph.hpp	/^	typedef typename std::list<edge_data>::iterator list_it_type;$/;"	t	class:Graph::IncidentIterator
 loc1	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/type_parameter_common.hpp	/^	    typedef typename boost::mpl::at<TypePara, location>::type               loc1;$/;"	t	struct:mtl::type_para::replace_defaults_common
 loc2	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/type_parameter_common.hpp	/^		loc1>::type                                                         loc2;		      $/;"	t	struct:mtl::type_para::replace_defaults_common
 location	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/type_parameter_common.hpp	/^	struct location {};$/;"	s	namespace:mtl::type_para
@@ -4657,7 +4649,6 @@ min	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/complexity.hpp	/^st
 min	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/vec_scal_mixed_expr.hpp	/^inline min(const E1& e1, const vec_expr<E2>& e2)$/;"	f	class:mtl::vec::mtl::traits::enable_if_scalar
 min	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/vec_scal_mixed_expr.hpp	/^inline min(const vec_expr<E1>& e1, const E2& e2)$/;"	f	class:mtl::vec::mtl::traits::enable_if_scalar
 min_	BoundingBox.hpp	/^  point_type min_;$/;"	m	class:BoundingBox
-min_	Graph.hpp	/^	idx_type min_(idx_type a, idx_type b) const {$/;"	f	class:Graph::Edge
 min_dim_test	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/base_case_test.hpp	/^    min_dim_test(std::size_t comp) : comp(comp) {}$/;"	f	struct:mtl::recursion::min_dim_test
 min_dim_test	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/base_case_test.hpp	/^struct min_dim_test$/;"	s	namespace:mtl::recursion
 min_functor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/reduction_functors.hpp	/^struct min_functor$/;"	s	namespace:mtl::vec
@@ -5277,6 +5268,8 @@ my_vector	MTL-4.0.9555-Linux/usr/share/mtl/tools/cmake/INITLIST_CHECK.cpp	/^    
 my_vector	MTL-4.0.9555-Linux/usr/share/mtl/tools/cmake/INITLIST_CHECK.cpp	/^    my_vector(self&&) {}$/;"	f	struct:my_vector
 my_vector	MTL-4.0.9555-Linux/usr/share/mtl/tools/cmake/INITLIST_CHECK.cpp	/^    my_vector(std::initializer_list<T> ls) $/;"	f	struct:my_vector
 my_vector	MTL-4.0.9555-Linux/usr/share/mtl/tools/cmake/INITLIST_CHECK.cpp	/^struct my_vector$/;"	s	file:
+my_vertex_data	shallow_water.cpp	/^typedef struct my_vertex_data {$/;"	s	file:
+my_vertex_data	shallow_water.cpp	/^} my_vertex_data;$/;"	t	typeref:struct:my_vertex_data	file:
 n	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/sub_matrix_pc.hpp	/^    size_t            n;$/;"	m	class:itl::pc::sub_matrix_pc
 n	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/smoother/repeated.hpp	/^    std::size_t n;$/;"	m	class:itl::repeated
 n	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^	    int                  n; $/;"	m	class:mtl::mat::umfpack::solver
@@ -5287,7 +5280,14 @@ n	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/inserter.hpp	/^    Siz
 n	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/sparse_vector.hpp	/^    size_type   n;$/;"	m	class:mtl::vec::sparse_vector
 n	mtl_test.cpp	/^	int n;$/;"	m	struct:IdentityMatrix	file:
 n1_	Mesh.hpp	/^		vert_node n1_;$/;"	m	struct:Mesh::triangle_data
+n1_ind_	Graph.hpp	/^	size_type n1_ind_; \/\/ not uids, position in vectors$/;"	m	class:Graph::IncidentIterator
+n1_ind_	Graph.hpp	/^    size_type n1_ind_; \/\/ not uids, indices$/;"	m	class:Graph::EdgeIterator
+n1_uid_	Graph.hpp	/^    size_type n1_uid_;$/;"	m	class:Graph::Edge
 n2_	Mesh.hpp	/^		vert_node n2_;$/;"	m	struct:Mesh::triangle_data
+n2_id	Graph.hpp	/^	  size_type n2_id;$/;"	m	struct:Graph::EdgeData
+n2_ind_	Graph.hpp	/^	size_type n2_ind_;$/;"	m	class:Graph::IncidentIterator
+n2_ind_	Graph.hpp	/^    size_type n2_ind_; \/\/ not uids, indices$/;"	m	class:Graph::EdgeIterator
+n2_uid_	Graph.hpp	/^    size_type n2_uid_;$/;"	m	class:Graph::Edge
 n3_	Mesh.hpp	/^		vert_node n3_;$/;"	m	struct:Mesh::triangle_data
 n_	Examples/trivial_copy.cpp	/^  size_t n_;$/;"	m	class:Vector	file:
 n_bytes	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/masked_dilation_tables.hpp	/^    static const T n_bytes= sizeof(T);           \/\/ number of bytes of the unmasked value of this type$/;"	m	struct:mtl::dilated::masked_dilation_tables
@@ -5370,24 +5370,23 @@ nnz	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/transposed_view.hpp	
 nnz	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/sparse_vector.hpp	/^    std::size_t nnz() const { assert(indices.size() == data.size()); return indices.size(); }$/;"	f	class:mtl::vec::sparse_vector
 nnz_local	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/compressed2D.hpp	/^    size_type nnz_local(size_type r_or_c) const $/;"	f	class:mtl::mat::compressed2D
 no_op	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/no_op.hpp	/^struct no_op {};$/;"	s	namespace:mtl
-node	Graph.hpp	/^  Node node(idx_type i) const {$/;"	f	class:Graph
+node	Graph.hpp	/^  Node node(size_type i) const {$/;"	f	class:Graph
 node1	Graph.hpp	/^    Node node1() const {$/;"	f	class:Graph::Edge
 node1	Mesh.hpp	/^			Triangle node1() const {return Triangle(mesh_, e_.node1());}$/;"	f	class:Mesh::Link
 node1	Mesh.hpp	/^			Vertex node1() const {return Vertex(mesh_, e_.node1());}$/;"	f	class:Mesh::Edge
 node2	Graph.hpp	/^    Node node2() const {$/;"	f	class:Graph::Edge
 node2	Mesh.hpp	/^			Triangle node2() const {return Triangle(mesh_, e_.node2());}$/;"	f	class:Mesh::Link
 node2	Mesh.hpp	/^			Vertex node2() const {return Vertex(mesh_, e_.node2());}$/;"	f	class:Mesh::Edge
-node_begin	Graph.hpp	/^  NodeIterator node_begin() const {$/;"	f	class:Graph
-node_data	Graph.hpp	/^  typedef struct node_data {$/;"	s	class:Graph
-node_data	Graph.hpp	/^  } node_data;$/;"	t	class:Graph	typeref:struct:Graph::node_data
+node_begin	Graph.hpp	/^  node_iterator node_begin() const {$/;"	f	class:Graph
 node_data	poisson.cpp	/^} node_data;$/;"	t	typeref:struct:NodeData	file:
-node_end	Graph.hpp	/^  NodeIterator node_end() const {$/;"	f	class:Graph
+node_data_by_uid	Graph.hpp	/^	NodeData& node_data_by_uid(size_type uid) {$/;"	f	class:Graph
+node_end	Graph.hpp	/^  node_iterator node_end() const {$/;"	f	class:Graph
 node_iterator	Graph.hpp	/^  typedef NodeIterator node_iterator;$/;"	t	class:Graph
 node_map	poisson.cpp	/^		MAP node_map;$/;"	m	class:itl::visual_iteration	file:
 node_type	Graph.hpp	/^  typedef Node node_type;$/;"	t	class:Graph
 node_type	Mesh.hpp	/^	typedef vert_node node_type;$/;"	t	class:Mesh
 node_value_type	Graph.hpp	/^  typedef V node_value_type;$/;"	t	class:Graph
-nodes_	Graph.hpp	/^ 	mutable std::vector<node_data> nodes_;$/;"	m	class:Graph
+nodes_	Graph.hpp	/^  std::vector<NodeData> nodes_; \/\/ sorted by index, not uid$/;"	m	class:Graph
 noisy_iteration	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/noisy_iteration.hpp	/^      noisy_iteration(const Vector& r0, int max_iter_, Real tol_, Real atol_ = Real(0),$/;"	f	class:itl::noisy_iteration
 noisy_iteration	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/noisy_iteration.hpp	/^  class noisy_iteration : public cyclic_iteration<Real, OStream> $/;"	c	namespace:itl
 non_fixed	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/dimension.hpp	/^namespace non_fixed$/;"	n	namespace:mtl
@@ -5464,11 +5463,9 @@ num_cols	poisson.cpp	/^inline std::size_t num_cols(const GraphSymmetricMatrix& A
 num_counters	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/papi.hpp	/^    int num_counters, event_set, active_events;$/;"	m	class:mtl::utility::papi_t
 num_edges	Graph.hpp	/^  size_type num_edges() const {$/;"	f	class:Graph
 num_edges	Mesh.hpp	/^	size_type num_edges() const {$/;"	f	class:Mesh
-num_edges_	Graph.hpp	/^	mutable size_type num_edges_ = 0;$/;"	m	class:Graph
 num_links	Mesh.hpp	/^	size_type num_links() const {$/;"	f	class:Mesh
 num_nodes	Graph.hpp	/^  size_type num_nodes() const {$/;"	f	class:Graph
 num_nodes	Mesh.hpp	/^	size_type num_nodes() const {$/;"	f	class:Mesh
-num_nodes_	Graph.hpp	/^ 	mutable size_type num_nodes_ = 0;$/;"	m	class:Graph
 num_rows	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/banded_view.hpp	/^    friend size_type inline num_rows(const self& A) $/;"	f	struct:mtl::mat::banded_view
 num_rows	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/base_matrix.hpp	/^    size_type num_rows() const $/;"	f	struct:mtl::mat::base_matrix
 num_rows	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/base_sub_matrix.hpp	/^    size_type num_rows() const $/;"	f	struct:mtl::mat::base_sub_matrix
@@ -5605,7 +5602,6 @@ operator ()	Examples/expr_template.cpp	/^  double operator()(unsigned i, unsigne
 operator ()	Examples/expr_template.cpp	/^  double operator()(unsigned i, unsigned j) const {$/;"	f	struct:MatScale
 operator ()	Examples/expr_template.cpp	/^  double& operator()(unsigned i, unsigned j) {$/;"	f	struct:Matrix
 operator ()	Examples/func_params.cpp	/^  bool operator()(int a, int b) const {$/;"	f	struct:s_greater
-operator ()	Graph.hpp	/^	bool operator()(const edge_data& e_data) {$/;"	f	struct:Graph::uid_predicate
 operator ()	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/comparators.hpp	/^	POINTER operator()(const Type *const a) const {$/;"	f	struct:compare::address_hasher
 operator ()	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/comparators.hpp	/^	bool operator()(const Type *const a, const Type *const b) const {$/;"	f	struct:compare::address_compare
 operator ()	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/comparators.hpp	/^	bool operator()(const Type *const a, const Type *const b) const {$/;"	f	struct:compare::address_compare_equal
@@ -5933,7 +5929,8 @@ operator ()	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/vec_vec_op_e
 operator ()	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/vec_vec_pmop_expr.hpp	/^    const_dereference_type operator() (size_type i) const$/;"	f	struct:mtl::vec::vec_vec_pmop_expr
 operator ()	mass_spring.cpp	/^	Point operator()(Node n, double t) const {$/;"	f	struct:Force
 operator ()	mass_spring.cpp	/^	void operator()(const GraphType& g, double t) const {$/;"	f	struct:Constraint
-operator ()	shallow_water.cpp	/^	Point operator()(const VERTEX& v) const {$/;"	f	struct:VertexPosition
+operator ()	shallow_water.cpp	/^	Point operator()(VERTEX& v) const {$/;"	f	struct:VertexPosition
+operator ()	shallow_water.cpp	/^	QVar operator()(double nx, double ny, double dt, const QVar& qk, const QVar& qm) {$/;"	f	struct:Tilt
 operator ()	shallow_water.cpp	/^  Point operator()(const NODE& n) const {$/;"	f	struct:NodePosition
 operator ()	shallow_water.cpp	/^  QVar operator()(double nx, double ny, double dt,$/;"	f	struct:EdgeFluxCalculator
 operator ()	shortest_path.cpp	/^	CS207::Color operator()(const NODE& node) {$/;"	f	struct:MyColorFunc
@@ -5953,9 +5950,9 @@ operator *	Examples/iterator_adaptor.cpp	/^  const reference operator*() const {
 operator *	Examples/iterator_adaptor.cpp	/^  int operator*() const {$/;"	f	struct:my_transform_iterator
 operator *	Examples/iterator_adaptor.cpp	/^  int& operator*() {$/;"	f	struct:my_position_iterator
 operator *	Examples/iterator_adaptor.cpp	/^  reference operator*() {                           \/\/ Dereference (*p)$/;"	f	class:iterator_adaptor
-operator *	Graph.hpp	/^	Edge operator*() const {$/;"	f	class:Graph::EdgeIterator
 operator *	Graph.hpp	/^	Edge operator*() const {$/;"	f	class:Graph::IncidentIterator
-operator *	Graph.hpp	/^	Node operator* () const {$/;"	f	class:Graph::NodeIterator
+operator *	Graph.hpp	/^    Edge operator*() const {$/;"	f	class:Graph::EdgeIterator
+operator *	Graph.hpp	/^    Node operator*() const {$/;"	f	class:Graph::NodeIterator
 operator *	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/base_cursor.hpp	/^    key_type operator*() const $/;"	f	class:mtl::detail::base_cursor
 operator *	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/range_generator.hpp	/^	key_type operator*() const { return key_type(ref, indices[0], indices[1]); }$/;"	f	struct:mtl::traits::detail::matrix_element_cursor
 operator *	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/range_generator.hpp	/^	self operator*() const { return *this; }$/;"	f	struct:mtl::traits::detail::sub_matrix_cursor
@@ -6037,9 +6034,9 @@ operator ++	Examples/distance_dispatch.cpp	/^  dumb_iterator& operator++() { it_
 operator ++	Examples/iterator_adaptor.cpp	/^  derived_type operator++(int) {                    \/\/ Postfix increment (p++)$/;"	f	class:iterator_adaptor
 operator ++	Examples/iterator_adaptor.cpp	/^  derived_type& operator++() {                      \/\/ Prefix increment (++p)$/;"	f	class:iterator_adaptor
 operator ++	Examples/iterator_adaptor.cpp	/^  my_stride_iterator& operator++() {$/;"	f	struct:my_stride_iterator
-operator ++	Graph.hpp	/^	EdgeIterator& operator++() {$/;"	f	class:Graph::EdgeIterator
 operator ++	Graph.hpp	/^	IncidentIterator& operator++() {$/;"	f	class:Graph::IncidentIterator
-operator ++	Graph.hpp	/^	NodeIterator& operator++() {$/;"	f	class:Graph::NodeIterator
+operator ++	Graph.hpp	/^    EdgeIterator& operator++() {$/;"	f	class:Graph::EdgeIterator
+operator ++	Graph.hpp	/^    NodeIterator& operator++() {$/;"	f	class:Graph::NodeIterator
 operator ++	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iteration.hpp	/^    self& operator++() { ++i; return *this; }$/;"	f	class:itl::basic_iteration
 operator ++	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/cyclic_iteration.hpp	/^      inline self& operator++() { ++this->i; return *this; }$/;"	f	class:itl::cyclic_iteration
 operator ++	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/base_cursor.hpp	/^    self operator++ (int) $/;"	f	class:mtl::detail::base_cursor
@@ -6083,6 +6080,7 @@ operator +=	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/crtp_base_ve
 operator +=	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/inserter.hpp	/^    self& operator+= (Value const& val)$/;"	f	struct:mtl::vec::update_proxy
 operator +=	Point.hpp	/^  Point& operator+=(const Point& b) {$/;"	f	struct:Point
 operator +=	Point.hpp	/^  Point& operator+=(value_type b) {$/;"	f	struct:Point
+operator +=	shallow_water.cpp	/^  void operator+=(QVar o) {$/;"	f	struct:QVar
 operator ,	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/crtp_base_matrix.hpp	/^	scalar_assign& operator, (ValueSource val)$/;"	f	struct:mtl::mat::crtp_matrix_assign::scalar_assign
 operator ,	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/push_back_comma_inserter.hpp	/^	self& operator, (Source val)$/;"	f	class:mtl::push_back_comma_inserter
 operator ,	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/vec_scal_aop_expr.hpp	/^    self& operator, (Source val)$/;"	f	struct:mtl::vec::vec_scal_aop_expr
@@ -6109,6 +6107,7 @@ operator -	Point.hpp	/^Point operator-(Point a, const Point& b) {$/;"	f
 operator -	Point.hpp	/^Point operator-(Point a, double b) {$/;"	f
 operator -	Point.hpp	/^Point operator-(const Point& a) {$/;"	f
 operator -	Point.hpp	/^Point operator-(double b, const Point& a) {$/;"	f
+operator -	shallow_water.cpp	/^  QVar operator-(QVar o) const {$/;"	f	struct:QVar
 operator --	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/base_cursor.hpp	/^    self operator-- (int) $/;"	f	class:mtl::detail::base_cursor
 operator --	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/base_cursor.hpp	/^    self& operator-- () $/;"	f	class:mtl::detail::base_cursor
 operator --	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/dilated_int.hpp	/^    self operator-- (int)$/;"	f	struct:mtl::dilated::dilated_int
@@ -6135,6 +6134,7 @@ operator -=	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/lazy.hpp	
 operator -=	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/crtp_base_vector.hpp	/^    typename crtp_minus_assign<Vector, E>::type operator-=(const E& e)$/;"	f	struct:mtl::vec::crtp_vector_assign
 operator -=	Point.hpp	/^  Point& operator-=(const Point& b) {$/;"	f	struct:Point
 operator -=	Point.hpp	/^  Point& operator-=(value_type b) {$/;"	f	struct:Point
+operator -=	shallow_water.cpp	/^  void operator-=(QVar o) {$/;"	f	struct:QVar
 operator /	Examples/Metrics.hpp	/^inline Unit<i-l, j-m, k-n, div_type<T,C>> operator\/(const Unit<i, j, k, T>& a,$/;"	f	namespace:Metrics
 operator /	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/extended_complex.hpp	/^inline operator\/(const T& x, const complex<U>& y)$/;"	f	class:std::mtl::traits::extended_complex
 operator /	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/extended_complex.hpp	/^inline operator\/(const complex<T>& x, const U& y)$/;"	f	class:std::mtl::traits::extended_complex
@@ -6143,6 +6143,7 @@ operator /	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/operators.
 operator /	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/operators.hpp	/^    inline operator\/(const Op1& op1, const Op2& op2)$/;"	f	class:mtl::vec::traits::div_result
 operator /	Point.hpp	/^Point operator\/(Point a, const Point& b) {$/;"	f
 operator /	Point.hpp	/^Point operator\/(Point a, double b) {$/;"	f
+operator /	shallow_water.cpp	/^  QVar operator\/(double s) const {$/;"	f	struct:QVar
 operator /=	Examples/Metrics.hpp	/^inline Unit<i, j, k, T>& operator\/=(Unit<i, j, k, T>& a,$/;"	f	namespace:Metrics
 operator /=	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/crtp_base_matrix.hpp	/^    Matrix& operator\/=(const Factor& alpha)$/;"	f	struct:mtl::mat::crtp_matrix_assign
 operator /=	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/crtp_base_vector.hpp	/^    typename crtp_div_assign<Vector, E>::type operator\/=(const E& e)$/;"	f	struct:mtl::vec::crtp_vector_assign
@@ -6241,11 +6242,15 @@ operator =	MTL-4.0.9555-Linux/usr/share/mtl/tools/cmake/INITLIST_CHECK.cpp	/^   
 operator ==	Examples/Metrics.hpp	/^inline bool operator==(const Unit<i, j, k, T>& a,$/;"	f	namespace:Metrics
 operator ==	Examples/distance_dispatch.cpp	/^  bool operator==(const dumb_iterator& other) { return it_ == other.it_; }$/;"	f	struct:dumb_iterator
 operator ==	Examples/iterator_adaptor.cpp	/^  bool operator==(const derived_type& m) const {    \/\/ Equality (p==q)$/;"	f	class:iterator_adaptor
-operator ==	Graph.hpp	/^	bool operator==(const EdgeIterator& it) const {$/;"	f	class:Graph::EdgeIterator
-operator ==	Graph.hpp	/^	bool operator==(const IncidentIterator& other) const {$/;"	f	class:Graph::IncidentIterator
-operator ==	Graph.hpp	/^	bool operator==(const NodeIterator& it) const {$/;"	f	class:Graph::NodeIterator
+operator ==	Graph.hpp	/^	  bool operator==(const EdgeData& x) const {$/;"	f	struct:Graph::EdgeData
+operator ==	Graph.hpp	/^	  bool operator==(const NodeData& x) const {$/;"	f	struct:Graph::NodeData
+operator ==	Graph.hpp	/^	  bool operator==(size_type i) const {$/;"	f	struct:Graph::EdgeData
+operator ==	Graph.hpp	/^	  bool operator==(size_type i) const {$/;"	f	struct:Graph::NodeData
+operator ==	Graph.hpp	/^	bool operator==(const IncidentIterator& it) const {$/;"	f	class:Graph::IncidentIterator
 operator ==	Graph.hpp	/^    bool operator==(const Edge& x) const {$/;"	f	class:Graph::Edge
+operator ==	Graph.hpp	/^    bool operator==(const EdgeIterator& it) const {$/;"	f	class:Graph::EdgeIterator
 operator ==	Graph.hpp	/^    bool operator==(const Node& x) const {$/;"	f	class:Graph::Node
+operator ==	Graph.hpp	/^    bool operator==(const NodeIterator& it) const {$/;"	f	class:Graph::NodeIterator
 operator ==	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/base_cursor.hpp	/^    bool operator==(const self& cc) const $/;"	f	class:mtl::detail::base_cursor
 operator ==	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/dilated_int.hpp	/^    bool operator== (self const& x) const$/;"	f	struct:mtl::dilated::dilated_int
 operator ==	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/range_generator.hpp	/^	bool operator==(const self& cc) const { return &ref == &cc.ref && indices[0] == cc.indices[0] && indices[1] == cc.indices[1]; }$/;"	f	struct:mtl::traits::detail::matrix_element_cursor
@@ -6410,9 +6415,6 @@ outer_bound	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/utility.h
 outer_bound_splitter	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/dim_splitter.hpp	/^    explicit outer_bound_splitter(Recursator const& recursator) $/;"	f	struct:mtl::recursion::outer_bound_splitter
 outer_bound_splitter	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/dim_splitter.hpp	/^struct outer_bound_splitter$/;"	s	namespace:mtl::recursion
 outer_cursor_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/coordinate2D.hpp	/^    typedef coordinate_major_cursor<Value, Parameters>   outer_cursor_type;$/;"	t	struct:mtl::mat::coordinate_minor_range_generator
-outer_end_	Graph.hpp	/^	bool outer_end_() {$/;"	f	class:Graph::EdgeIterator
-outer_it_type	Graph.hpp	/^	typedef node_iterator outer_it_type;$/;"	t	class:Graph::EdgeIterator
-outer_pos_	Graph.hpp	/^	outer_it_type outer_pos_;$/;"	m	class:Graph::EdgeIterator
 outer_product_functor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/implicit_dense.hpp	/^    outer_product_functor(const Vector1& v1, const Vector2& v2) : my_v1(v1), my_v2(v2) {}$/;"	f	class:mtl::mat::outer_product_functor
 outer_product_functor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/implicit_dense.hpp	/^    outer_product_functor(size_type r, size_type c) : my_v1(r), my_v2(c) {}$/;"	f	class:mtl::mat::outer_product_functor
 outer_product_functor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/implicit_dense.hpp	/^class outer_product_functor$/;"	c	namespace:mtl::mat
@@ -6421,13 +6423,11 @@ outer_product_matrix	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/imp
 outer_product_matrix	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/implicit_dense.hpp	/^class outer_product_matrix$/;"	c	namespace:mtl::mat
 own	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/contiguous_memory_block.hpp	/^    enum c_t {own,         \/\/< My own memory: allocate and free it$/;"	e	enum:mtl::detail::contiguous_memory_block::c_t
 own	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/contiguous_memory_block.hpp	/^    enum c_t {own};$/;"	e	enum:mtl::detail::contiguous_memory_block::c_t
-p	Graph.hpp	/^	mutable Point p;$/;"	m	struct:Graph::node_data
 p	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/zipped_sort.hpp	/^    diff_type     p;$/;"	m	struct:mtl::utility::zip_it
 p	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/zipped_sort.hpp	/^    int           p;$/;"	m	struct:mtl::utility::zip_ref
 p	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/extracter.hpp	/^	const size_type p;$/;"	m	struct:mtl::vec::extracter::bracket_proxy
 p_	shortest_path.cpp	/^   Point p_;$/;"	m	struct:MyComparator	file:
 p_	subgraph.cpp	/^  Pred p_;$/;"	m	class:filter_iterator	file:
-p_orig	Graph.hpp	/^	Point p_orig;$/;"	m	struct:Graph::node_data
 pan	CS207/GLCamera.hpp	/^  inline void pan(float x, float y, float z) {$/;"	f	class:CS207::GLCamera
 papi_add_event_error	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/papi.hpp	/^    explicit papi_add_event_error(const char *s= "PAPI: add event error") : papi_error(s) {}$/;"	f	struct:mtl::utility::papi_add_event_error
 papi_add_event_error	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/papi.hpp	/^struct papi_add_event_error : public papi_error $/;"	s	namespace:mtl::utility
@@ -6523,13 +6523,13 @@ polylog_n	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/complexity.hp
 polynomial	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/complexity.hpp	/^struct polynomial : boost::mpl::int_<200> {};$/;"	s	namespace:mtl::complexity_classes
 pop	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/binary_heap.hpp	/^	void pop() {$/;"	f	class:utils::binary_heap
 pos	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/sparse_vector.hpp	/^    size_type pos(size_type i) const $/;"	f	class:mtl::vec::sparse_vector
-pos_	Graph.hpp	/^	adj_list_iterator pos_;$/;"	m	class:Graph::IncidentIterator
 pos_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/max_pos.hpp	/^	    typedef typename mtl::traits::pos_type<Vector>::type  pos_type;$/;"	t	struct:mtl::vec::max_pos_functor
 pos_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/min_pos.hpp	/^	    typedef typename mtl::traits::pos_type<Vector>::type  pos_type;$/;"	t	struct:mtl::vec::min_pos_functor
 pos_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/pos_type.hpp	/^struct pos_type$/;"	s	namespace:mtl::traits
 pos_type_aux	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/pos_type.hpp	/^struct pos_type_aux$/;"	s	namespace:mtl::traits
 pos_type_aux	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/pos_type.hpp	/^struct pos_type_aux<T, true>$/;"	s	namespace:mtl::traits
 position	Graph.hpp	/^	Point& position() {$/;"	f	class:Graph::Node
+position	Graph.hpp	/^ 	  Point position;$/;"	m	struct:Graph::NodeData
 position	Graph.hpp	/^    const Point& position() const {$/;"	f	class:Graph::Node
 position	Mesh.hpp	/^			const Point& position() const {return v_.position();}$/;"	f	class:Mesh::Vertex
 position	Mesh.hpp	/^		Point position() const {$/;"	f	class:Mesh::Triangle
@@ -6549,6 +6549,7 @@ print	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/compressed2D.hpp	/
 print	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/compressed2D.hpp	/^    void print(size_type i) const$/;"	f	struct:mtl::mat::compressed2D_inserter
 print	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/print.hpp	/^    print(Value const& value, std::ostream& out= std::cout, int width= 3, int precision= 2)$/;"	f	namespace:mtl::mat
 print	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/print.hpp	/^    print(Value const& value, std::ostream& out= std::cout, int width= 3, int precision= 2)$/;"	f	namespace:mtl::vec
+print_graph	Graph.hpp	/^  void print_graph() const {$/;"	f	class:Graph
 print_internal	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/coordinate2D.hpp	/^    void print_internal() const { print(std::cout); }$/;"	f	class:mtl::mat::coordinate2D
 print_internal	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/coordinate2D.hpp	/^    void print_internal(OStream& os) const$/;"	f	class:mtl::mat::coordinate2D
 print_internal	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/ell_matrix.hpp	/^    void print_internal(OStream& os) const$/;"	f	class:mtl::mat::ell_matrix
@@ -6853,13 +6854,10 @@ relresid	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iterat
 remove	Examples/proxy_example.cpp	/^  void remove(size_type i) {$/;"	f	class:SimpleSet
 remove	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/binary_heap.hpp	/^	void remove(value_type node) {$/;"	f	class:utils::binary_heap
 remove_box	poisson.cpp	/^void remove_box(GraphType& g, const BoundingBox& bb) {$/;"	f
-remove_edge	Graph.hpp	/^  edge_iterator remove_edge(edge_iterator e_it) const {$/;"	f	class:Graph
-remove_edge	Graph.hpp	/^  size_type remove_edge(const Edge& e) const {$/;"	f	class:Graph
-remove_edge	Graph.hpp	/^  size_type remove_edge(const Node& a, const Node& b) const {$/;"	f	class:Graph
-remove_edge	Graph.hpp	/^  size_type remove_edge(const Node& n) const {$/;"	f	class:Graph
-remove_edge_	Graph.hpp	/^  edge_iterator remove_edge_(uid_type uid_a, uid_type uid_b) const {$/;"	f	class:Graph
-remove_node	Graph.hpp	/^  node_iterator remove_node(node_iterator n_it) const {$/;"	f	class:Graph
-remove_node	Graph.hpp	/^  size_type remove_node(const Node& n) const {$/;"	f	class:Graph
+remove_edge	Graph.hpp	/^  size_type remove_edge(const Edge& e) {$/;"	f	class:Graph
+remove_edge	Graph.hpp	/^  size_type remove_edge(const Node& n1, const Node& n2) {$/;"	f	class:Graph
+remove_node	Graph.hpp	/^  node_iterator remove_node(node_iterator nit) {$/;"	f	class:Graph
+remove_node	Graph.hpp	/^  size_type remove_node(const Node& n) {$/;"	f	class:Graph
 remove_nodes	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/element.hpp	/^    void remove_nodes(const Vector& nodes, element_type& el) {$/;"	f	class:mtl::mat::element
 render	CS207/SDLViewer.hpp	/^  void render() {$/;"	f	class:CS207::SDLViewer
 render_label	CS207/SDLViewer.hpp	/^  void render_label() {$/;"	f	class:CS207::SDLViewer
@@ -6887,7 +6885,6 @@ reset	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/papi.hpp	/^    vo
 resid	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iteration.hpp	/^    Real resid() const { return resid_; }$/;"	f	class:itl::basic_iteration
 resid_	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iteration.hpp	/^    Real         rtol_, atol_, resid_;$/;"	m	class:itl::basic_iteration
 resource	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/resource.hpp	/^	inline resource(const Vector& v)$/;"	f	class:mtl::vec::mtl::traits::vector_resource
-rest_length	Graph.hpp	/^	scalar rest_length;$/;"	m	struct:Graph::edge_data
 restart	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/krylov/gmres.hpp	/^    size_t                restart;$/;"	m	class:itl::gmres_solver
 restrict	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/sub_matrix_pc.hpp	/^    void restrict(const VectorIn& x, VectorIn& x0) const$/;"	f	class:itl::pc::sub_matrix_pc
 result_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/concept/std_concept.hpp	/^	typedef associated_type result_type;$/;"	t	struct:mtl::BinaryFunctor
@@ -7124,7 +7121,6 @@ scal_mat_mult	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/ashape.hp
 scal_rvec_mult	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/ashape.hpp	/^struct scal_rvec_mult {};$/;"	s	namespace:mtl::ashape
 scal_scal_div	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/ashape.hpp	/^struct scal_scal_div {};$/;"	s	namespace:mtl::ashape
 scal_scal_mult	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/ashape.hpp	/^struct scal_scal_mult {};$/;"	s	namespace:mtl::ashape
-scalar	Graph.hpp	/^  typedef float scalar;$/;"	t	class:Graph
 scalar	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/conj.hpp	/^    namespace scalar {$/;"	n	namespace:mtl
 scalar	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^struct scalar : virtual universe {};$/;"	s	namespace:mtl::tag
 scalar	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/dot_index_evaluator.hpp	/^    Scalar&        scalar;$/;"	m	struct:mtl::vec::dot_index_evaluator
@@ -7382,6 +7378,7 @@ set_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/set_to_ze
 set_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/set_to_zero.hpp	/^	void set_to_zero(Matrix& matrix, tag::morton_dense, ashape::scal)$/;"	f	namespace:mtl::impl
 set_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/set_to_zero.hpp	/^    set_to_zero(Coll& collection)$/;"	f	namespace:mtl::mat
 set_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/set_to_zero.hpp	/^    set_to_zero(Coll& collection)$/;"	f	namespace:mtl::vec
+set_value	Graph.hpp	/^	void set_value(edge_value_type v) {$/;"	f	class:Graph::Edge
 set_vector_dimensions	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/vector_type_generator.hpp	/^	struct set_vector_dimensions$/;"	s	namespace:mtl::type_para
 set_vector_dimensions	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/vector_type_generator.hpp	/^	struct set_vector_dimensions<dim<Size> >$/;"	s	namespace:mtl::type_para
 set_vector_dimensions	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/vector_type_generator.hpp	/^	struct set_vector_dimensions<dim<Values...> >$/;"	s	namespace:mtl::type_para
@@ -8002,7 +7999,6 @@ swap	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/morton_dense.hpp	/^
 swap	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/zipped_sort.hpp	/^inline void swap(const zip_ref<T, U>& x, const zip_ref<T, U>& y)$/;"	f	namespace:mtl::utility
 swap	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/dense_vector.hpp	/^    friend void swap(self& vector1, self& vector2)$/;"	f	class:mtl::vec::dense_vector
 swap	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/strided_vector_ref.hpp	/^    friend void swap(self& vector1, self& vector2)$/;"	f	class:mtl::vec::strided_vector_ref
-swap_	Graph.hpp	/^  void swap_(idx_type a, idx_type b) const {$/;"	f	class:Graph
 swap_row	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/swap_row.hpp	/^	inline void swap_row(Matrix& A, typename Collection<Matrix>::size_type i,$/;"	f	namespace:mtl::mat::detail
 swap_row	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/swap_row.hpp	/^	inline void swap_row(Matrix&, typename Collection<Matrix>::size_type,$/;"	f	namespace:mtl::mat::detail
 swap_row	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/swap_row.hpp	/^    inline swap_row(Matrix& A, typename Collection<Matrix>::size_type i,$/;"	f	class:mtl::mat::mtl::traits::enable_if_matrix
@@ -8021,6 +8017,7 @@ tag	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^namespace
 tag_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/sub_matrix_pc.hpp	/^    typedef mtl::dense_vector<bool>                                               tag_type;$/;"	t	class:itl::pc::sub_matrix_pc
 tags	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/sub_matrix_pc.hpp	/^    tag_type          tags;$/;"	m	class:itl::pc::sub_matrix_pc
 tail	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/static_vector.hpp	/^	typedef static_vector<ValueType, Values...>              tail;$/;"	t	struct:mtl::static_vector
+take_next_uid	Graph.hpp	/^	size_type take_next_uid() {$/;"	f	class:Graph
 terminate	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iteration.hpp	/^    int terminate(const T& r) { finished(r); return error; }$/;"	f	class:itl::basic_iteration
 test	mass_spring.cpp	/^	int test;$/;"	m	struct:EdgeData	file:
 test_ostream	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/io/test_ostream.hpp	/^    test_ostream(std::ostream& out = std::cout) : out(out) {}$/;"	f	struct:mtl::io::test_ostream
@@ -8071,8 +8068,6 @@ tmp	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/dot_index_evaluator.
 tmp	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/reduction_index_evaluator.hpp	/^    Scalar         tmp[4];$/;"	m	struct:mtl::vec::reduction_index_evaluator
 tmp2	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/view_code.hpp	/^      static const unsigned tmp2= Value == 0 || Value == 4 ? Value | 1 : Value, \/\/ if matrix ref or transposed, make it const$/;"	m	struct:mtl::traits::view_normalize_const
 tmp_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/transposed_view.hpp	/^    typedef typename boost::remove_const<Matrix>::type                            tmp_type;$/;"	t	struct:mtl::mat::sub_matrix_t
-to_end_	Graph.hpp	/^	EdgeIterator& to_end_() {$/;"	f	class:Graph::EdgeIterator
-to_end_	Graph.hpp	/^	IncidentIterator& to_end_() {$/;"	f	class:Graph::IncidentIterator
 to_lower	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/io/matrix_market.hpp	/^    void to_lower(std::string& s) const$/;"	f	class:mtl::io::matrix_market_istream
 to_masked	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/masked_dilation_tables.hpp	/^    T to_masked(T x) $/;"	f	struct:mtl::dilated::masked_dilation_tables
 to_range	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/irange.hpp	/^	size_type to_range(size_type i) const$/;"	f	class:mtl::irange
@@ -8223,7 +8218,7 @@ tri_solve_base_t	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/chol
 tri_type	Mesh.hpp	/^	typedef Triangle tri_type;$/;"	t	class:Mesh
 triangle1	Mesh.hpp	/^			Triangle triangle1() const {return node1();};$/;"	f	class:Mesh::Link
 triangle2	Mesh.hpp	/^			Triangle triangle2() const {return node2();};$/;"	f	class:Mesh::Link
-triangle_data	Mesh.hpp	/^		triangle_data() {std::cerr << "made empty triangle data " << std::endl;}$/;"	f	struct:Mesh::triangle_data
+triangle_data	Mesh.hpp	/^		triangle_data() {}$/;"	f	struct:Mesh::triangle_data
 triangle_data	Mesh.hpp	/^		triangle_data(vert_node n1, vert_node n2, vert_node n3, UserTriData d = UserTriData()) :$/;"	f	struct:Mesh::triangle_data
 triangle_data	Mesh.hpp	/^	typedef struct triangle_data {$/;"	s	class:Mesh
 triangle_data	Mesh.hpp	/^	} triangle_data;$/;"	t	class:Mesh	typeref:struct:Mesh::triangle_data
@@ -8598,23 +8593,12 @@ type_para	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/type_paramete
 type_para	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/type_parameter_local.hpp	/^    namespace type_para {$/;"	n	namespace:mtl
 type_para	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/vector_type_generator.hpp	/^    namespace type_para {$/;"	n	namespace:mtl
 u	poisson.cpp	/^		const Vector& u;$/;"	m	class:itl::visual_iteration	file:
-u2i_	Graph.hpp	/^	idx_type u2i_(uid_type u) const {$/;"	f	class:Graph
 uid	Examples/proxy_example.cpp	/^    size_type uid;      \/\/ The unique identifcation for an element$/;"	m	struct:SimpleSet::internal_element	file:
-uid	Graph.hpp	/^	uid_type uid;$/;"	m	struct:Graph::adjacency_data
-uid	Graph.hpp	/^	uid_type uid;$/;"	m	struct:Graph::node_data
-uid	Graph.hpp	/^  	uid_type uid;$/;"	m	struct:Graph::edge_data
-uid	Graph.hpp	/^  	uid_type uid;$/;"	m	struct:Graph::uid_predicate
-uid1_	Graph.hpp	/^	uid_type uid1_;$/;"	m	class:Graph::Edge
-uid2_	Graph.hpp	/^	uid_type uid2_;$/;"	m	class:Graph::Edge
+uid	Graph.hpp	/^ 	  size_type uid;$/;"	m	struct:Graph::NodeData
+uid2idx_	Graph.hpp	/^  std::vector<size_type> uid2idx_; \/\/ uid2idx_[uid] = idx. -1 = not taken$/;"	m	class:Graph
 uid_	Examples/proxy_example.cpp	/^    size_type uid_;$/;"	m	class:SimpleSet::SimpleElement	file:
-uid_	Graph.hpp	/^	uid_type uid_;$/;"	m	class:Graph::IncidentIterator
-uid_	Graph.hpp	/^	uid_type uid_;$/;"	m	class:Graph::Node
-uid_	Graph.hpp	/^	uid_type uid_;$/;"	m	class:Graph::NodeIterator
+uid_	Graph.hpp	/^    size_type uid_; \/\/no delete function, so uids will remain in order$/;"	m	class:Graph::Node
 uid_	Mesh.hpp	/^		size_type uid_;$/;"	m	class:Mesh::Triangle
-uid_predicate	Graph.hpp	/^	uid_predicate( uid_type u ) : uid(u) {$/;"	f	struct:Graph::uid_predicate
-uid_predicate	Graph.hpp	/^  typedef struct uid_predicate {$/;"	s	class:Graph
-uid_predicate	Graph.hpp	/^  } uid_predicate;$/;"	t	class:Graph	typeref:struct:Graph::uid_predicate
-uid_type	Graph.hpp	/^  typedef unsigned uid_type;$/;"	t	class:Graph
 umfpack	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^    namespace umfpack {$/;"	n	namespace:mtl::mat
 umfpack_solve	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^int umfpack_solve(const compressed2D<Value, Parameters>& A, VectorX& x, const VectorB& b)$/;"	f	namespace:mtl::mat
 unary_dot	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/unary_dot.hpp	/^	inline unary_dot(const Value& value)$/;"	f	class:mtl::vec::Collection
@@ -8735,8 +8719,6 @@ utility	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/papi.hpp	/^name
 utility	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/sometimes_data.hpp	/^namespace mtl { namespace utility {$/;"	n	namespace:mtl
 utility	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/zipped_sort.hpp	/^namespace mtl { namespace utility {$/;"	n	namespace:mtl
 utils	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/binary_heap.hpp	/^namespace utils {$/;"	n
-v	Graph.hpp	/^	edge_value_type v;$/;"	m	struct:Graph::edge_data
-v	Graph.hpp	/^	mutable node_value_type v;$/;"	m	struct:Graph::node_data
 v	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/givens.hpp	/^    Vector&    v;$/;"	m	class:mtl::vec::givens
 v	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/zipped_sort.hpp	/^    U *v;$/;"	m	struct:mtl::utility::zip_ref
 v	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/zipped_sort.hpp	/^    U*            v;$/;"	m	struct:mtl::utility::zip_it
@@ -8774,12 +8756,17 @@ v2	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/dot_index_evaluator.h
 v_	CS207/SDLViewer.hpp	/^    SDLViewer* v_;$/;"	m	struct:CS207::SDLViewer::safe_lock
 v_	Examples/expr_template.cpp	/^  std::vector<double> v_;$/;"	m	struct:Matrix	file:
 v_	Examples/trivial_copy.cpp	/^  T* v_;$/;"	m	class:Vector	file:
-v_	Mesh.hpp	/^			const vert_node v_;$/;"	m	class:Mesh::Vertex
+v_	Mesh.hpp	/^			vert_node v_;$/;"	m	class:Mesh::Vertex
+valid_node_index	Graph.hpp	/^  bool valid_node_index(const size_type i) const {$/;"	f	class:Graph
+valid_node_uid	Graph.hpp	/^	bool valid_node_uid(const size_type i) const {$/;"	f	class:Graph
 value	CS207/SDLViewer.hpp	/^  static constexpr GLenum value = V;$/;"	m	struct:CS207::gltype_v
 value	Examples/Metrics.hpp	/^  T value;$/;"	m	struct:Metrics::Unit
-value	Graph.hpp	/^	const node_value_type& value() const {$/;"	f	class:Graph::Node
-value	Graph.hpp	/^	edge_value_type& value() const {$/;"	f	class:Graph::Edge
-value	Graph.hpp	/^	node_value_type& value() {$/;"	f	class:Graph::Node
+value	Graph.hpp	/^	  edge_value_type value;$/;"	m	struct:Graph::EdgeData
+value	Graph.hpp	/^	const edge_value_type& value() const {$/;"	f	class:Graph::Edge
+value	Graph.hpp	/^	edge_value_type& value() {$/;"	f	class:Graph::Edge
+value	Graph.hpp	/^ 	  node_value_type value;$/;"	m	struct:Graph::NodeData
+value	Graph.hpp	/^    const node_value_type& value() const {$/;"	f	class:Graph::Node
+value	Graph.hpp	/^    node_value_type& value() {$/;"	f	class:Graph::Node
 value	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/smoother/relaxation_parameter.hpp	/^    static const double value;$/;"	m	struct:itl::default_omega
 value	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/smoother/relaxation_parameter.hpp	/^const double default_omega::value= 2.\/3.;$/;"	m	class:itl::default_omega
 value	MTL-4.0.9555-Linux/usr/include/boost/numeric/meta_math/is_power_of_2.hpp	/^    static const bool value= X == least_significant_one_bit<X>::value;$/;"	m	struct:meta_math::is_power_of_2
@@ -8891,12 +8878,11 @@ value	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/sparse_vector.hpp	
 value	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/sparse_vector.hpp	/^    value_type&       value(size_type j)       { check(j); return data[j]; }$/;"	f	class:mtl::vec::sparse_vector
 value	Mesh.hpp	/^			UserEdgeData value() const {$/;"	f	class:Mesh::Edge
 value	Mesh.hpp	/^			UserEdgeData& value() {$/;"	f	class:Mesh::Link
-value	Mesh.hpp	/^			UserNodeData& value() const {return v_.value().data_;}$/;"	f	class:Mesh::Vertex
+value	Mesh.hpp	/^			UserNodeData& value() {return v_.value().data_;}$/;"	f	class:Mesh::Vertex
 value	Mesh.hpp	/^		UserTriData& value() {$/;"	f	class:Mesh::Triangle
 value	Mesh.hpp	/^		const UserTriData& value() const {$/;"	f	class:Mesh::Triangle
 value0	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/unroll_size1.hpp	/^    static const unsigned value0= 4;$/;"	m	struct:mtl::traits::unroll_size1
 value0	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/unroll_size1.hpp	/^    static const unsigned value0= BSize;$/;"	m	struct:mtl::traits::unroll_size1
-value_	Graph.hpp	/^	edge_value_type& value_() const {$/;"	f	class:Graph::IncidentIterator
 value_a	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/lower_trisolve.hpp	/^	typename mtl::traits::const_value<Matrix>::type  value_a; $/;"	m	struct:mtl::mat::detail::lower_trisolve_t
 value_a	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/upper_trisolve.hpp	/^	typename mtl::traits::const_value<Matrix>::type  value_a; $/;"	m	struct:mtl::mat::detail::upper_trisolve_t
 value_array	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/coordinate2D.hpp	/^    value_array_type const& value_array() const { return values; } \/\/\/< Array of values (const)$/;"	f	class:mtl::mat::coordinate2D
