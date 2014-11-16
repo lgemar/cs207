@@ -143,7 +143,7 @@ struct NodePosition {
 
 struct VertexPosition {
 	template<typename VERTEX>
-	Point operator()(const VERTEX& v) const {
+	Point operator()(VERTEX& v) const {
 		Point sum = Point(0, 0, 0);
 		int counter = 0;
 		for(auto it = v.triangles_begin(); it != v.triangles_end(); ++it) {
@@ -153,7 +153,6 @@ struct VertexPosition {
 		return Point(sum.x / counter, sum.y / counter, sum.z / counter);
 	}
 };
-
 
 /** Integrate a hyperbolic conservation law defined over the mesh m
  * with flux functor f by dt in time.
