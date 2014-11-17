@@ -79,9 +79,9 @@ typedef struct my_triangle_data {
 	QVar qvar_;
 } my_triangle_data;
 
-typedef struct my_link_data {
+typedef struct my_edge_data {
 	Point normal_;
-} my_link_data;
+} my_edge_data;
 
 typedef struct my_vertex_data {
 	double h;
@@ -91,10 +91,11 @@ typedef struct my_vertex_data {
 // HW4B: Placeholder for Mesh Type!
 // Define NodeData, EdgeData, TriData, etc
 // or redefine for your particular Mesh
-typedef Mesh<my_vertex_data, my_link_data, my_triangle_data> MeshType;
+typedef Mesh<my_vertex_data, my_edge_data, my_triangle_data> MeshType;
 typedef MeshType::Link Link;
 typedef MeshType::Triangle Triangle;
 typedef MeshType::Vertex Vertex;
+typedef MeshType::Edge Edge;
 typedef MeshType::triangle_iterator triangle_iterator;
 
 
@@ -166,39 +167,30 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
 		QVar flux = QVar(0,0,0);
 		int num_links = 0;
-		for (auto link = (*tri).link_begin(); link != (*tri).link_end(); ++link) {
+		for (auto eit = (*tri).edge_begin(); eit != (*tri).edge_end(); ++eit) {
+			// Grab the edge
+			Edge this_edge = *eit;
+
 			// getting the normal
 			Point normal;
-			if(*tri < (*link).triangle2())
-				normal = (*link).value().normal_;
-			else
-				normal = -(*link).value().normal_;
-
-			normal = m.normal(*tri, (*link).triangle2());
-
-			db("getting normal");
-			db(normal.x);
-			db(normal.y);
-			db("this triangle");
-			db((*tri).value().qvar_.h);
-			db((*tri).value().qvar_.hx);
-			db((*tri).value().qvar_.hy);
-			db("other triangle");
-			db((*link).triangle2().value().qvar_.h);
-			db((*link).triangle2().value().qvar_.hx);
-			db((*link).triangle2().value().qvar_.hy);
+			normal = m.normal(this_edge);
 
 			// getting the flux
-			QVar temp = f(normal.x, normal.y, dt, (*tri).value().qvar_, (*link).triangle2().value().qvar_);
-			db("temp");
-			db(temp.h);
-			db(temp.hx);
-			db(temp.hy);
+			QVar this_q = (*tri).value().qvar_;
+			QVar other_q; 
+			MeshType::triangle_set adjacency_set=this_edge.adjacent_triangles();
+			if(adjacency_set.size() < 2)
+				other_q = QVar(this_q.h, 0, 0);
+			else {
+				auto first = adjacency_set.begin();
+				if( *first == *tri )
+					other_q = (*(++first)).value().qvar_;
+				else
+					other_q = (*first).value().qvar_;	
+			}
+			QVar temp = f(normal.x, normal.y, dt, (*tri).value().qvar_, other_q);
 			flux = flux + temp;
 			++num_links;
-		}
-		// Deal with the nodes that are on a boundary
-		if( num_links < 2 ) {
 		}
 			
 		// saving the flux
@@ -224,9 +216,9 @@ void post_process(MESH& m) {
 			total_h += (*adj).value().qvar_.h;
 			++count;
 		}
-		(*vit).value().h = total_h / count; // old computation
+		// (*vit).value().h = total_h / count; // old computation
 		// Predictable evolution in time by increasing the height by the y-val
-		// (*vit).value().h += (*vit).position().y;
+		(*vit).value().h += (*vit).position().y;
 	}
 }
 
@@ -333,25 +325,11 @@ int main(int argc, char* argv[])
 	(*it).value().area_ = (*it).area();
   }
   // Compute the normals for all of the links
-  for(auto it = mesh.link_begin(); it != mesh.link_end(); ++it) {
-  	Link this_link = (*it);
-
-  	Triangle t1 = this_link.triangle1();
-  	Triangle t2 = this_link.triangle2();
-
-	if(this_link.triangle1() < this_link.triangle2()) {
-		this_link.value().normal_ = mesh.normal(this_link.triangle1(), this_link.triangle2());
-	}
-	else {
-		this_link.value().normal_ = mesh.normal(this_link.triangle2(), this_link.triangle1());
-	}
-
-	db("precompute done");
-	db(mesh.normal(this_link.triangle1(), this_link.triangle2()));
-	db(this_link.value().normal_);
-
-
+  for(auto it = mesh.edge_begin(); it != mesh.edge_end(); ++it) {
+  		Edge this_edge = *it;
+		this_edge.value().normal_ = mesh.normal(this_edge);
   }
+
   // Precompute the Qvars in the triangles
   for(auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
   	Triangle this_triangle = (*it);

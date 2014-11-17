@@ -80,6 +80,9 @@ public:
 	typedef Vertex vert_type;
 	typedef Edge edge_type;
 
+	// Helpful type definitions
+	typedef std::set<Triangle> triangle_set;
+
 	/** triangle stores 3 vertices and user triangle data*/
 	typedef struct triangle_data {
 		vert_node n1_;
@@ -113,6 +116,7 @@ public:
 	 * */
 	typedef struct edge_data {
 		tri_edge dual_;
+		UserEdgeData data_;
 		edge_data(tri_edge dual) : dual_(dual) {}
 		edge_data() {};
 	} edge_data;
@@ -214,14 +218,13 @@ public:
 			Vertex node2() const {return Vertex(mesh_, e_.node2());}
 			Vertex vertex1() const {return node1();}
 			Vertex vertex2() const {return node2();}
-			UserEdgeData value() const {
-				return e_.value().data_;
-			}
-			bool operator==(const Edge& other) const {
-				return e_ == other.e_;
-			}
-			bool operator<(const Edge& other) const {
-				return e_ < other.e_;
+			UserEdgeData value() const { return e_.value().data_; }
+			bool operator==(const Edge& other) const { return e_ == other.e_; }
+			bool operator<(const Edge& other) const { return e_ < other.e_; }
+
+			triangle_set adjacent_triangles() const {
+				return common_triangles(
+							e_.node1(), e_.node2());
 			}
 		private: 
 			friend class Mesh;
@@ -458,6 +461,38 @@ public:
 			normal = -1 * normal;
 
 		return normal;
+	}
+
+	/** Returns the normal across the edge
+	 * If there is only one triangle, it points away from that triangle
+	 * If the edge is bounded by two triangles, the normal points from the 
+	 * 	smaller to the larger, as defined by operator<
+	 */
+	Point normal(Edge e) {
+		vert_edge edge = e.e_;
+		triangle_set adj_triangles = common_triangles(
+					edge.node1(), edge.node2());
+		auto first = adj_triangles.begin();
+		Triangle t1;
+		if(adj_triangles.size() == 1) {
+			t1 = *first;
+		} 
+		else if( adj_triangles.size() == 2) {
+			auto first = adj_triangles.begin();
+			t1 = std::min(*first, *(++first));	
+		}
+		else
+			assert( false ); // every edge is bordered by a triangle
+		Point edge_vec = edge.node1().position() - edge.node2().position();
+		Point normal_vect = cross(edge_vec, Point(0,0,1));
+		Point towards_t1 = get_unused(t1, edge).position() - edge.node1().position();
+		if(dot(normal_vect, towards_t1) > 0)
+			normal_vect = -1 * normal_vect;
+		return normal_vect;
+	}
+
+	Point normal(vert_edge e) {
+		normal(Edge(this, e));
 	}
 
 	/** Creates a new iterator from an existing iterator IT by templating on 

@@ -1,0 +1,14 @@
+shallow_water.cpp:21:12: warning: unused parameter 's' [-Wunused-parameter]
+void db(in s) {
+           ^
+shallow_water.cpp:25:15: warning: unused parameter 'p' [-Wunused-parameter]
+void db(Point p) {
+              ^
+shallow_water.cpp:170:26: error: no member named 'edge_begin' in 'Mesh<my_vertex_data, my_edge_data, my_triangle_data>::Triangle'
+                for (auto eit = (*tri).edge_begin(); eit != (*tri).edge_end(); ++eit) {
+                                ~~~~~~ ^
+shallow_water.cpp:350:5: note: in instantiation of function template specialization 'hyperbolic_step<Mesh<my_vertex_data, my_edge_data, my_triangle_data>, EdgeFluxCalculator>' requested here
+    hyperbolic_step(mesh, f, t, dt);
+    ^
+2 warnings and 1 error generated.
+make: *** [shallow_water.o] Error 1
