@@ -28,5 +28,11 @@ shallow water:
 	correct value.
 
 Mesh: 
-< > Comment preconditions, postconditions, and invariant
+< > Comment preconditions, postconditions, and invariants
 < > Specifically, make sure that "normal" functions are well commented
+
+Graph:
+< > There is an invariant in the construction of edges that is not enforced. 
+	This becomes evident when getting the value of the edge -- it depends
+	on the order in which the uids are passed into the constructor...it is 
+	marked in the code with a TODO

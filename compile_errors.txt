@@ -1,7 +1,0 @@
-shallow_water.cpp:303:18: warning: unused variable 'di' [-Wunused-variable]
-  DamInitializer di;
-                 ^
-shallow_water.cpp:304:24: warning: unused variable 'pi' [-Wunused-variable]
-  GiantWaveInitializer pi;
-                       ^
-2 warnings generated.
