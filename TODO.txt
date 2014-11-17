@@ -3,7 +3,6 @@ basics: Erik thursday
 <X> add triangle
 <X> private data
 <X> triangle class
-< > Test
 
 iterators: Lukas friday
 <x> triangle iterator
@@ -17,12 +16,17 @@ functionality:
 <X> find triangle
 <X> num triangles
 <X> num connections
-< > Test
 
 math:
 <X> normal
 <X> area
-< > Test
 
 shallow water:
-< > ???
+< > Clean up code, hyperbolic_step still has some jank conditional statements
+< > Calculate the dt time step. Right now the "max_height" is hard-coded, so 
+	the time step calculation could be refined by updating this value to be the
+	correct value.
+
+Mesh: 
+< > Comment preconditions, postconditions, and invariant
+< > Specifically, make sure that "normal" functions are well commented
