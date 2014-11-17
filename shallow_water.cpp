@@ -151,7 +151,7 @@ struct NodePosition {
 
 struct VertexPosition {
 	Point operator()(Vertex& v) const {
-		return Point(v.position().x, v.position().y, v.value().h);
+		return Point(v.position().x, v.position().y, v.value().h - 1);
 	}
 };
 
@@ -364,31 +364,14 @@ int main(int argc, char* argv[])
     // Step forward in time with forward Euler
     hyperbolic_step(mesh, f, t, dt);
 
-    for (auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
-    	  db("after hyperbolic:");
-    	  db((*it).value().qvar_.h);
-      }
-
     // Update node values with triangle-averaged values
     post_process(mesh);
 
-    for (auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
-    	  db("after post process:");
-    	  db((*it).value().qvar_.h);
-      }
-
-    // Update the viewer with new node positions
-    // HW4B: Need to define node_iterators before these can be used!
-#if 1
     viewer.add_nodes(mesh.vertex_begin(), mesh.vertex_end(),
                      CS207::DefaultColor(), VertexPosition(), vertex_map);
-#endif
+
     viewer.set_label(t);
 
-    // These lines slow down the animation for small meshes.
-    // Feel free to remove them or tweak the constants.
-    if (mesh.num_nodes() < 100)
-      CS207::sleep(0.05);
   }
 
 
