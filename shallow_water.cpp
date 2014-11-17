@@ -152,7 +152,7 @@ struct NodePosition {
 
 struct VertexPosition {
 	Point operator()(Vertex& v) const {
-		return Point(v.position().x, v.position().y, v.value().h);
+		return Point(v.position().x, v.position().y, v.value().h - 1);
 	}
 };
 
@@ -399,12 +399,10 @@ int main(int argc, char* argv[])
     // Update the viewer with new node positions
     viewer.add_nodes(mesh.vertex_begin(), mesh.vertex_end(),
                      CS207::DefaultColor(), VertexPosition(), vertex_map);
+    viewer.add_nodes(mesh.vertex_begin(), mesh.vertex_end(),
+                     CS207::DefaultColor(), VertexPosition(), vertex_map);
     viewer.set_label(t);
 
-    // These lines slow down the animation for small meshes.
-    // Feel free to remove them or tweak the constants.
-    if (mesh.num_nodes() < 100)
-      CS207::sleep(0.05);
   }
 
 
