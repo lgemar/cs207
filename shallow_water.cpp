@@ -18,82 +18,49 @@
 #include "Point.hpp"
 #include "Mesh.hpp"
 
+/* Prints out the variable s */
 template <typename in>
 void db(in s) {
 	(void) s;
 	// std::cout << s << std::endl;
 }
 
+/* Prints out the point p */
 void db(Point p) {
 	(void) p;
 	// std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
 }
 
 /** Water column characteristics */
-// This goes in as the UserTriangleData
 struct QVar {
   double h;   // Height of column
   double hx;  // Height times average x velocity of column
   double hy;  // Height times average y velocity of column
 
   /** Default constructor.
-   *
-   * A default water column is 1 unit high with no velocity. */
-  QVar()
-      : h(1), hx(0), hy(0) {
-  }
+   * A default water column is 1 unit high with no velocity. 
+   */
+  QVar() : h(1), hx(0), hy(0) {}
   /** Construct the given water column. */
-  QVar(double h_, double hx_, double hy_)
-      : h(h_), hx(hx_), hy(hy_) {
-  }
-
-  /** sum up two Qs*/
-  QVar operator+(QVar o) const {
-	  return QVar(h + o.h, hx + o.hx, hy + o.hy);
-  }
-
-  QVar operator-(QVar o) const {
-	  return QVar(h - o.h, hx - o.hx, hy - o.hy);
-  }
-
-  void operator+=(QVar o) {
-	  *this = (*this + o);
-  }
-
-  void operator-=(QVar o) {
-	  *this = (*this - o);
-  }
-
-  QVar operator*(double s) const {
-	  return QVar(h*s, hx*s, hy*s);
-  }
-
-  QVar operator/(double s) const {
-	  return *this * 1/s;
-  }
+  QVar(double h_, double hx_, double hy_) : h(h_), hx(hx_), hy(hy_) { }
+  /* Implement QVar operators */
+  QVar operator+(QVar o) const { return QVar(h + o.h, hx + o.hx, hy + o.hy); }
+  QVar operator-(QVar o) const { return QVar(h - o.h, hx - o.hx, hy - o.hy); }
+  void operator+=(QVar o) { *this = (*this + o); }
+  void operator-=(QVar o) { *this = (*this - o); }
+  QVar operator*(double s) const { return QVar(h*s, hx*s, hy*s); }
+  QVar operator/(double s) const { return *this * 1/s; }
 };
 
 // Standard gravity (average gravity at Earth's surface) in meters/sec^2
 static constexpr double grav = 9.80665;
 
-typedef struct my_triangle_data {
-	// TODO: Qvar stuff
-	double area_;
-	QVar qvar_;
-} my_triangle_data;
-
-typedef struct my_edge_data {
-	Point normal_;
-} my_edge_data;
-
-typedef struct my_vertex_data {
-	double h;
-} my_vertex_data;
-
-
-// HW4B: Placeholder for Mesh Type!
 // Define NodeData, EdgeData, TriData, etc
-// or redefine for your particular Mesh
+typedef struct my_triangle_data { double area_; QVar qvar_; } my_triangle_data;
+typedef struct my_edge_data { Point normal_; } my_edge_data;
+typedef struct my_vertex_data { double h; } my_vertex_data;
+
+// Mesh types
 typedef Mesh<my_vertex_data, my_edge_data, my_triangle_data> MeshType;
 typedef MeshType::Link Link;
 typedef MeshType::Triangle Triangle;
@@ -152,6 +119,7 @@ struct NodePosition {
   }
 };
 
+/** Calculates the position of the vertex */
 struct VertexPosition {
 	Point operator()(Vertex& v) const {
 		return Point(v.position().x, v.position().y, v.value().h - 1);
@@ -163,16 +131,16 @@ struct VertexPosition {
  */
 template <typename MESH, typename FLUX>
 double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
-	// HW4B: YOUR CODE HERE
-	// Step the finite volume model in time by dt.
 
+	// Step the finite volume model in time by dt.
 	std::vector<QVar> flux_list;
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
 		Triangle this_tri = *tri;
 		QVar flux = QVar(0,0,0);
 		auto these_edges = m.edges(this_tri);
-		assert(these_edges.size() == 3);
+		assert(these_edges.size() == 3); // RI: each triangle has 3 edges
 		for (auto eit = these_edges.begin(); eit != these_edges.end(); ++eit) {
+
 			// Grab the edge
 			Edge this_edge = *eit;
 
@@ -181,28 +149,36 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 			normal = m.normal(this_edge);
 
 			// getting the flux
-			QVar this_q = this_tri.value().qvar_;
+			QVar this_qvar = this_tri.value().qvar_;
 			QVar other_q; 
 			MeshType::triangle_set adjacency_set=this_edge.adjacent_triangles();
-			if(adjacency_set.size() < 2) {
-				other_q = QVar(this_q.h, 0, 0);
+			if(adjacency_set.size() == 1) {
+				other_q = QVar(this_qvar.h, 0, 0);
 			}
-			else {
+			else if( adjacency_set.size() == 2) {
 				auto first = adjacency_set.begin();
 				Triangle t1 = *first;
 				Triangle t2 = *(++first);
 				if( t1 == this_tri ) {
 					other_q = t2.value().qvar_;
-					if( t1 > t2 ) 
-						normal = -normal;
+					if( t1 > t2 ) normal = -normal;
 				}
 				else {
 					other_q = t1.value().qvar_;	
-					if( t2 > t1 ) 
-						normal = -normal;
+					if( t2 > t1 ) normal = -normal;
 				}
 			}
-			QVar temp = f(normal.x, normal.y, dt, this_tri.value().qvar_, other_q);
+			else {
+				 // Representation invariant is violated: each edge must have 
+				 // at least one adjacent triangle and no more than 2 adjacent
+				 // Triangles
+				assert(false);
+			}
+			QVar temp = f( normal.x, normal.y, dt, 
+						   this_tri.value().qvar_, other_q);
+			
+			// Increment the overall flux for this triangle by the flux 
+			// contribution across this edge
 			flux = flux + temp;
 		}
 			
@@ -225,7 +201,8 @@ void post_process(MESH& m) {
 	for (auto vit = m.vertex_begin(); vit != m.vertex_end(); ++vit) {
 		double total_h = 0;
 		int count = 0;
-		for (auto adj = (*vit).triangles_begin(); adj != (*vit).triangles_end(); ++adj) {
+		for (auto adj = (*vit).triangles_begin(); 
+		    	adj != (*vit).triangles_end(); ++adj) {
 			total_h += (*adj).value().qvar_.h;
 			++count;
 		}
@@ -234,19 +211,14 @@ void post_process(MESH& m) {
 }
 
 /** Creates initial conditions for dam simulation */
-double step(double x) {
-	if( x < 0 ) return 1;
-	else return 0;
-}
+double step(double x) { if( x < 0 ) return 1; else return 0; }
 
 /** Creates initial conditions for dam simulation */
 struct DamInitializer {
-	QVar operator()(Point p) {
-		return QVar(1 + 0.75*step(p.x), 0, 0);
-	}
+	QVar operator()(Point p) { return QVar(1 + 0.75*step(p.x), 0, 0); }
 };
 
-/** Creates initial conditinos for the pond simulation */
+/** Creates initial conditions for the giant wave simulation */
 struct GiantWaveInitializer {
 	QVar operator()(Point p) {
 		double temp = (p.x - 0.75)*(p.x - 0.75) + p.y*p.y - 0.15*0.15;
@@ -257,13 +229,14 @@ struct GiantWaveInitializer {
 /** Creates initial conditions for the pebble simulation */
 struct PebbleInitializer {
 	QVar operator()(Point p) {
-		double temp = 1 - 0.75 * std::exp(-80*((p.x-0.75)*(p.x - 0.75) + p.y*p.y));
+		double temp = 1-0.75 * std::exp(-80*((p.x-0.75)*(p.x - 0.75) + p.y*p.y));
 		return QVar(temp, 0, 0);
 	}
 };
 
-/* 
- * INIT has to be a structure that implements the operator()(Point p) and returns
+/* Initialzes the qvar_ values for all the triangles in the @a mesh using the
+ * 	given initializer functor
+ * @pre INIT is a type that implements the operator()(Point p) and returns
  * 	QVar with the corresponding initial condition
  */
 template <typename INIT>
