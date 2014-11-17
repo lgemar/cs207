@@ -20,10 +20,12 @@
 
 template <typename in>
 void db(in s) {
+	(void) s;
 	// std::cout << s << std::endl;
 }
 
 void db(Point p) {
+	(void) p;
 	// std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
 }
 
@@ -177,16 +179,12 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 			// getting the normal
 			Point normal;
 			normal = m.normal(this_edge);
-			// normal = this_edge.value().normal_;
-			db("\nThe normal is: ");
-			db(normal);
 
 			// getting the flux
 			QVar this_q = this_tri.value().qvar_;
 			QVar other_q; 
 			MeshType::triangle_set adjacency_set=this_edge.adjacent_triangles();
 			if(adjacency_set.size() < 2) {
-				db("Boundary edge");
 				other_q = QVar(this_q.h, 0, 0);
 			}
 			else {
@@ -215,8 +213,6 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 	// now updating all fluxes
 	auto fli = flux_list.begin();
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri, ++fli ) {
-		db("Triangle area: ");
-		db((*tri).value().area_);
 		(*tri).value().qvar_ -= (*fli) * (dt / (*tri).value().area_);
 	}
 
@@ -251,7 +247,7 @@ struct DamInitializer {
 };
 
 /** Creates initial conditinos for the pond simulation */
-struct PondInitializer {
+struct GiantWaveInitializer {
 	QVar operator()(Point p) {
 		double temp = (p.x - 0.75)*(p.x - 0.75) + p.y*p.y - 0.15*0.15;
 		return QVar(1 + 0.75*step(temp), 0, 0);
@@ -288,40 +284,26 @@ int main(int argc, char* argv[])
   }
 
   MeshType mesh;
-  // HW4B: Need node_type before this can be used!
-#if 1
   std::vector<typename MeshType::node_type> mesh_node;
-#endif
-  std::cerr << "started 1" << std::endl;
   // Read all Points and add them to the Mesh
   std::ifstream nodes_file(argv[1]);
   Point p;
   while (CS207::getline_parsed(nodes_file, p)) {
-    // HW4B: Need to implement add_node before this can be used!
-#if 1
     mesh_node.push_back(mesh.add_node(p));
-#endif
   }
-  std::cerr << "started 2" << std::endl;
 
   // Read all mesh triangles and add them to the Mesh
   std::ifstream tris_file(argv[2]);
   std::array<int,3> t;
   while (CS207::getline_parsed(tris_file, t)) {
-    // HW4B: Need to implement add_triangle before this can be used!
-#if 1
     mesh.add_triangle(mesh_node[t[0]], mesh_node[t[1]], mesh_node[t[2]]);
-#endif
   }
-
-  std::cerr << "started 3" << std::endl;
 
   // Print out the stats
   std::cout << mesh.num_nodes() << " "
             << mesh.num_edges() << " "
             << mesh.num_triangles() << std::endl;
 
-  // HW4B Initialization
   // Set the initial conditions
   // Perform any needed precomputation
 
@@ -329,27 +311,21 @@ int main(int argc, char* argv[])
   CS207::SDLViewer viewer;
   viewer.launch();
 
-  // HW4B: Need to define Mesh::node_type and node/edge iterator
-  // before these can be used!
-#if 1
   auto vertex_map = viewer.empty_vertex_map(mesh);
   viewer.add_nodes(mesh.vertex_begin(), mesh.vertex_end(),
                    CS207::DefaultColor(), NodePosition(), vertex_map);
   viewer.add_edges(mesh.edge_begin(), mesh.edge_end(), vertex_map);
-#endif
-// Add triangles to the the graph to test the triangle iterator
-#if 1
+  // Add triangles to the the graph to test the triangle iterator
   auto triangle_map = viewer.empty_triangle_map(mesh);
   viewer.add_nodes(mesh.triangles_begin(), mesh.triangles_end(),
                    CS207::RedColor(), NodePosition(), triangle_map);
   viewer.add_edges(mesh.link_begin(), mesh.link_end(), triangle_map);
-#endif
   viewer.center_view();
 
 
   // Initialize an initial condition structures
   DamInitializer di;
-  PondInitializer pi;
+  GiantWaveInitializer pi;
   PebbleInitializer pebi;
 
   // Initialize the mesh with a set of initial conditions
@@ -390,6 +366,7 @@ int main(int argc, char* argv[])
 
   // Begin the time stepping
   for (double t = t_start; t < t_end; t += dt) {
+
     // Step forward in time with forward Euler
     hyperbolic_step(mesh, f, t, dt);
 
