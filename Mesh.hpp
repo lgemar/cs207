@@ -82,6 +82,7 @@ public:
 
 	// Helpful type definitions
 	typedef std::set<Triangle> triangle_set;
+	typedef std::vector<Edge> edge_list;
 
 	/** triangle stores 3 vertices and user triangle data*/
 	typedef struct triangle_data {
@@ -107,7 +108,7 @@ public:
 	/** vertex stores its triangles, node data */
 	typedef struct vertex_data {
 		std::set<Triangle> triangles_;
-		UserNodeData data_;
+		UserNodeData data_;	
 		vertex_data(UserNodeData data = UserNodeData()) : data_(data) {/* triangles starts empty*/}
 	} vertex_data;
 
@@ -223,7 +224,7 @@ public:
 			bool operator<(const Edge& other) const { return e_ < other.e_; }
 
 			triangle_set adjacent_triangles() const {
-				return common_triangles(
+				return mesh_->common_triangles(
 							e_.node1(), e_.node2());
 			}
 		private: 
@@ -326,6 +327,15 @@ public:
 
 	};
 
+	/* Returns a vector of edges adjacent to the triangle 
+	 */ 
+	edge_list edges(Triangle t) {
+		edge_list ret;
+		ret.push_back(Edge(this, vertex_graph_.edge(t.vertex(1), t.vertex(2))));
+		ret.push_back(Edge(this, vertex_graph_.edge(t.vertex(1), t.vertex(3))));
+		ret.push_back(Edge(this, vertex_graph_.edge(t.vertex(2), t.vertex(3))));
+		return ret;
+	}
 	/** add node
 	 * function for the user to add nodes into the mesh
 	 * should later be added into triangles

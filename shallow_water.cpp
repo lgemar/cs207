@@ -167,7 +167,8 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
 		QVar flux = QVar(0,0,0);
 		int num_links = 0;
-		for (auto eit = (*tri).edge_begin(); eit != (*tri).edge_end(); ++eit) {
+		auto these_edges = m.edges((*tri));
+		for (auto eit = these_edges.begin(); eit != these_edges.end(); ++eit) {
 			// Grab the edge
 			Edge this_edge = *eit;
 
