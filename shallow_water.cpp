@@ -148,14 +148,8 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 			Edge this_edge = *eit;
 
 			// getting the normal
-			Point normal, db_normal;
-			db_normal = m.normal(this_edge);
+			Point normal;
 			normal = this_edge.value().normal_;
-			// std::cout << std::endl;
-			db(normal);
-			// std::cout << " vs ";
-			db(db_normal);
-			// std::cout << std::endl;
 
 			// getting the flux
 			QVar this_qvar = this_tri.value().qvar_;
@@ -341,35 +335,10 @@ int main(int argc, char* argv[])
 	(*it).value().area_ = (*it).area();
   }
   // Compute the normals across each of the edges
-  int counter = 0;
   for(auto it = mesh.edge_begin(); it != mesh.edge_end(); ++it) {
   		Edge this_edge = *it;
-		db("The computed normal: ");
-		db(mesh.normal(this_edge));
 		this_edge.value().normal_ = mesh.normal(this_edge);
-		++counter;
   }
-  db("There are "); 
-  // std::cout << counter;
-  db("edges...\n");
-
-  // For debug purposes: check calculation of edge normals
-  counter = 0;
-  for(auto tri = mesh.triangles_begin(); tri != mesh.triangles_end(); ++tri) {
-		Triangle this_tri = *tri;
-		auto these_edges = mesh.edges(this_tri);
-		for(auto eit = these_edges.begin(); eit != these_edges.end(); ++eit) {
-			if( (*eit).adjacent_triangles().size() == 1)
-				db("This is a boundary edge");
-	//		std::cout << "Precomputed edge normal: ";
-			db((*eit).value().normal_);
-	//		std::cout << std::endl;
-			++counter;
-		}
-  }
-  db("There are "); 
-  // std::cout << counter;
-  db("edges when overcounted...\n");
 
   // Begin the time stepping
   for (double t = t_start; t < t_end; t += dt) {

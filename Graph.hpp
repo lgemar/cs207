@@ -423,7 +423,6 @@ class Graph {
 
     /** return the value type of this edge */
 	edge_value_type& value() {
-		std::cout << "Finding a value in the edge" << std::endl;
 		auto it = std::find(graph_->adj_list_[n1_uid_].begin(),
 				graph_->adj_list_[n1_uid_].end(), n2_uid_);
 		return (*it).value;
