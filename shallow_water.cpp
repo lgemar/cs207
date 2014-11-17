@@ -19,11 +19,11 @@
 
 template <typename in>
 void db(in s) {
-	// std::cout << s << std::endl;
+//	std::cout << s << std::endl;
 }
 
 void db(Point p) {
-	// std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
+//	std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
 }
 
 /** Water column characteristics */
@@ -165,9 +165,10 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 
 	std::vector<QVar> flux_list;
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
+		Triangle this_tri = *tri;
 		QVar flux = QVar(0,0,0);
-		int num_links = 0;
-		auto these_edges = m.edges((*tri));
+		auto these_edges = m.edges(this_tri);
+		assert(these_edges.size() == 3);
 		for (auto eit = these_edges.begin(); eit != these_edges.end(); ++eit) {
 			// Grab the edge
 			Edge this_edge = *eit;
@@ -175,23 +176,34 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 			// getting the normal
 			Point normal;
 			normal = m.normal(this_edge);
+			db("\nThe normal is: ");
+			db(normal);
 
 			// getting the flux
-			QVar this_q = (*tri).value().qvar_;
+			QVar this_q = this_tri.value().qvar_;
 			QVar other_q; 
 			MeshType::triangle_set adjacency_set=this_edge.adjacent_triangles();
-			if(adjacency_set.size() < 2)
+			if(adjacency_set.size() < 2) {
+				db("Boundary edge");
 				other_q = QVar(this_q.h, 0, 0);
+			}
 			else {
 				auto first = adjacency_set.begin();
-				if( *first == *tri )
-					other_q = (*(++first)).value().qvar_;
-				else
-					other_q = (*first).value().qvar_;	
+				Triangle t1 = *first;
+				Triangle t2 = *(++first);
+				if( t1 == this_tri ) {
+					other_q = t2.value().qvar_;
+					if( t1 > t2 ) 
+						normal = -normal;
+				}
+				else {
+					other_q = t1.value().qvar_;	
+					if( t2 > t1 ) 
+						normal = -normal;
+				}
 			}
-			QVar temp = f(normal.x, normal.y, dt, (*tri).value().qvar_, other_q);
+			QVar temp = f(normal.x, normal.y, dt, this_tri.value().qvar_, other_q);
 			flux = flux + temp;
-			++num_links;
 		}
 			
 		// saving the flux
@@ -201,6 +213,8 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 	// now updating all fluxes
 	auto fli = flux_list.begin();
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri, ++fli ) {
+		db("Triangle area: ");
+		db((*tri).value().area_);
 		(*tri).value().qvar_ -= (*fli) * (dt / (*tri).value().area_);
 	}
 
@@ -217,9 +231,9 @@ void post_process(MESH& m) {
 			total_h += (*adj).value().qvar_.h;
 			++count;
 		}
-		// (*vit).value().h = total_h / count; // old computation
+		(*vit).value().h = total_h / count; // old computation
 		// Predictable evolution in time by increasing the height by the y-val
-		(*vit).value().h += (*vit).position().y;
+		// (*vit).value().h += (*vit).position().y;
 	}
 }
 
