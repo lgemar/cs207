@@ -423,6 +423,7 @@ class Graph {
 
     /** return the value type of this edge */
 	edge_value_type& value() {
+		std::cout << "Finding a value in the edge" << std::endl;
 		auto it = std::find(graph_->adj_list_[n1_uid_].begin(),
 				graph_->adj_list_[n1_uid_].end(), n2_uid_);
 		return (*it).value;
@@ -628,10 +629,13 @@ class Graph {
   }
 
   Edge edge(const Node& n1, const Node& n2) const {
-	  return Edge(this, n1.uid_, n2.uid_);
+	  // TODO: figure out the invariant for ordering of UIDs in edge construct
+	  // This is the only invariant that gives the correct behavior when
+	  // Accessing the value of the edge and modifying the data in that 
+	  // edge data structure
+	  if(n1.uid_ < n2.uid_) return Edge(this, n2.uid_, n1.uid_);
+	  else return Edge(this, n1.uid_, n2.uid_);
   }
-
-
 
   /** Removes an edge from the graph
    * @param e The edge object that should be removed

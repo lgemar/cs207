@@ -331,6 +331,8 @@ public:
 	 */ 
 	edge_list edges(Triangle t) {
 		edge_list ret;
+		// TODO: figure out why this is creepy
+		// Creepy: the order of construction for vertex number matters here?
 		ret.push_back(Edge(this, vertex_graph_.edge(t.vertex(1), t.vertex(2))));
 		ret.push_back(Edge(this, vertex_graph_.edge(t.vertex(1), t.vertex(3))));
 		ret.push_back(Edge(this, vertex_graph_.edge(t.vertex(2), t.vertex(3))));
