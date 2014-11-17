@@ -3620,6 +3620,7 @@ init_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/assign_m
 init_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/assign_mode.hpp	/^    static const bool init_to_zero= false;$/;"	m	struct:mtl::assign::times_sum
 init_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/assign_mode.hpp	/^    static const bool init_to_zero= true;$/;"	m	struct:mtl::assign::assign_sum
 initialize	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^	    void initialize()$/;"	f	class:mtl::mat::umfpack::solver
+initialize_mesh	shallow_water.cpp	/^void initialize_mesh(MeshType& mesh) {$/;"	f
 inner_cursor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/coordinate2D.hpp	/^    typedef coordinate_minor_cursor<Value, Parameters>   inner_cursor;$/;"	t	struct:mtl::mat::coordinate_major_cursor
 inner_prod	Point.hpp	/^double inner_prod(const Point& a, const Point& b) {$/;"	f
 ins	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/crtp_base_matrix.hpp	/^	inserter<Matrix> ins;$/;"	m	struct:mtl::mat::crtp_matrix_assign::scalar_assign
@@ -8883,7 +8884,7 @@ value	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/dimension.hpp	/^	s
 value	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/dimension.hpp	/^	static size_type const value= Size;$/;"	m	struct:mtl::vec::fixed::dimension
 value	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/sparse_vector.hpp	/^    value_type const& value(size_type j) const { check(j); return data[j]; }$/;"	f	class:mtl::vec::sparse_vector
 value	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/sparse_vector.hpp	/^    value_type&       value(size_type j)       { check(j); return data[j]; }$/;"	f	class:mtl::vec::sparse_vector
-value	Mesh.hpp	/^			UserEdgeData value() const { return e_.value().data_; }$/;"	f	class:Mesh::Edge
+value	Mesh.hpp	/^			UserEdgeData& value() { return e_.value().data_; }$/;"	f	class:Mesh::Edge
 value	Mesh.hpp	/^			UserEdgeData& value() {$/;"	f	class:Mesh::Link
 value	Mesh.hpp	/^			UserNodeData& value() {return v_.value().data_;}$/;"	f	class:Mesh::Vertex
 value	Mesh.hpp	/^		UserTriData& value() {$/;"	f	class:Mesh::Triangle

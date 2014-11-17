@@ -9,6 +9,7 @@
 
 #include <fstream>
 #include <cmath>
+#include <math.h>
 
 #include "CS207/SDLViewer.hpp"
 #include "CS207/Util.hpp"
@@ -19,11 +20,11 @@
 
 template <typename in>
 void db(in s) {
-//	std::cout << s << std::endl;
+	// std::cout << s << std::endl;
 }
 
 void db(Point p) {
-//	std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
+	// std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
 }
 
 /** Water column characteristics */
@@ -176,6 +177,7 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 			// getting the normal
 			Point normal;
 			normal = m.normal(this_edge);
+			// normal = this_edge.value().normal_;
 			db("\nThe normal is: ");
 			db(normal);
 
@@ -231,13 +233,51 @@ void post_process(MESH& m) {
 			total_h += (*adj).value().qvar_.h;
 			++count;
 		}
-		(*vit).value().h = total_h / count; // old computation
-		// Predictable evolution in time by increasing the height by the y-val
-		// (*vit).value().h += (*vit).position().y;
+		(*vit).value().h = total_h / count;
 	}
 }
 
+/** Creates initial conditions for dam simulation */
+double step(double x) {
+	if( x < 0 ) return 1;
+	else return 0;
+}
 
+/** Creates initial conditions for dam simulation */
+struct DamInitializer {
+	QVar operator()(Point p) {
+		return QVar(1 + 0.75*step(p.x), 0, 0);
+	}
+};
+
+/** Creates initial conditinos for the pond simulation */
+struct PondInitializer {
+	QVar operator()(Point p) {
+		double temp = (p.x - 0.75)*(p.x - 0.75) + p.y*p.y - 0.15*0.15;
+		return QVar(1 + 0.75*step(temp), 0, 0);
+	}
+};
+
+/** Creates initial conditions for the pebble simulation */
+struct PebbleInitializer {
+	QVar operator()(Point p) {
+		double temp = 1 - 0.75 * std::exp(-80*((p.x-0.75)*(p.x - 0.75) + p.y*p.y));
+		return QVar(temp, 0, 0);
+	}
+};
+
+/* 
+ * INIT has to be a structure that implements the operator()(Point p) and returns
+ * 	QVar with the corresponding initial condition
+ */
+template <typename INIT>
+void initialize_mesh(MeshType& mesh, INIT initializer) {
+  // Precompute the Qvars in the triangles
+  for(auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
+  	Triangle this_triangle = (*it);
+	this_triangle.value().qvar_ = initializer(this_triangle.position());
+  }
+}
 
 int main(int argc, char* argv[])
 {
@@ -307,14 +347,21 @@ int main(int argc, char* argv[])
   viewer.center_view();
 
 
-  // HW4B: Timestep
+  // Initialize an initial condition structures
+  DamInitializer di;
+  PondInitializer pi;
+  PebbleInitializer pebi;
+
+  // Initialize the mesh with a set of initial conditions
+  initialize_mesh(mesh, pebi);
+
+  // Compute Timestep
   // CFL stability condition requires dt <= dx / max|velocity|
   // For the shallow water equations with u = v = 0 initial conditions
   //   we can compute the minimum edge length and maximum original water height
   //   to set the time-step
   // Compute the minimum edge length and maximum water height for computing dt
 
-#if 1
   double min_edge_length = 0;
   double max_height = 1.75; // hardcoded from knowledge about initial conditions
   for(auto it = mesh.link_begin(); it != mesh.link_end(); ++it) {
@@ -325,10 +372,6 @@ int main(int argc, char* argv[])
 		min_edge_length = this_edge_length;
   }
   double dt = 0.25 * min_edge_length / (sqrt(grav * max_height));
-#else
-  // Placeholder!! Delete me when min_edge_length and max_height can be computed!
-  double dt = 0.1;
-#endif
   double t_start = 0;
   double t_end = 10;
 
@@ -345,44 +388,17 @@ int main(int argc, char* argv[])
 		this_edge.value().normal_ = mesh.normal(this_edge);
   }
 
-  // Precompute the Qvars in the triangles
-  for(auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
-  	Triangle this_triangle = (*it);
-	if( this_triangle.position().x < 0)
-		this_triangle.value().qvar_ = QVar(1.75, 0, 0);
-	else
-		this_triangle.value().qvar_ = QVar(1.0, 0, 0);
-  }
-
-  for (auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
-	  db("precomputed:");
-	  db((*it).value().qvar_.h);
-  }
-
   // Begin the time stepping
   for (double t = t_start; t < t_end; t += dt) {
     // Step forward in time with forward Euler
     hyperbolic_step(mesh, f, t, dt);
 
-    for (auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
-    	  db("after hyperbolic:");
-    	  db((*it).value().qvar_.h);
-      }
-
     // Update node values with triangle-averaged values
     post_process(mesh);
 
-    for (auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
-    	  db("after post process:");
-    	  db((*it).value().qvar_.h);
-      }
-
     // Update the viewer with new node positions
-    // HW4B: Need to define node_iterators before these can be used!
-#if 1
     viewer.add_nodes(mesh.vertex_begin(), mesh.vertex_end(),
                      CS207::DefaultColor(), VertexPosition(), vertex_map);
-#endif
     viewer.set_label(t);
 
     // These lines slow down the animation for small meshes.

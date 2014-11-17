@@ -1,7 +1,0 @@
-shallow_water.cpp:21:12: warning: unused parameter 's' [-Wunused-parameter]
-void db(in s) {
-           ^
-shallow_water.cpp:25:15: warning: unused parameter 'p' [-Wunused-parameter]
-void db(Point p) {
-              ^
-2 warnings generated.

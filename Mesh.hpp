@@ -219,7 +219,7 @@ public:
 			Vertex node2() const {return Vertex(mesh_, e_.node2());}
 			Vertex vertex1() const {return node1();}
 			Vertex vertex2() const {return node2();}
-			UserEdgeData value() const { return e_.value().data_; }
+			UserEdgeData& value() { return e_.value().data_; }
 			bool operator==(const Edge& other) const { return e_ == other.e_; }
 			bool operator<(const Edge& other) const { return e_ < other.e_; }
 
