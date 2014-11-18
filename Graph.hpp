@@ -421,28 +421,28 @@ class Graph {
       return graph_->node(n2_uid_);
     }
 
-    /** return the value type of this edge */
+    /** return the value type of this edge
+     * @RI edge values are stored at only one spot in the adj list[uid1][udi2], s.t. uid1 < uid2
+     * */
 	edge_value_type& value() {
-		auto it = std::find(graph_->adj_list_[n1_uid_].begin(),
-				graph_->adj_list_[n1_uid_].end(), n2_uid_);
+		size_t mn = std::min(n1_uid_, n2_uid_);
+		size_t mx = std::max(n1_uid_, n2_uid_);
+
+		auto it = std::find(graph_->adj_list_[mn].begin(),
+				graph_->adj_list_[mn].end(), mx);
 		return (*it).value;
 	}
 
-	/** Return the value of this edge */
+	/** Return the value of this edge
+     * @RI edge values are stored at only one spot in the adj list[uid1][udi2], s.t. uid1 < uid2
+     */
 	const edge_value_type& value() const {
-		auto it = std::find(graph_->adj_list_[n1_uid_].begin(),
-				graph_->adj_list_[n1_uid_].end(), n2_uid_);
-		return (*it).value;
-	}
+		size_t mn = std::min(n1_uid_, n2_uid_);
+		size_t mx = std::max(n1_uid_, n2_uid_);
 
-	/** Set the value of this edge */
-	void set_value(edge_value_type v) {
-		auto it = std::find(graph_->adj_list_[n1_uid_].begin(),
-				graph_->adj_list_[n1_uid_].end(), n2_uid_);
-		(*it).value = v;
-		it = std::find(graph_->adj_list_[n2_uid_].begin(),
-				graph_->adj_list_[n2_uid_].end(), n1_uid_);
-		(*it).value = v;
+		auto it = std::find(graph_->adj_list_[mn].begin(),
+				graph_->adj_list_[mn].end(), mx);
+		return (*it).value;
 	}
 
     /** returns the vector between node1 and node2; */
@@ -628,12 +628,7 @@ class Graph {
   }
 
   Edge edge(const Node& n1, const Node& n2) const {
-	  // TODO: figure out the invariant for ordering of UIDs in edge construct
-	  // This is the only invariant that gives the correct behavior when
-	  // Accessing the value of the edge and modifying the data in that 
-	  // edge data structure
-	  if(n1.uid_ < n2.uid_) return Edge(this, n2.uid_, n1.uid_);
-	  else return Edge(this, n1.uid_, n2.uid_);
+	  return Edge(this, n1.uid_, n2.uid_);
   }
 
   /** Removes an edge from the graph

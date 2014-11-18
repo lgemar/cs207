@@ -331,8 +331,6 @@ public:
 	 */ 
 	edge_list edges(Triangle t) {
 		edge_list ret;
-		// TODO: figure out why this is creepy
-		// Creepy: the order of construction for vertex number matters here?
 		ret.push_back(Edge(this, vertex_graph_.edge(t.vertex(1), t.vertex(2))));
 		ret.push_back(Edge(this, vertex_graph_.edge(t.vertex(1), t.vertex(3))));
 		ret.push_back(Edge(this, vertex_graph_.edge(t.vertex(2), t.vertex(3))));
@@ -380,7 +378,7 @@ public:
 		tri_node tn = triangle_graph_.add_node(Point(),triangle_data(n1,n2,n3,d));
 
 		//adding edges: some might already exist
-		vert_edge e12 = vertex_graph_.add_edge(n1, n2);
+		vert_edge e12 = vertex_graph_.add_edge(n2, n1);
 		vert_edge e23 = vertex_graph_.add_edge(n2, n3);
 		vert_edge e31 = vertex_graph_.add_edge(n3, n1);
 

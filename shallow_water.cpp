@@ -70,6 +70,7 @@ typedef MeshType::Triangle Triangle;
 typedef MeshType::Vertex Vertex;
 typedef MeshType::Edge Edge;
 typedef MeshType::triangle_iterator triangle_iterator;
+typedef std::set<Triangle> triangle_set;
 
 
 /** Function object for calculating shallow-water flux.
@@ -138,10 +139,13 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 	// Step the finite volume model in time by dt.
 	std::vector<QVar> flux_list;
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
+
+		// initial values for this triangle
 		Triangle this_tri = *tri;
 		QVar flux = QVar(0,0,0);
 		auto these_edges = m.edges(this_tri);
-		assert(these_edges.size() == 3); // RI: each triangle has 3 edges
+
+		// Integrating over edges of triangle
 		for (auto eit = these_edges.begin(); eit != these_edges.end(); ++eit) {
 
 			// Grab the edge
@@ -154,7 +158,7 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 			// getting the flux
 			QVar this_qvar = this_tri.value().qvar_;
 			QVar other_q; 
-			MeshType::triangle_set adjacency_set=this_edge.adjacent_triangles();
+			triangle_set adjacency_set=this_edge.adjacent_triangles();
 			if(adjacency_set.size() == 1) {
 				other_q = QVar(this_qvar.h, 0, 0);
 			}
@@ -291,12 +295,16 @@ int main(int argc, char* argv[])
   viewer.add_nodes(mesh.vertex_begin(), mesh.vertex_end(),
                    CS207::DefaultColor(), NodePosition(), vertex_map);
   viewer.add_edges(mesh.edge_begin(), mesh.edge_end(), vertex_map);
+
+
+  /* Uncomment this code to draw a graph of links between triangles of the graph
   // Add triangles to the the graph to test the triangle iterator
   auto triangle_map = viewer.empty_triangle_map(mesh);
   viewer.add_nodes(mesh.triangles_begin(), mesh.triangles_end(),
                    CS207::RedColor(), NodePosition(), triangle_map);
   viewer.add_edges(mesh.link_begin(), mesh.link_end(), triangle_map);
   viewer.center_view();
+  */
 
 
   // Initialize an initial condition structures
@@ -305,7 +313,7 @@ int main(int argc, char* argv[])
   PebbleInitializer pebi;
 
   // Initialize the mesh with a set of initial conditions
-  initialize_mesh(mesh, pebi);
+  initialize_mesh(mesh, pi);
 
   // Compute Timestep
   // CFL stability condition requires dt <= dx / max|velocity|
