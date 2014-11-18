@@ -22,7 +22,7 @@ math:
 <X> area
 
 shallow water:
-< > Clean up code, hyperbolic_step still has some jank conditional statements
+<X> Clean up code, hyperbolic_step still has some jank conditional statements
 < > Calculate the dt time step. Right now the "max_height" is hard-coded, so 
 	the time step calculation could be refined by updating this value to be the
 	correct value.
@@ -32,7 +32,7 @@ Mesh:
 < > Specifically, make sure that "normal" functions are well commented
 
 Graph:
-< > There is an invariant in the construction of edges that is not enforced. 
+<X> There is an invariant in the construction of edges that is not enforced. 
 	This becomes evident when getting the value of the edge -- it depends
 	on the order in which the uids are passed into the constructor...it is 
 	marked in the code with a TODO

@@ -10,6 +10,7 @@
 #include <fstream>
 #include <cmath>
 #include <math.h>
+#include <string.h>
 
 #include "CS207/SDLViewer.hpp"
 #include "CS207/Util.hpp"
@@ -19,16 +20,27 @@
 #include "Mesh.hpp"
 
 /* Prints out the variable s */
+template <typename in, typename in2>
+void db(in s, in2 s2) {
+	std::cout << s << s2 << std::endl;
+}
+
+/* Prints out the variable s */
 template <typename in>
 void db(in s) {
-	(void) s;
-	// std::cout << s << std::endl;
+	std::cout << s << std::endl;
 }
 
 /* Prints out the point p */
 void db(Point p) {
 	(void) p;
-	// std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
+	std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
+}
+
+/* Prints out the point p */
+template <typename in>
+void db(in s, Point p) {
+	std::cout << s << "(" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
 }
 
 /** Water column characteristics */
@@ -134,10 +146,12 @@ struct VertexPosition {
  * with flux functor f by dt in time.
  */
 template <typename MESH, typename FLUX>
-double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
+double hyperbolic_step(MESH& m, FLUX& f, double t, size_t n_triangles, double dt) {
 
 	// Step the finite volume model in time by dt.
 	std::vector<QVar> flux_list;
+	flux_list.reserve(n_triangles);
+
 	for (auto tri = m.triangles_begin(); tri != m.triangles_end(); ++tri ) {
 
 		// initial values for this triangle
@@ -158,35 +172,20 @@ double hyperbolic_step(MESH& m, FLUX& f, double t, double dt) {
 			// getting the flux
 			QVar this_qvar = this_tri.value().qvar_;
 			QVar other_q; 
-			triangle_set adjacency_set=this_edge.adjacent_triangles();
-			if(adjacency_set.size() == 1) {
+
+			// getting triangle on edge that's not this one
+			triangle_set others = this_edge.other_triangle(this_tri);
+			if (others.size() == 0)
 				other_q = QVar(this_qvar.h, 0, 0);
-			}
-			else if( adjacency_set.size() == 2) {
-				auto first = adjacency_set.begin();
-				Triangle t1 = *first;
-				Triangle t2 = *(++first);
-				if( t1 == this_tri ) {
-					other_q = t2.value().qvar_;
-					if( t1 > t2 ) normal = -normal;
-				}
-				else {
-					other_q = t1.value().qvar_;	
-					if( t2 > t1 ) normal = -normal;
-				}
-			}
 			else {
-				 // Representation invariant is violated: each edge must have 
-				 // at least one adjacent triangle and no more than 2 adjacent
-				 // Triangles
-				assert(false);
+				other_q = (*others.begin()).value().qvar_;
+				if (this_tri > *others.begin()) normal = -normal;
 			}
-			QVar temp = f( normal.x, normal.y, dt, 
-						   this_tri.value().qvar_, other_q);
 			
 			// Increment the overall flux for this triangle by the flux 
 			// contribution across this edge
-			flux = flux + temp;
+			flux = flux + f( normal.x, normal.y, dt,
+					   this_tri.value().qvar_, other_q);
 		}
 			
 		// saving the flux
@@ -259,7 +258,7 @@ int main(int argc, char* argv[])
 {
   // Check arguments
   if (argc < 3) {
-    std::cerr << "Usage: shallow_water NODES_FILE TRIS_FILE\n";
+    std::cerr << "Usage: shallow_water NODES_FILE TRIS_FILE INIT\n";
     exit(1);
   }
 
@@ -311,9 +310,18 @@ int main(int argc, char* argv[])
   DamInitializer di;
   GiantWaveInitializer pi;
   PebbleInitializer pebi;
+  std::string choice;
+  if (argc < 4)
+	  choice = ""; // go to default
+  else
+	  choice = argv[3];
+  if (choice.compare("dam") == 0)
+	  initialize_mesh(mesh, di);
+  else if (choice.compare("pebble") == 0)
+	  initialize_mesh(mesh, pebi);
+  else
+	  initialize_mesh(mesh, pi); // wave is default case
 
-  // Initialize the mesh with a set of initial conditions
-  initialize_mesh(mesh, pi);
 
   // Compute Timestep
   // CFL stability condition requires dt <= dx / max|velocity|
@@ -321,19 +329,26 @@ int main(int argc, char* argv[])
   //   we can compute the minimum edge length and maximum original water height
   //   to set the time-step
   // Compute the minimum edge length and maximum water height for computing dt
+  double max_height = 0; // hardcoded from knowledge about initial conditions
+  for (auto it = mesh.triangles_begin(); it != mesh.triangles_end(); ++it) {
+	  double this_height = (*it).value().qvar_.h;
+	  if (this_height > max_height)
+		  max_height = this_height;
+  }
 
-  double min_edge_length = 0;
-  double max_height = 1.75; // hardcoded from knowledge about initial conditions
-  for(auto it = mesh.link_begin(); it != mesh.link_end(); ++it) {
-	double this_edge_length = distance((*it).triangle1().position(), (*it).triangle2().position());
-  	if( it == mesh.link_begin() )
-		min_edge_length = this_edge_length;
+  double min_edge_length = 10000;
+  for(auto it = mesh.edge_begin(); it != mesh.edge_end(); ++it) {
+	double this_edge_length = (*it).length();
   	if(this_edge_length < min_edge_length)
 		min_edge_length = this_edge_length;
   }
   double dt = 0.25 * min_edge_length / (sqrt(grav * max_height));
   double t_start = 0;
   double t_end = 10;
+
+  db("time step:", dt);
+  db("min edge length: ", min_edge_length);
+  db("max height: ", max_height);
 
   // Preconstruct a Flux functor
   EdgeFluxCalculator f;
@@ -348,11 +363,13 @@ int main(int argc, char* argv[])
 		this_edge.value().normal_ = mesh.normal(this_edge);
   }
 
+  size_t num_triangles = mesh.num_triangles();
+
   // Begin the time stepping
   for (double t = t_start; t < t_end; t += dt) {
 
     // Step forward in time with forward Euler
-    hyperbolic_step(mesh, f, t, dt);
+    hyperbolic_step(mesh, f, t, num_triangles, dt);
 
     // Update node values with triangle-averaged values
     post_process(mesh);

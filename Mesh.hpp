@@ -227,6 +227,22 @@ public:
 				return mesh_->common_triangles(
 							e_.node1(), e_.node2());
 			}
+			/** returns set of triangle in this edge that is not
+			 * equal to @a t
+			 * */
+			triangle_set other_triangle(Triangle t) const {
+				triangle_set group = adjacent_triangles();
+				triangle_set other;
+				for (auto it = group.begin(); it != group.end(); ++it)
+					if (*it != t)
+						other.insert(*it);
+				return other;
+			}
+
+			double length() const {
+				return e_.length();
+			}
+
 		private: 
 			friend class Mesh;
 			const Mesh* mesh_;
