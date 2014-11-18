@@ -345,7 +345,7 @@ public:
 
 	/* Returns a vector of edges adjacent to the triangle 
 	 */ 
-	edge_list edges(Triangle t) {
+	edge_list edges(Triangle t) const {
 		edge_list ret;
 		ret.push_back(Edge(this, vertex_graph_.edge(t.vertex(1), t.vertex(2))));
 		ret.push_back(Edge(this, vertex_graph_.edge(t.vertex(1), t.vertex(3))));
@@ -473,31 +473,16 @@ public:
 		return t != Triangle();
 	}
 
-	/** returns the normal of the edge between t1 and t2, pointing towards t2
-	 * ONLY IN THE XY plane
-	 * */
-	Point normal(Triangle t1, Triangle t2) {
-		vert_edge edge = get_link(t1, t2).value().dual_;
-		Point edge_vec = edge.node1().position() - edge.node2().position();
-		Point normal = cross(edge_vec, Point(0,0,1));
 
-		// check if it points away from t1
-		Point towards_t1 = get_unused(t1, edge).position() - edge.node1().position();
-		if (dot(normal, towards_t1) > 0)
-			normal = -1 * normal;
-
-		return normal;
-	}
-
-	/** Returns the normal across the edge
+	/** Returns a vector normal to the edge, and normal to the +z direction
 	 * If there is only one triangle, it points away from that triangle
 	 * If the edge is bounded by two triangles, the normal points from the 
 	 * 	smaller to the larger, as defined by operator<
 	 */
-	Point normal(Edge e) {
+	Point normal(Edge e) const {
 		vert_edge edge = e.e_;
-		triangle_set adj_triangles = common_triangles(
-					edge.node1(), edge.node2());
+		triangle_set adj_triangles = e.adjacent_triangles();
+
 		auto first = adj_triangles.begin();
 		Triangle t1;
 		if(adj_triangles.size() == 1) {
@@ -517,8 +502,15 @@ public:
 		return normal_vect;
 	}
 
-	Point normal(vert_edge e) {
+	// other accessor for normal function
+	Point normal(vert_edge e) const {
 		normal(Edge(this, e));
+	}
+
+	// turns two triangles into edge
+	Point normal(Triangle t1, Triangle t2) const {
+		vert_edge edge = get_link(t1, t2).value().dual_;
+		return normal(edge);
 	}
 
 	/** Creates a new iterator from an existing iterator IT by templating on 
@@ -611,13 +603,19 @@ private:
 	friend class Triangle;
 
 	/** private utility functions */
+
+	/** returns the edge in the triangle graph between t1 and t2
+	 * @pre there is a link between t1 and t2
+	 */
 	tri_edge get_link(Triangle t1, Triangle t2) {
 		assert (triangle_graph_.has_edge(get_tri_node(t1), get_tri_node(t2)));
 		return triangle_graph_.edge(get_tri_node(t1), get_tri_node(t2));
 	}
+	// cast from triangle to its base node
 	tri_node get_tri_node(Triangle t) const {
 		return triangle_graph_.node(t.uid_);
 	}
+	// returns the first vertex of t that is not part of edge e
 	vert_node get_unused(Triangle t, vert_edge e) const {
 		int i = 1;
 		while (t.vertex(i) == e.node1() || t.vertex(i) == e.node2())

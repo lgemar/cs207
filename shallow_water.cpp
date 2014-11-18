@@ -310,6 +310,8 @@ int main(int argc, char* argv[])
   DamInitializer di;
   GiantWaveInitializer pi;
   PebbleInitializer pebi;
+
+  // select initial conditions from 3rd command line argument
   std::string choice;
   if (argc < 4)
 	  choice = ""; // go to default

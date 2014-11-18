@@ -23,7 +23,7 @@ math:
 
 shallow water:
 <X> Clean up code, hyperbolic_step still has some jank conditional statements
-< > Calculate the dt time step. Right now the "max_height" is hard-coded, so 
+<X> Calculate the dt time step. Right now the "max_height" is hard-coded, so 
 	the time step calculation could be refined by updating this value to be the
 	correct value.
 
