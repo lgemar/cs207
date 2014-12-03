@@ -2,6 +2,7 @@
 #include<string>
 #include<cmath>
 #include<cassert>
+#include<vector>
 
 #include "Point.hpp"
 
@@ -85,6 +86,12 @@ typedef struct Collision {
 		return cross(v1, v2);
 	}
 
+	/* Return the area of the triangle formed by t1, t2, t3 */
+	double triangle_area(Point t1, Point t2, Point t3) {
+		return 0.5 * norm(cross(t3 - t1, t3 - t2));
+	}
+
+	/* Returns true if the two doubles are within epsilon */
 	bool equal(double a, double b, double epsilon=0.001) {
 		return std::abs(a - b) < epsilon;
 	}
@@ -95,6 +102,8 @@ typedef struct Collision {
 		test_print_statements();
 		print_line("=====> Testing plane normals <======");
 		test_plane_normal();
+		print_line("=====> Testing on same side functionality<=====");
+		test_on_same_side();
 		print_line("=====> Testing triangle interior checks <=====");
 		test_is_inside_triangle();
 		print_line("=====> Testing plane-line intersection <=====");
@@ -112,7 +121,61 @@ typedef struct Collision {
 	}
 
 	void test_is_inside_triangle() {
-		print_line("Here are some tests for is_inside_triangle");
+		// Seed the random number generator
+		srand(time(NULL));
+		// Declare variables
+		Point t1, t2, t3, random_point;
+		double hit_rate, hit_prob;
+		int sz = 100;
+		int hits = 0;
+		int num_points = 10000;
+		// Define a random triangle on the 10x10 grid on the x-y plane
+		t1 = Point(rand() % sz, rand() % sz, 0);
+		t2 = Point(rand() % sz, rand() % sz, 0);
+		t3 = Point(rand() % sz, rand() % sz, 0);
+		// Create an array of points in a szxsz grid on x-y plane
+		int i = num_points;
+		while( i ) {
+			random_point = Point(rand() % sz, rand() % sz, 0);
+			if( is_inside_triangle(t1, t2, t3, random_point) )
+				++hits;
+			--i;
+		}
+		// Print out the hit rate and the hit probability
+		print_line("Hit rate and hit probabilities");
+		hit_rate = (double) hits / num_points;
+		hit_prob = triangle_area(t1, t2, t3) / (sz * sz);
+		std::cout << "Hit rate: " << hit_rate << std::endl;
+		std::cout << "Hit probability: " << hit_prob << std::endl;
+	}
+
+	void test_on_same_side() {
+		// Seed the random number generator
+		srand(time(NULL));
+		// Declare variables
+		Point a, b, p0, p1;
+		double hit_rate, hit_prob;
+		int sz = 100;
+		int hits = 0;
+		int num_points = 10000;
+		// Define a line that cuts szXsz grid on the x-y plane in half
+		a = Point(0, 0, 0);
+		b = Point(sz, sz, 0);
+		// Create an array of points in a szxsz grid on x-y plane
+		int i = num_points;
+		while( i ) {
+			p0 = Point(rand() % sz, rand() % sz, 0);
+			p1 = Point(rand() % sz, rand() % sz, 0);
+			if( on_same_side(a, b, p0, p1) )
+				++hits;
+			--i;
+		}
+		// Print out the hit rate and the hit probability
+		print_line("Hit rate and hit probabilities");
+		hit_rate = (double) hits / num_points;
+		hit_prob = 0.5;
+		std::cout << "Hit rate: " << hit_rate << std::endl;
+		std::cout << "Hit probability: " << hit_prob << std::endl;
 	}
 
 	void test_plane_normal() {
