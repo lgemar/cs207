@@ -3756,6 +3756,8 @@ is_multi_vector_expr	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/is
 is_multi_vector_expr	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/is_multi_vector_expr.hpp	/^struct is_multi_vector_expr< mtl::mat::scaled_view<Value1, Matrix> > $/;"	s	namespace:mtl::traits
 is_negative	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/is_negative.hpp	/^inline is_negative(T x) { return x < 0; }$/;"	f	class:mtl::boost::disable_if
 is_negative	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/is_negative.hpp	/^inline is_negative(T) { return false; }$/;"	f	class:mtl::boost::enable_if
+is_on_line	Collision.hpp	/^	bool is_on_line(Point a, Point b, Point p) {$/;"	f	struct:Collision
+is_on_plane	Collision.hpp	/^	bool is_on_plane(Point v1, Point v2, Point v3, Point p) {$/;"	f	struct:Collision
 is_power_of_2	MTL-4.0.9555-Linux/usr/include/boost/numeric/meta_math/is_power_of_2.hpp	/^struct is_power_of_2$/;"	s	namespace:meta_math
 is_power_of_2	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/utility.hpp	/^bool inline is_power_of_2(Integral x)$/;"	f	namespace:mtl::recursion
 is_prime	MTL-4.0.9555-Linux/usr/include/boost/numeric/meta_math/is_prime.hpp	/^struct is_prime$/;"	s	namespace:meta_math

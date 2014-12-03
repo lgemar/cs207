@@ -60,6 +60,10 @@ typedef struct Collision {
 	}
 
 	/** Compute the intersection of a plane and a line
+	 * @pre p0 and p1 must form a valid line, p0 != p1 && 
+	 * 	dot(p0, p1) != 0
+	 * @pre line formed by p0 and p1 is not parallel to the plane
+	 * @pre p0 and p1 must form a line not on the plane
 	 * @param[in] Line is defined by the two points p0 and p1
 	 * @param[in] Plane is defined by three points t1, t2, t3
 	 * @return a Point of intersection between the point and plane
@@ -70,9 +74,14 @@ typedef struct Collision {
 		Point n;
 		double t;
 
+		n = plane_normal(t1, t2, t3);
+		// Check preconditions
+		assert( !equal(p0, p1) );
+		assert( !equal(dot(p0, p1), 0) );
+		assert( !equal(dot(n, p1 - p0), 0) );
+
 		// r(t) = p0 + t*(p1 - p0) is the equation of the line; find
 		// t at the point of intersection; then compute the intersect
-		n = plane_normal(t1, t2, t3);
 		t = (dot(n, t1) - dot(p0, n)) / (dot(n, p1 - p0));
 		return p0 + t * (p1 - p0);
 	}
@@ -86,6 +95,28 @@ typedef struct Collision {
 		return cross(v1, v2);
 	}
 
+	/* Return true if the point is on the plane defined by v1, v2, v3*/
+	bool is_on_plane(Point v1, Point v2, Point v3, Point p) {
+		// Check if the vectors joining the point p to every vertex
+		// on the plane dotted with the normal vector is 0
+		Point n = plane_normal(v1, v2, v3);
+		return equal(dot(n, v1 - p), 0) && 
+			   equal(dot(n, v2 - p), 0) &&
+			   equal(dot(n, v3 - p), 0);
+	}
+
+	/* Return true if the point is on the line defined by a and b */
+	bool is_on_line(Point a, Point b, Point p) {
+		// Declare variables
+		Point v1, v2, crpr;
+		// If b and p jut out from a in the same or opposite 
+		// directions then p lies on the line formed by a and b
+		v1 = b - a;
+		v2 = p - a;
+		crpr = cross(v1, v2);
+		return equal(crpr, Point(0, 0, 0));
+	}
+
 	/* Return the area of the triangle formed by t1, t2, t3 */
 	double triangle_area(Point t1, Point t2, Point t3) {
 		return 0.5 * norm(cross(t3 - t1, t3 - t2));
@@ -94,6 +125,11 @@ typedef struct Collision {
 	/* Returns true if the two doubles are within epsilon */
 	bool equal(double a, double b, double epsilon=0.001) {
 		return std::abs(a - b) < epsilon;
+	}
+
+	/* Returns true if the two points x, y, z coords satisfy equal */
+	bool equal(Point a, Point b) {
+		return equal(a.x, b.x) && equal(a.y, b.y) && equal(a.z, b.z);
 	}
 
 	/** Runs a sequence of tests on the collision detector */
@@ -117,7 +153,38 @@ typedef struct Collision {
 	}
 
 	void test_plane_line_intersect() {
-		print_line("Hello world");
+		// Seed the random number generator
+		srand(time(NULL));
+		// Declare variables;
+		Point v1, v2, v3, a, b, intersect;
+		int sz = 10;
+		int num_points = 100;
+		int i = num_points;
+		// Assert that each intersect point is on the line and plane
+		while( i ) {
+			// Randomize all the points
+			v1 = Point(rand() % sz, rand() % sz, rand() % sz);
+			v2 = Point(rand() % sz, rand() % sz, rand() % sz);
+			v3 = Point(rand() % sz, rand() % sz, rand() % sz);
+			a = Point(rand() % sz, rand() % sz, rand() % sz);
+			b = Point(rand() % sz, rand() % sz, rand() % sz);
+			// Make sure that a and b form a valid line
+			if( equal(a, b) || equal(dot(a, b), 0) )
+				continue;
+			// Make sure that v1, v2, v3 form a valid plane
+			if( equal(triangle_area(v1, v2, v3), 0) )
+				continue;
+			// Make sure that line is not parallel to the plane
+			if( equal(dot(plane_normal(v1, v2, v3), a-b), 0) )
+				continue;
+			// Compute the intersection
+			intersect = plane_line_intersect(v1, v2, v3, a, b);
+			assert( is_on_plane(v1, v2, v3, intersect) );
+			assert( is_on_line(a, b, intersect) );
+			// Decrement the counter
+			--i;
+		}
+		print_line("All assertions pass");
 	}
 
 	void test_is_inside_triangle() {
@@ -184,19 +251,19 @@ typedef struct Collision {
 		Point p3 = Point(rand() % 100, rand() % 100, rand() % 100);
 
 		// Print out the three starting points
-		print_string("Point 1: ");
+		print_text("Point 1: ");
 		print_point(p1);
 		end_line();
-		print_string("Point 2: ");
+		print_text("Point 2: ");
 		print_point(p2);
 		end_line();
-		print_string("Point 3: ");
+		print_text("Point 3: ");
 		print_point(p3);
 		end_line();
 
 		// Compute the normal
 		Point the_normal = plane_normal(p1, p2, p3);
-		print_string("Plane normal: ");
+		print_text("Plane normal: ");
 		print_point(p1);
 		end_line();
 
@@ -212,7 +279,7 @@ typedef struct Collision {
 		Point p = Point(1, 2, 3);
 
 		print_line("This is a line");
-		print_string("Here is a point: ");
+		print_text("Here is a point: ");
 		print_point(p);
 		end_line();
 	}
@@ -223,7 +290,8 @@ typedef struct Collision {
 	}
 
 	/** Print a string to the console without starting a new line */
-	void print_string(std::string s) {
+	template<typename T>
+	void print_text(T s) {
 		std::cout << s;
 	}
 
