@@ -21,6 +21,7 @@
 
 #include "Point.hpp"
 #include "Graph.hpp"
+#include "CollisionDetector.hpp"
 
 template <typename UserNodeData, typename UserEdgeData, typename UserTriData>
 class Mesh {
@@ -598,6 +599,10 @@ public:
 	Link link(Triangle t1, Triangle t2) const {
 		return Link(this, get_link(t1, t2));
 	}
+
+	/** public tag for collision detection
+	 */
+	CollisionDetector::Tag& tag;
 
 private:
 	friend class Triangle;

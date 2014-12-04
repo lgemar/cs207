@@ -31,6 +31,62 @@ typedef struct CollisionDetector {
 		Collision(Node n, Triangle t) : n_(n), t_(t) {}
 	} Collision;
 
+	/** Tag type to specify what gets checked for what
+	 * @a id_ the unique id to represent this tag
+	 * @a white_ whether this is a white list or a black list
+	 * @a list_ a list of other Tags to specify relationship with this tag
+	 *
+	 * @RI no two tags have the same id
+	 *
+	 * White list tags will only check collisions against tags on their list
+	 * Black list tags will check collisions against any tag not on their list
+	 */
+	class Tag {
+	private:
+		friend class CollisionDetector;
+		int id_;
+		bool white_;
+
+		/** private constructor for collision detector */
+		Tag(int id, bool white) : id_(id), white_(white) {}
+
+	public:
+		/** create invalid tag */
+		Tag() {}
+		std::vector<size_t> list_;
+	};
+
+	/** tag has an empty blacklist, will check against everything */
+	Tag getAllTag() {
+		return get_tag(false);
+	}
+
+	/** tag has empty white list, will check against nothing */
+	Tag getNoneTag() {
+		return get_tag(true);
+	}
+
+	/** tag will check only against self */
+	Tag getSelfTag() {
+		Tag t = get_tag(true);
+		t.list_.push_back(t.id_);
+		return t;
+	}
+
+	/** tag will check anything but self */
+	Tag getOtherTag() {
+		Tag t = get_tag(false);
+		t.list_.push_back(t.id_);
+		return t;
+	}
+
+	Tag get_tag(bool white) {
+		size_t id = next_tag_id_;
+		++next_tag_id_;
+		return Tag(id, white);
+
+	}
+
 	/** Finds all collisions within the meshes defined by the range
 	 * store them in our internal collisions array
 	 * @pre @a first and @a last must define a valid iterator range
@@ -376,5 +432,6 @@ typedef struct CollisionDetector {
 	private: 
 		std::vector<BoundingBox> bounding_boxes_;
 		std::vector<Collision> collisions_;
+		size_t next_tag_id_;
 
 } Collision;
