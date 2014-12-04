@@ -13,6 +13,7 @@ template <typename MeshType>
 typedef struct CollisionDetector {
 
 	// used types ----------------------
+	struct Tag;
 	struct Collision;
 	typedef MeshType::Triangle Triangle;
 	typedef MeshType::Node Node;
@@ -22,8 +23,18 @@ typedef struct CollisionDetector {
 	/** 3D object that can be checked for collisions
 	 * @a mesh_ the closed mesh that defines the boundary of the object
 	 * @a tag_ the tag representing how we should check it
+	 *
+	 * these are what we operate over
 	 */
 	struct Object {
+		MeshType mesh_;
+		Tag tag_;
+
+		// default to all Tag
+		Object(MeshType& m) : mesh_(m), tag_(getAllTag()) {}
+
+		// explicitly pass in a tag
+		Object(MeshType& m, Tag& t) : mesh_(m), tag_(t) {}
 
 	} Object;
 
@@ -102,7 +113,8 @@ typedef struct CollisionDetector {
 	template<typename IT>
 	void check_collisions(IT first, IT last) {
 		for(auto it = first; it != last; ++it) {
-			MeshType m = (*it);
+			Object o = (*it);
+			MeshType m = o.mesh_;
 			BoundingBox b = build_bb(m.node_begin(), m.node_end());
 			bounding_boxes_.push_back(b);
 		}
