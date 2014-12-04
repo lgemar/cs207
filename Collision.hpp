@@ -5,12 +5,62 @@
 #include<vector>
 
 #include "Point.hpp"
+#include "BoundingBox.hpp"
+#include "Graph.hpp"
+#include "Mesh.hpp"
 
 typedef struct Collision {
+	/** Type definitions */
+	struct CollisionInfo {
+		CollisionInfo() {
+		}
+		
+		~CollisionInfo() {
+		}
+	};
+	typedef std::vector<CollisionInfo>::iterator info_iterator;
+
 	/** Constructor */
 	Collision () {
 	}
 
+	/** Deconstructor */
+	~Collision() {
+	}
+
+	/** Return an iterator to an array of collision info objects
+	 * @pre the type T is the type of (*IT)
+	 * @pre @a first and @a last must define a valid iterator range
+	 */
+	template<typename IT, typename T>
+	info_iterator get_collisions(IT first, IT last) {
+		for(auto it = first; it != last; ++it) {
+			T m = (*it);
+			BoundingBox b = build_bb(m.node_begin(), m.node_end());
+			bounding_boxes_.push_back(b);
+		}
+		return collision_info_.begin();
+	}
+	/** Create a bounding box around set of objects positioned in space
+	 * @pre The type of *IT must implement the "position" concept; that
+	 * 	is the function (*IT).position() must be defined and return a 
+	 *	Point
+	 * @pre @a first and @a last must define a valid range
+	 * @param[in] @a first is an iterator to the first object in the
+	 * 	range of objects
+	 * @param[in] @a last is an iterator to the last object in the
+	 * 	range
+	 * @returns a bounding box around the set of objects in the range
+	 * 	@a first to @a last
+	 */
+	template<typename IT>
+	BoundingBox build_bb(IT first, IT last) {
+		BoundingBox b = BoundingBox();
+		for(auto it = first; it != last; ++it) {
+			b |= BoundingBox((*it).position());
+		}
+		return b;
+	}
 	/** Determines whether a line segment passes through triangle
 	 * @param[in] Triangle is defined by t1, t2, t3
 	 * @param[in] Line segment is defined by a and b
@@ -304,5 +354,9 @@ typedef struct Collision {
 	void end_line() {
 		std::cout << std::endl;
 	}
+
+	private: 
+		std::vector<BoundingBox> bounding_boxes_;
+		std::vector<CollisionInfo> collision_info_;
 
 } Collision;
