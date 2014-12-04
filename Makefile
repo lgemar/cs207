@@ -15,6 +15,7 @@ EXEC += mtl_test
 EXEC += poisson
 EXEC += shallow_water
 EXEC += collision
+EXEC += test_collision
 
 # Get the shell name to determine the OS
 UNAME := $(shell uname)
