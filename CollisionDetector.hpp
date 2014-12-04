@@ -99,12 +99,13 @@ struct CollisionDetector {
 	 * store them in our internal collisions array
 	 * @pre @a first and @a last must define a valid iterator range
 	 */
-	template<typename IT, typename MESH, typename TAG>
 	void check_collisions(IT first, IT last) {
+		// Build bounding boxes out of all of the meshes
 		for(auto it = first; it != last; ++it) {
-			MESH m = (*it).mesh;
-			BoundingBox b = build_bb(m.node_begin(), m.node_end());
-			bounding_boxes_.push_back(b);
+			Object obj = (*it);
+			BoundingBox b = build_bb(obj.mesh.node_begin(), 
+									 obj.mesh.node_end());
+			bounding_boxes_.push_back(std::pair<b, obj>);
 		}
 
 		// do other stuff
@@ -438,7 +439,7 @@ struct CollisionDetector {
 	}
 
 	private: 
-		std::vector<BoundingBox> bounding_boxes_;
+		std::vector<std::pair<BoundingBox, Object> bounding_boxes_;
 		std::vector<Collision> collisions_;
 		size_t next_tag_id_;
 
