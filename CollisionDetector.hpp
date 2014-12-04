@@ -3,11 +3,13 @@
 #include<cmath>
 #include<cassert>
 #include<vector>
+#include<unordered_map>
 
 #include "Point.hpp"
 #include "BoundingBox.hpp"
 #include "Graph.hpp"
 #include "Mesh.hpp"
+
 
 template <typename MeshType>
 typedef struct CollisionDetector {
@@ -133,6 +135,18 @@ typedef struct CollisionDetector {
 	CollIter end() {
 		return collisions_.end();
 	}
+
+	/** removes a mesh from our collision detection
+	 *
+	 */
+	void remove_object(MeshType& m) {
+		// finding node from mesh
+		ObjectNode on = mesh2node[&m];
+		ObjectGraph.remove_node(on);
+	}
+
+	// private data structures
+	std::unordered_map<MeshType*, ObjectNode> mesh2node;
 
 	/** Create a bounding box around set of objects positioned in space
 	 * @pre The type of *IT must implement the "position" concept; that

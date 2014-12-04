@@ -604,7 +604,6 @@ public:
 private:
 	friend class Triangle;
 
-	Object o;
 
 	/** private utility functions */
 
