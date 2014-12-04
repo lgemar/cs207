@@ -12,31 +12,33 @@
 
 
 template <typename MeshType>
-typedef struct CollisionDetector {
+struct CollisionDetector {
 
 	// used types ----------------------
 	struct Tag;
 	struct Collision;
-	typedef MeshType::Triangle Triangle;
-	typedef MeshType::Node Node;
-	typedef MeshType::Edge Edge;
-	typedef std::vector<Collision>::iterator CollIter;
+	struct Object;
+	typedef typename MeshType::Triangle Triangle;
+	typedef typename MeshType::Node Node;
+	typedef typename MeshType::Edge Edge;
+	typedef typename std::vector<Collision>::iterator CollIter;
+	typedef typename object_graph::Node object_node;
 
 	/** 3D object that can be checked for collisions
-	 * @a mesh_ the closed mesh that defines the boundary of the object
-	 * @a tag_ the tag representing how we should check it
+	 * @a mesh the closed mesh that defines the boundary of the object
+	 * @a tag the tag representing how we should check it
 	 *
 	 * these are what we operate over
 	 */
 	struct Object {
-		MeshType mesh_;
-		Tag tag_;
+		MeshType mesh;
+		Tag tag;
 
 		// default to all Tag
-		Object(MeshType& m) : mesh_(m), tag_(getAllTag()) {}
+		Object(MeshType& m) : mesh(m), tag(getAllTag()) {}
 
 		// explicitly pass in a tag
-		Object(MeshType& m, Tag& t) : mesh_(m), tag_(t) {}
+		Object(MeshType& m, Tag& t) : mesh(m), tag(t) {}
 
 	} Object;
 
@@ -45,7 +47,7 @@ typedef struct CollisionDetector {
 	 * @a t_ the triangle in the mesh that is closest to the node
 	 * 	(most likely guess for the collision)
 	 */
-	struct Collision {
+	typedef struct Collision {
 		Node n_;
 		Triangle t_;
 
@@ -108,17 +110,31 @@ typedef struct CollisionDetector {
 
 	}
 
+	/** Adds an object to the world of objects */
+	template<typename MeshType>	
+	void add_object(MeshType m, Tag t) {
+		Point approx_pos = (*(m.node_begin())).position();
+		object_node n = object_graph_.add_node(approx_pos);
+		// Add the object to the value type
+		Object o = Object(m, t);	
+		n.value() = o;
+		for(auto it = object_graph_.node_begin(); 
+				 it != object_graph_.node_end(); ++it) {
+			// add tag logic here
+		}
+	}
+
 	/** Finds all collisions within the meshes defined by the range
 	 * store them in our internal collisions array
 	 * @pre @a first and @a last must define a valid iterator range
 	 */
-	template<typename IT>
 	void check_collisions(IT first, IT last) {
+		// Build bounding boxes out of all of the meshes
 		for(auto it = first; it != last; ++it) {
-			Object o = (*it);
-			MeshType m = o.mesh_;
-			BoundingBox b = build_bb(m.node_begin(), m.node_end());
-			bounding_boxes_.push_back(b);
+			Object obj = (*it);
+			BoundingBox b = build_bb(obj.mesh.node_begin(), 
+									 obj.mesh.node_end());
+			bounding_boxes_.push_back(std::pair<b, obj>);
 		}
 
 		// do other stuff
@@ -464,8 +480,9 @@ typedef struct CollisionDetector {
 	}
 
 	private: 
-		std::vector<BoundingBox> bounding_boxes_;
+		std::vector<std::pair<BoundingBox, Object> bounding_boxes_;
 		std::vector<Collision> collisions_;
 		size_t next_tag_id_;
+		typedef object_graph object_graph_;
 
-} Collision;
+};
