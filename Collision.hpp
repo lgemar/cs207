@@ -5,11 +5,51 @@
 #include<vector>
 
 #include "Point.hpp"
+#include "Mesh.hpp"
 
-typedef struct Collision {
+template <typename MeshType>
+typedef struct CollisionDetector {
+
+	// used types ----------------------
+	struct Collision;
+	typedef MeshType::Triangle Triangle;
+	typedef MeshType::Node Node;
+	typedef MeshType::Edge Edge;
+	typedef std::vector<MeshType>::iterator MeshIter;
+	typedef std::vector<Collision>::iterator CollIter;
+
+	// public interfaces ------------------------------------
+
 	/** Constructor */
-	Collision () {
+	CollisionDetector () {
 	}
+
+	/** main function
+	 * takes in iterator over vector of meshes
+	 * stores results in internal vector of colisions
+	 * overwrites old collisions
+	 * */
+	void check_collisions(MeshIter begin, MeshIter end);
+
+	/** accessors to found collisions
+	 */
+	CollIter begin();
+	CollIter end();
+
+	/** struct to store collision information
+	 * @a n_ the node that is inside another mesh
+	 * @a t_ the triangle in the mesh that is closest to the node
+	 * 	(most likely guess for the collision)
+	 */
+	struct Collision {
+		Node n_;
+		Triangle t_;
+
+		Collision(Node n, Triangle t) : n_(n), t_(t) {}
+	} Collision;
+
+
+
 
 	/** Determines whether a line segment passes through triangle
 	 * @param[in] Triangle is defined by t1, t2, t3
