@@ -5,6 +5,8 @@
 #include<vector>
 
 #include "Point.hpp"
+#include "BoundingBox.hpp"
+#include "Graph.hpp"
 #include "Mesh.hpp"
 
 template <typename MeshType>
@@ -15,26 +17,7 @@ typedef struct CollisionDetector {
 	typedef MeshType::Triangle Triangle;
 	typedef MeshType::Node Node;
 	typedef MeshType::Edge Edge;
-	typedef std::vector<MeshType>::iterator MeshIter;
 	typedef std::vector<Collision>::iterator CollIter;
-
-	// public interfaces ------------------------------------
-
-	/** Constructor */
-	CollisionDetector () {
-	}
-
-	/** main function
-	 * takes in iterator over vector of meshes
-	 * stores results in internal vector of colisions
-	 * overwrites old collisions
-	 * */
-	void check_collisions(MeshIter begin, MeshIter end);
-
-	/** accessors to found collisions
-	 */
-	CollIter begin();
-	CollIter end();
 
 	/** struct to store collision information
 	 * @a n_ the node that is inside another mesh
@@ -48,8 +31,53 @@ typedef struct CollisionDetector {
 		Collision(Node n, Triangle t) : n_(n), t_(t) {}
 	} Collision;
 
+	/** Finds all collisions within the meshes defined by the range
+	 * store them in our internal collisions array
+	 * @pre @a first and @a last must define a valid iterator range
+	 */
+	template<typename IT>
+	void check_collisions(IT first, IT last) {
+		for(auto it = first; it != last; ++it) {
+			MeshType m = (*it);
+			BoundingBox b = build_bb(m.node_begin(), m.node_end());
+			bounding_boxes_.push_back(b);
+		}
 
+		// do other stuff
+	}
 
+	/** returns iterator to beginning of our found collisions
+	 */
+	CollIter begin() {
+		return collisions_.begin();
+	}
+
+	/** returns iterator to end of our vector of collisions
+	 */
+	CollIter end() {
+		return collisions_.end();
+	}
+
+	/** Create a bounding box around set of objects positioned in space
+	 * @pre The type of *IT must implement the "position" concept; that
+	 * 	is the function (*IT).position() must be defined and return a 
+	 *	Point
+	 * @pre @a first and @a last must define a valid range
+	 * @param[in] @a first is an iterator to the first object in the
+	 * 	range of objects
+	 * @param[in] @a last is an iterator to the last object in the
+	 * 	range
+	 * @returns a bounding box around the set of objects in the range
+	 * 	@a first to @a last
+	 */
+	template<typename IT>
+	BoundingBox build_bb(IT first, IT last) {
+		BoundingBox b = BoundingBox();
+		for(auto it = first; it != last; ++it) {
+			b |= BoundingBox((*it).position());
+		}
+		return b;
+	}
 
 	/** Determines whether a line segment passes through triangle
 	 * @param[in] Triangle is defined by t1, t2, t3
@@ -344,5 +372,9 @@ typedef struct CollisionDetector {
 	void end_line() {
 		std::cout << std::endl;
 	}
+
+	private: 
+		std::vector<BoundingBox> bounding_boxes_;
+		std::vector<Collision> collisions_;
 
 } Collision;
