@@ -600,9 +600,6 @@ public:
 		return Link(this, get_link(t1, t2));
 	}
 
-	/** public tag for collision detection
-	 */
-	CollisionDetector::Tag& tag;
 
 private:
 	friend class Triangle;

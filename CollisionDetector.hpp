@@ -19,6 +19,14 @@ typedef struct CollisionDetector {
 	typedef MeshType::Edge Edge;
 	typedef std::vector<Collision>::iterator CollIter;
 
+	/** 3D object that can be checked for collisions
+	 * @a mesh_ the closed mesh that defines the boundary of the object
+	 * @a tag_ the tag representing how we should check it
+	 */
+	struct Object {
+
+	} Object;
+
 	/** struct to store collision information
 	 * @a n_ the node that is inside another mesh
 	 * @a t_ the triangle in the mesh that is closest to the node
