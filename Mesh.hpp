@@ -607,6 +607,8 @@ public:
 private:
 	friend class Triangle;
 
+	Object o;
+
 	/** private utility functions */
 
 	/** returns the edge in the triangle graph between t1 and t2
