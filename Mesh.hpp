@@ -38,6 +38,9 @@ public:
 	class Edge;
 	class Link;
 
+	// Backwards compatibility
+	typedef Vertex Node;
+
 	// Iterator Clases
 	template <typename IT> class AdjacentIterator;
 	template <typename IT, typename RET> class TransformIterator;
