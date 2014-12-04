@@ -8,6 +8,7 @@
 #include "BoundingBox.hpp"
 #include "Graph.hpp"
 #include "Mesh.hpp"
+#include "Collection.hpp"
 
 typedef struct Collision {
 	/** Type definitions */
