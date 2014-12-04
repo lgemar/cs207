@@ -22,6 +22,7 @@ struct CollisionDetector {
 	typedef typename MeshType::Node Node;
 	typedef typename MeshType::Edge Edge;
 	typedef typename std::vector<Collision>::iterator CollIter;
+	typedef typename Graph<Object,int> object_graph;
 	typedef typename object_graph::Node object_node;
 
 	/** 3D object that can be checked for collisions
@@ -79,6 +80,10 @@ struct CollisionDetector {
 		std::vector<size_t> list_;
 	};
 
+	/** returns default tag by reference */
+	Tag& getTag() {
+		return default_tag;
+	}
 	/** tag has an empty blacklist, will check against everything */
 	Tag getAllTag() {
 		return get_tag(false);
@@ -112,7 +117,7 @@ struct CollisionDetector {
 
 	/** Adds an object to the world of objects */
 	template<typename MeshType>	
-	void add_object(MeshType m, Tag t) {
+	void add_object(MeshType m, Tag t = default_tag) {
 		Point approx_pos = (*(m.node_begin())).position();
 		object_node n = object_graph_.add_node(approx_pos);
 		// Add the object to the value type
@@ -122,6 +127,16 @@ struct CollisionDetector {
 				 it != object_graph_.node_end(); ++it) {
 			// add tag logic here
 		}
+	}
+
+	/** removes a mesh from our collision detection
+	 *
+	 */
+	void remove_object(MeshType& m) {
+		// finding node from mesh
+		object_node on = mesh2node[&m];
+		object_graph_.remove_node(on);
+		mesh2node.erase(&m);
 	}
 
 	/** Finds all collisions within the meshes defined by the range
@@ -152,17 +167,6 @@ struct CollisionDetector {
 		return collisions_.end();
 	}
 
-	/** removes a mesh from our collision detection
-	 *
-	 */
-	void remove_object(MeshType& m) {
-		// finding node from mesh
-		ObjectNode on = mesh2node[&m];
-		ObjectGraph.remove_node(on);
-	}
-
-	// private data structures
-	std::unordered_map<MeshType*, ObjectNode> mesh2node;
 
 	/** Create a bounding box around set of objects positioned in space
 	 * @pre The type of *IT must implement the "position" concept; that
@@ -480,9 +484,11 @@ struct CollisionDetector {
 	}
 
 	private: 
+		Tag default_tag;
 		std::vector<std::pair<BoundingBox, Object> bounding_boxes_;
 		std::vector<Collision> collisions_;
 		size_t next_tag_id_;
-		typedef object_graph object_graph_;
+		object_graph object_graph_;
+		std::unordered_map<MeshType*, object_node> mesh2node;
 
 };
