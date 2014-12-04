@@ -21,7 +21,6 @@
 
 #include "Point.hpp"
 #include "Graph.hpp"
-#include "CollisionDetector.hpp"
 
 template <typename UserNodeData, typename UserEdgeData, typename UserTriData>
 class Mesh {

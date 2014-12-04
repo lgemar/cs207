@@ -15,14 +15,14 @@ template <typename MeshType>
 struct CollisionDetector {
 
 	// used types ----------------------
-	struct Tag;
+	class Tag;
 	struct Collision;
 	struct Object;
 	typedef typename MeshType::Triangle Triangle;
 	typedef typename MeshType::Node Node;
 	typedef typename MeshType::Edge Edge;
 	typedef typename std::vector<Collision>::iterator CollIter;
-	typedef typename Graph<Object,int> object_graph;
+	typedef class Graph<Object,int> object_graph;
 	typedef typename object_graph::Node object_node;
 
 	/** 3D object that can be checked for collisions
@@ -32,28 +32,28 @@ struct CollisionDetector {
 	 * these are what we operate over
 	 */
 	struct Object {
-		MeshType mesh;
-		Tag tag;
+		MeshType& mesh;
+		Tag& tag;
 
 		// default to all Tag
-		Object(MeshType& m) : mesh(m), tag(getAllTag()) {}
+		Object(MeshType& m) : mesh(m), tag(Tag()) {}
 
 		// explicitly pass in a tag
 		Object(MeshType& m, Tag& t) : mesh(m), tag(t) {}
 
-	} Object;
+	};
 
 	/** struct to store collision information
 	 * @a n_ the node that is inside another mesh
 	 * @a t_ the triangle in the mesh that is closest to the node
 	 * 	(most likely guess for the collision)
 	 */
-	typedef struct Collision {
+	struct Collision {
 		Node n_;
 		Triangle t_;
 
 		Collision(Node n, Triangle t) : n_(n), t_(t) {}
-	} Collision;
+	};
 
 	/** Tag type to specify what gets checked for what
 	 * @a id_ the unique id to represent this tag
@@ -62,12 +62,18 @@ struct CollisionDetector {
 	 *
 	 * @RI no two tags have the same id
 	 *
+	 * Default tag is (0, false)
+	 *
 	 * White list tags will only check collisions against tags on their list
 	 * Black list tags will check collisions against any tag not on their list
+	 *
+	 * Decision are made by the more conservative tag. i.e. a tag that checks everything
+	 * will not be checked against a tag that checks nothing.
+	 * All checking must be bidirectional.
 	 */
 	class Tag {
 	private:
-		friend class CollisionDetector;
+		friend struct CollisionDetector;
 		int id_;
 		bool white_;
 
@@ -76,17 +82,13 @@ struct CollisionDetector {
 
 	public:
 		/** create invalid tag */
-		Tag() {}
+		Tag() : id_(0), white_(false) {}
 		std::vector<size_t> list_;
 	};
 
-	/** returns default tag by reference */
-	Tag& getTag() {
-		return default_tag;
-	}
 	/** tag has an empty blacklist, will check against everything */
 	Tag getAllTag() {
-		return get_tag(false);
+		return Tag();
 	}
 
 	/** tag has empty white list, will check against nothing */
@@ -116,16 +118,50 @@ struct CollisionDetector {
 	}
 
 	/** Adds an object to the world of objects */
-	template<typename MeshType>	
-	void add_object(MeshType m, Tag t = default_tag) {
+	void add_object(MeshType m, Tag tag) {
+
+		// create a node for this mesh
 		Point approx_pos = (*(m.node_begin())).position();
 		object_node n = object_graph_.add_node(approx_pos);
 		// Add the object to the value type
-		Object o = Object(m, t);	
+		Object o = Object(m, tag);
 		n.value() = o;
+
+		// saving link to this mesh in hash table
+		mesh2node[&m] = n;
+
+		// create edges for the graph
 		for(auto it = object_graph_.node_begin(); 
 				 it != object_graph_.node_end(); ++it) {
-			// add tag logic here
+
+			// check if other tag in list
+			Tag tag2 = (*it).value().tag;
+			auto optr = std::find(tag.list_.begin(), tag.list_.end(), tag2.id_);
+			bool tag_found = (optr != tag.list_.end());
+
+			// white listed and not found
+			if (tag.white_ && !tag_found	)
+				continue;
+
+			// blacklisted and found
+			if (!tag.white_ && tag_found)
+				continue;
+
+
+			// checking if it's in other tag's list
+			optr = std::find(tag2.list_.begin(), tag2.list_.end(), tag.id_);
+			tag_found = (optr != tag.list_.end());
+
+			// white listed and not found
+			if (tag2.white_ && !tag_found	)
+				continue;
+
+			// blacklisted and found
+			if (!tag2.white_ && tag_found)
+				continue;
+
+			// no conflicts found, adding edge
+			object_graph_.add_edge(n, (*it));
 		}
 	}
 
@@ -143,13 +179,14 @@ struct CollisionDetector {
 	 * store them in our internal collisions array
 	 * @pre @a first and @a last must define a valid iterator range
 	 */
+	template <typename IT>
 	void check_collisions(IT first, IT last) {
 		// Build bounding boxes out of all of the meshes
 		for(auto it = first; it != last; ++it) {
 			Object obj = (*it);
 			BoundingBox b = build_bb(obj.mesh.node_begin(), 
 									 obj.mesh.node_end());
-			bounding_boxes_.push_back(std::pair<b, obj>);
+			bounding_boxes_.push_back(std::make_pair(b,obj));
 		}
 
 		// do other stuff
@@ -484,8 +521,7 @@ struct CollisionDetector {
 	}
 
 	private: 
-		Tag default_tag;
-		std::vector<std::pair<BoundingBox, Object> bounding_boxes_;
+		std::vector<std::pair<BoundingBox, Object>> bounding_boxes_;
 		std::vector<Collision> collisions_;
 		size_t next_tag_id_;
 		object_graph object_graph_;
