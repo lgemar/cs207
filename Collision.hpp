@@ -10,38 +10,55 @@
 #include "Mesh.hpp"
 #include "Collection.hpp"
 
-typedef struct Collision {
-	/** Type definitions */
-	struct CollisionInfo {
-		CollisionInfo() {
-		}
-		
-		~CollisionInfo() {
-		}
-	};
-	typedef std::vector<CollisionInfo>::iterator info_iterator;
+template <typename MeshType>
+typedef struct CollisionDetector {
 
-	/** Constructor */
-	Collision () {
-	}
+	// used types ----------------------
+	struct Collision;
+	typedef MeshType::Triangle Triangle;
+	typedef MeshType::Node Node;
+	typedef MeshType::Edge Edge;
+	typedef std::vector<Collision>::iterator CollIter;
 
-	/** Deconstructor */
-	~Collision() {
-	}
+	/** struct to store collision information
+	 * @a n_ the node that is inside another mesh
+	 * @a t_ the triangle in the mesh that is closest to the node
+	 * 	(most likely guess for the collision)
+	 */
+	struct Collision {
+		Node n_;
+		Triangle t_;
 
-	/** Return an iterator to an array of collision info objects
-	 * @pre the type T is the type of (*IT)
+		Collision(Node n, Triangle t) : n_(n), t_(t) {}
+	} Collision;
+
+	/** Finds all collisions within the meshes defined by the range
+	 * store them in our internal collisions array
 	 * @pre @a first and @a last must define a valid iterator range
 	 */
-	template<typename IT, typename T>
-	info_iterator get_collisions(IT first, IT last) {
+	template<typename IT>
+	void check_collisions(IT first, IT last) {
 		for(auto it = first; it != last; ++it) {
-			T m = (*it);
+			MeshType m = (*it);
 			BoundingBox b = build_bb(m.node_begin(), m.node_end());
 			bounding_boxes_.push_back(b);
 		}
-		return collision_info_.begin();
+
+		// do other stuff
 	}
+
+	/** returns iterator to beginning of our found collisions
+	 */
+	CollIter begin() {
+		return collisions_.begin();
+	}
+
+	/** returns iterator to end of our vector of collisions
+	 */
+	CollIter end() {
+		return collisions_.end();
+	}
+
 	/** Create a bounding box around set of objects positioned in space
 	 * @pre The type of *IT must implement the "position" concept; that
 	 * 	is the function (*IT).position() must be defined and return a 
@@ -62,6 +79,7 @@ typedef struct Collision {
 		}
 		return b;
 	}
+
 	/** Determines whether a line segment passes through triangle
 	 * @param[in] Triangle is defined by t1, t2, t3
 	 * @param[in] Line segment is defined by a and b
@@ -358,6 +376,6 @@ typedef struct Collision {
 
 	private: 
 		std::vector<BoundingBox> bounding_boxes_;
-		std::vector<CollisionInfo> collision_info_;
+		std::vector<Collision> collisions_;
 
 } Collision;
