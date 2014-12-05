@@ -267,6 +267,7 @@ struct CollisionDetector {
 				++num_collisions;
 			}
 		}
+		return num_collisions;
 	}
 
 	/** returns iterator to beginning of our found collisions

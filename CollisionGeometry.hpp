@@ -158,3 +158,17 @@ bool equal(double a, double b, double epsilon) {
 bool equal(Point a, Point b) {
 	return equal(a.x, b.x) && equal(a.y, b.y) && equal(a.z, b.z);
 }
+
+/* returns area of tet defined by 4 nodes */
+double tet_area(Point a, Point b, Point c, Point d) {
+	return abs(dot(a-d, cross(b-d, c-d)))/6.0;
+}
+/* returns area of tet defined by 4 nodes */
+template <typename N>
+double tet_area(N a, N b, N c, N d) {
+	return tet_area(a.position(), b.position(), c.position(), d.position());
+}
+
+
+
+

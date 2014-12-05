@@ -196,8 +196,11 @@ void test_find_collisions() {
 	// Create a tetrahedral mesh in 3D space
 	std::vector<Node> nodes1;
 	int sz = 4;
+
+	int scale = 10;
+
 	while(sz) {
-		Point p1 = Point(rand() % 10, rand() % 10, rand() % 10 );
+		Point p1 = Point(rand() % scale, rand() % scale, rand() % scale );
 		Node n1 = m1.add_node(p1);
 		nodes1.push_back(n1);
 		--sz;
@@ -208,26 +211,33 @@ void test_find_collisions() {
 	m1.add_triangle(nodes1[0], nodes1[2], nodes1[3]);
 	m1.add_triangle(nodes1[1], nodes1[2], nodes1[3]);
 
+	// finding volume and prob
+	double tet_volume = tet_area(nodes1[0], nodes1[1], nodes1[2], nodes1[3]);
+	double total_volume = scale*scale*scale;
+	double hit_prob = tet_volume / total_volume;
+
 	///////////////////////////////////////////////////////////////
 	// Initialize an empty collider and use find_collisions function
 	//////////////////////////////////////////////////////////////
 	int num_points = 10000;
 	int hits;
-	int sz = 100;
 	MeshType m2;
 	// Initialize a mesh with a bunch of vertices and no triangles
 	int i = num_points;
 	while( i ) {
-		p = Point(rand() % sz, rand() % sz, sz);
+		Point p = Point(rand() % scale, rand() % scale, scale);
 		m2.add_node(p);
 		--i;
 	}
-	hits = find_collisions(m2.node_begin(), m2.node_end(), m1);
+	collider c;
+	hits = c.find_collisions(m2.vertex_begin(), m2.vertex_end(), m1);
 	// Print out the hit rate and the hit probability
 	db("Hit rate and hit probabilities");
-	hit_rate = (double) hits / num_points;
+	double hit_rate = (double) hits / num_points;
 	std::cout << "Hit rate: " << hit_rate << std::endl;
 	std::cout << "Hit probability: " << hit_prob << std::endl;
+
+}
 
 void test_tags() {
 	db("======> Testing tags <=============");
@@ -269,7 +279,6 @@ void test_tags() {
 
 	t4.add(t5);
 	t5.add(t4);
-
 
 	db("printing tags");
 	db("t0 w:", t0.white_);
@@ -378,14 +387,16 @@ void test_check_collisions() {
 int main () {
 
 	//test_geometry();
-	//db("");
+	db("");
 	//test_add_remove();
-	//db("");
+	db("");
 	test_tags();
 	db("");
 	test_add_remove();
 	db("");
-	test_check_collisions();
+	//test_check_collisions();
+	db("");
+	test_find_collisions();
 
 
 	return 0;
