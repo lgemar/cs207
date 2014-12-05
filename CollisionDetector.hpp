@@ -46,19 +46,11 @@ struct CollisionDetector {
 	 * these are what we operate over
 	 */
 	struct Object {
-		const MeshType& mesh;
-		const Tag& tag;
-
-		// need this for some reason
-		const Object& operator=(const Object& o) {
-			return o;
-		}
-
-		// default to all Tag
-		Object(const MeshType& m) : mesh(m), tag(Tag()) {};
+		MeshType* mesh;
+		Tag tag;
 
 		// explicitly pass in a tag
-		Object(const MeshType& m, const Tag& t) : mesh(m), tag(t) {};
+		Object(MeshType& m, Tag& t) : mesh(&m), tag(t) {};
 
 	};
 
@@ -143,7 +135,7 @@ struct CollisionDetector {
 	}
 
 	/** Adds an object to the world of objects */
-	void add_object(const MeshType& m, const Tag tag = Tag()) {
+	void add_object(MeshType& m, Tag tag = Tag()) {
 
 		// create a node for this mesh
 		Point approx_pos = (*(m.vertex_begin())).position();
@@ -159,13 +151,6 @@ struct CollisionDetector {
 
 			Tag tag2 = (*it).value().tag;
 
-			db("trying between:");
-			db(tag.id_, tag2.id_);
-			db("tag w:", tag.white_);
-			db("tag2 w:", tag2.white_);
-			db_vec("tag l:", tag.list_);
-			db_vec("tag2 l:", tag2.list_);
-
 			// check if other tag in list
 			auto optr = std::find(tag.list_.begin(), tag.list_.end(), tag2.id_);
 			bool tag_found = (optr != tag.list_.end());
@@ -174,13 +159,10 @@ struct CollisionDetector {
 			if (tag.white_ && !tag_found)
 				continue;
 
-			db("1");
 			// blacklisted and found
 			if (!tag.white_ && tag_found)
 				continue;
 
-
-			db("2");
 			// checking if it's in other tag's list
 			optr = std::find(tag2.list_.begin(), tag2.list_.end(), tag.id_);
 			tag_found = (optr != tag2.list_.end());
@@ -189,18 +171,14 @@ struct CollisionDetector {
 			if (tag2.white_ && !tag_found)
 				continue;
 
-			db("3");
 			// blacklisted and found
 			if (!tag2.white_ && tag_found)
 				continue;
 
-			db("4");
 			// self loop
 			if (*it == n)
 				continue;
 
-			db("5");
-			db("success!");
 			// no conflicts found, adding edge
 			object_graph_.add_edge(n, (*it));
 		}
@@ -227,8 +205,8 @@ struct CollisionDetector {
 				it != object_graph_.edge_end(); ++it) {
 			// Get the two meshes that are a part of this edge
 			auto e = (*it);
-			auto m1 = e.node1().value().mesh;
-			auto m2 = e.node2().value().mesh;
+			auto m1 = *e.node1().value().mesh;
+			auto m2 = *e.node2().value().mesh;
 			// Build spatial search objects
 			space_searcher s1 = space_searcher(m1.vertex_begin(), 
 											m1.vertex_end(),

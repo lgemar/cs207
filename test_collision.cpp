@@ -225,20 +225,8 @@ void test_tags() {
 	Tag t5 = c.get_tag(true); // only on t4
 
 	t4.add(t5);
-	t4.add(t2);
-	t4.add(t3);
 	t5.add(t4);
-	t5.add(t0);
-	t5.add(t1);
 
-	db("printing tags");
-	db("t0 id:", t0.id_);
-	db("t1 id:", t1.id_);
-	db("t2 id:", t2.id_);
-	db("t3 id:", t3.id_);
-	db("t4 id:", t4.id_);
-	db("t5 id:", t5.id_);
-	db("");
 
 	db("printing tags");
 	db("t0 w:", t0.white_);
@@ -260,20 +248,12 @@ void test_tags() {
 	c.add_object(m0); // connect to all
 	c.add_object(m1,t0); // connect to all
 	c.add_object(m2,t1); // connects to nothing
-	c.add_object(m3,t4); // checks against not t2
-	c.add_object(m4,t5); // checks against not t2
-	c.add_object(m5,t4); // checks against only t3
-	c.add_object(m6,t5); // checks against only t3
+	c.add_object(m3,t2); // checks against not t2
+	c.add_object(m4,t2); // checks against not t2
+	c.add_object(m5,t3); // checks against only t3
+	c.add_object(m6,t3); // checks against only t3
 	c.add_object(m7,t4); // checks against only t5
 	c.add_object(m8,t5); // checks aginst only t4
-
-	db("printing lists");
-	db_vec("t0 l:", t0.list_);
-	db_vec("t1 l:", t1.list_);
-	db_vec("t2 l:", t2.list_);
-	db_vec("t3 l:", t3.list_);
-	db_vec("t4 l:", t4.list_);
-	db_vec("t5 l:", t5.list_);
 
 	db("printing graph");
 	c.print_graph();
