@@ -56,6 +56,9 @@ class Graph {
  	  Point position;
  	  node_value_type value;
 
+ 	  NodeData(size_type id, Point p, node_value_type v) :
+ 		  uid(id), position(p), value(v) {};
+
  	 /** provide comparison to other structs and ints */
 	  bool operator==(const NodeData& x) const {
 		return uid == x.uid;
@@ -274,10 +277,8 @@ class Graph {
   Node add_node(const Point& position, const node_value_type& val = node_value_type()) {
 	  size_type next_uid = take_next_uid();
 	  size_type next_idx = num_nodes();
-	  NodeData nd;
-	  nd.position = position;
-	  nd.value = val;
-	  nd.uid = next_uid;
+	  NodeData nd = NodeData(next_uid, position, val);
+
 	  // recording
 	  nodes_.push_back(nd);
 	  uid2idx_[next_uid] = next_idx;

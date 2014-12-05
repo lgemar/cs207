@@ -10,8 +10,7 @@
 #include "CollisionGeometry.hpp"
 #include "Graph.hpp"
 #include "Mesh.hpp"
-
-
+#include "debug.hpp"
 
 template <typename MeshType>
 struct CollisionDetector {
@@ -37,11 +36,16 @@ struct CollisionDetector {
 		MeshType& mesh;
 		Tag& tag;
 
+		// need this for some reason
+		const Object& operator=(const Object& o) {
+			return o;
+		}
+
 		// default to all Tag
-		Object(MeshType& m) : mesh(m), tag(Tag()) {}
+		Object(MeshType& m) : mesh(m), tag(Tag()) {};
 
 		// explicitly pass in a tag
-		Object(MeshType& m, Tag& t) : mesh(m), tag(t) {}
+		Object(MeshType& m, Tag& t) : mesh(m), tag(t) {};
 
 	};
 
@@ -123,11 +127,9 @@ struct CollisionDetector {
 	void add_object(MeshType m, Tag tag) {
 
 		// create a node for this mesh
-		Point approx_pos = (*(m.node_begin())).position();
-		object_node n = object_graph_.add_node(approx_pos);
-		// Add the object to the value type
+		Point approx_pos = (*(m.vertex_begin())).position();
 		Object o = Object(m, tag);
-		n.value() = o;
+		object_node n = object_graph_.add_node(approx_pos, o);
 
 		// saving link to this mesh in hash table
 		mesh2node[&m] = n;
@@ -182,12 +184,13 @@ struct CollisionDetector {
 	 * @pre @a first and @a last must define a valid iterator range
 	 */
 	template <typename IT>
-	void check_collisions(IT first, IT last) {
+	void check_collisions() {
 		// Build bounding boxes out of all of the meshes
-		for(auto it = first; it != last; ++it) {
-			Object obj = (*it);
-			BoundingBox b = build_bb(obj.mesh.node_begin(), 
-									 obj.mesh.node_end());
+		for(auto it = object_graph_.node_begin(); it != object_graph_.node_end(); ++it) {
+			Object obj = (*it).value();
+
+			BoundingBox b = build_bb(obj.mesh.vertex_begin(),
+									 obj.mesh.vertex_end());
 			bounding_boxes_.push_back(std::make_pair(b,obj));
 		}
 

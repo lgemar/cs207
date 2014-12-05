@@ -1,6 +1,4 @@
 #include "CollisionDetector.hpp"
-#include "Point.hpp"
-
 
 // function prototypes
 void test_is_colliding();
@@ -8,15 +6,9 @@ void test_plane_line_intersect();
 void test_is_inside_triangle();
 void test_on_same_side();
 void test_plane_normal();
-void test_print_statements();
-void print_point(Point);
-template <typename T>
-void print_text(T);
-void print_line(std::string);
-void end_line();
 
 void test_is_colliding() {
-	print_line("Here will be some triangle-line segment tests");
+	db("Here will be some triangle-line segment tests");
 }
 
 void test_plane_line_intersect() {
@@ -51,7 +43,7 @@ void test_plane_line_intersect() {
 		// Decrement the counter
 		--i;
 	}
-	print_line("All assertions pass");
+	dbg("All assertions pass");
 }
 
 void test_is_inside_triangle() {
@@ -76,7 +68,7 @@ void test_is_inside_triangle() {
 		--i;
 	}
 	// Print out the hit rate and the hit probability
-	print_line("Hit rate and hit probabilities");
+	db("Hit rate and hit probabilities");
 	hit_rate = (double) hits / num_points;
 	hit_prob = triangle_area(t1, t2, t3) / (sz * sz);
 	std::cout << "Hit rate: " << hit_rate << std::endl;
@@ -105,7 +97,7 @@ void test_on_same_side() {
 		--i;
 	}
 	// Print out the hit rate and the hit probability
-	print_line("Hit rate and hit probabilities");
+	db("Hit rate and hit probabilities");
 	hit_rate = (double) hits / num_points;
 	hit_prob = 0.5;
 	std::cout << "Hit rate: " << hit_rate << std::endl;
@@ -118,81 +110,73 @@ void test_plane_normal() {
 	Point p3 = Point(rand() % 100, rand() % 100, rand() % 100);
 
 	// Print out the three starting points
-	print_text("Point 1: ");
-	print_point(p1);
-	end_line();
-	print_text("Point 2: ");
-	print_point(p2);
-	end_line();
-	print_text("Point 3: ");
-	print_point(p3);
-	end_line();
+	db("Point 1: ",p1);
+	db("Point 2: ",p2);
+	db("Point 3: ",p3);
+
 
 	// Compute the normal
 	Point the_normal = plane_normal(p1, p2, p3);
-	print_text("Plane normal: ");
-	print_point(p1);
-	end_line();
+	db("Plane normal: ",p1);
+
 
 	// Check that all the dot products are 0
 	assert( equal(dot(the_normal, p2 - p1), 0) );
 	assert( equal(dot(the_normal, p3 - p1), 0) );
 	assert( equal(dot(the_normal, p3 - p2), 0) );
-	print_line("Passing all asserts");
-}
-
-/** Test the printing functionality */
-void test_print_statements() {
-	Point p = Point(1, 2, 3);
-
-	print_line("This is a line");
-	print_text("Here is a point: ");
-	print_point(p);
-	end_line();
-}
-
-/** Prints out a point to the console */
-void print_point(Point p) {
-	std::cout << "(" << p.x << ", " << p.y << ", " << p.z << ")";
-}
-
-/** Print a string to the console without starting a new line */
-template<typename T>
-void print_text(T s) {
-	std::cout << s;
-}
-
-/** Print a string to the console and end the line */
-void print_line(std::string s) {
-	std::cout << s << std::endl;
-}
-
-/** Prints a new line to the output stream */
-void end_line() {
-	std::cout << std::endl;
+	dbg("Passing all asserts");
 }
 
 /** Runs a sequence of tests on the collision detector */
-void test() {
-	print_line("=====> Testing print statements <======");
-	test_print_statements();
-	print_line("=====> Testing plane normals <======");
+void test_geometry() {
+	db("=====> Testing plane normals <======");
 	test_plane_normal();
-	print_line("=====> Testing on same side functionality<=====");
+	db("=====> Testing on same side functionality<=====");
 	test_on_same_side();
-	print_line("=====> Testing triangle interior checks <=====");
+	db("=====> Testing triangle interior checks <=====");
 	test_is_inside_triangle();
-	print_line("=====> Testing plane-line intersection <=====");
+	db("=====> Testing plane-line intersection <=====");
 	test_plane_line_intersect();
-	print_line("=====> Testing triangle-segment collision <=====");
+	db("=====> Testing triangle-segment collision <=====");
 	test_is_colliding();
 }
 
-int main () {
-	typedef Mesh<int, int, int> MeshType;
+void test_add_remove() {
+	typedef Mesh<char, char, char> MeshType;
 	typedef CollisionDetector<MeshType> collider;
+	typedef collider::Tag Tag;
 	collider c = collider();
-	test();
+
+	// creating a few meshes
+	MeshType m1;
+	MeshType m2;
+	MeshType m3;
+	MeshType m4;
+	MeshType m5;
+
+	// getting 2 tags
+	Tag t1 = Tag(); // default tag
+	Tag t2 = c.getNoneTag(); // checks against nothing
+	Tag t3 = c.getOtherTag(); // checks against not self
+
+	c.add_object(m1,t1);
+	c.add_object(m2,t1);
+	c.add_object(m3,t2);
+	c.add_object(m4,t3);
+	c.add_object(m5,t1);
+
+	c.remove_object(m4);
+	c.remove_object(m1);
+
+}
+
+int main () {
+
+	test_geometry();
+	db("");
+	test_add_remove();
+
+
 	return 0;
 }
 
