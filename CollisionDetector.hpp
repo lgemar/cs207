@@ -11,6 +11,15 @@
 #include "Graph.hpp"
 #include "Mesh.hpp"
 #include "debug.hpp"
+#include "SpaceSearcher.hpp"
+
+/** Simple mapping from a node to its corresponding point. */
+struct NodeToPoint {
+  template <typename NODE>
+  Point operator()(const NODE& n) {
+    return n.position();
+  }
+};
 
 template <typename MeshType>
 struct CollisionDetector {
@@ -25,6 +34,7 @@ struct CollisionDetector {
 	typedef typename std::vector<Collision>::iterator CollIter;
 	typedef class Graph<Object,int> object_graph;
 	typedef typename object_graph::Node object_node;
+	typedef SpaceSearcher<Node, NodeToPoint> space_searcher;
 
 	/** 3D object that can be checked for collisions
 	 * @a mesh the closed mesh that defines the boundary of the object
@@ -55,10 +65,12 @@ struct CollisionDetector {
 	 * 	(most likely guess for the collision)
 	 */
 	struct Collision {
-		Node n_;
-		Triangle t_;
 
-		Collision(Node n, Triangle t) : n_(n), t_(t) {}
+		Node n;
+		Triangle t;
+
+		Collision(Node n, Triangle t) : n(n), t(t) {}
+		Collision(Node n) : n(n), t() {}
 	};
 
 	/** Tag type to specify what gets checked for what
@@ -181,28 +193,79 @@ struct CollisionDetector {
 		// finding node from mesh
 		object_node on = mesh2node[&m];
 		object_graph_.remove_node(on);
-
 		mesh2node.erase(&m);
-
-
 	}
 
 	/** Finds all collisions within the meshes defined by the range
 	 * store them in our internal collisions array
 	 * @pre @a first and @a last must define a valid iterator range
 	 */
-	template <typename IT>
 	void check_collisions() {
-		// Build bounding boxes out of all of the meshes
-		for(auto it = object_graph_.node_begin(); it != object_graph_.node_end(); ++it) {
-			Object obj = (*it).value();
-
-			BoundingBox b = build_bb(obj.mesh.vertex_begin(),
-									 obj.mesh.vertex_end());
-			bounding_boxes_.push_back(std::make_pair(b,obj));
+		// Iterate over all edges in the graph and find intersections
+		for(auto it = object_graph_.edge_begin(); 
+				it != object_graph_.edge; ++it) {
+			// Get the two meshes that are a part of this edge
+			Edge e = (*it);
+			auto m1 = e.node1().value().mesh;
+			auto m2 = e.node2().value().mesh;
+			// Build spatial search objects
+			space_searcher s1 = space_searcher(m1.node_begin(), 
+											m1.node_end(),
+											NodeToPoint());
+			space_searcher s2 = space_searcher(m2.node_begin(), 
+											m2.node_end(),
+											NodeToPoint());
+			// Find the bounding boxes corresponding to spaces
+			BoundingBox bb1 = s1.bounding_box();
+			BoundingBox bb2 = s2.bounding_box();
+			// Find the collisions
+			find_collisions(s1.begin(bb1), s1.end(bb1), m2);
+			find_collisions(s2.begin(bb2), s2.end(bb2), m1);
 		}
+	}
 
-		// do other stuff
+	/** Add the collision information to the collisions array */
+	template<typename IT, typename MESH>
+	void find_collisions(IT first, IT last, MESH m) {
+		for(IT it1 = first; it1 != last; ++it1) {
+			int collision_count = 0;
+			Node n = (*it1);
+			
+			// Find the two points that define a line
+			Point p0 = n.position();
+			Point p1 = 2 * p0;
+			for(auto it2 = m.triangles_begin(); 
+					it2 != m.triangles_end(); ++it2) {
+					Triangle t = (*it2);
+					// Find the three points that make up triangle
+					Point t1 = t.vertex(1);
+					Point t2 = t.vertex(2);
+					Point t3 = t.vertex(3);
+
+					// Determine intersection point
+					Point p = plane_line_intersect(t1, t2, t3, p0, p1);
+
+					// Check if intersection points same direction as
+					// the outgoing ray
+					bool check1 = dot(p-p0, p1-p0) > 0;
+
+					// Check if intersection point is inside of
+					// the triangle being checked against
+					bool check2 = is_inside_triangle(t1, t2, t3, p);
+
+					// Increase the intersection collision_count is the two
+					// check are true
+					if( check1 && check2 ) {
+						++collision_count;
+					}
+			}
+
+			// If the number of intersections is odd, add to collisions
+			if( collision_count % 2 != 0 ) {
+				Collision c = Collision(n);
+				collisions_.push_back(c);
+			}
+		}
 	}
 
 	/** returns iterator to beginning of our found collisions
