@@ -55,6 +55,20 @@ struct RedColor {
   }
 };
 
+struct BlueColor {
+  template <typename NODE>
+  Color operator()(const NODE&) {
+    return Color(0, 0, 1);
+  }
+};
+
+struct GreenColor {
+  template <typename NODE>
+  Color operator()(const NODE&) {
+    return Color(0, 1, 0);
+  }
+};
+
 struct PoissonColor {
 	template<typename NODE>
 	Color operator()(const NODE& n) {
@@ -466,8 +480,8 @@ class SDLViewer {
       return;
     }
 
-    window_width_ = 1500;
-    window_height_ = 1000;
+    window_width_ = 800;
+    window_height_ = 600;
 
     int bits_per_pixel = 32;
 

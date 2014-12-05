@@ -136,7 +136,7 @@ struct CollisionDetector {
 	}
 
 	/** Adds an object to the world of objects */
-	void add_object(const MeshType& m, const Tag tag) {
+	void add_object(const MeshType& m, const Tag tag=Tag()) {
 
 		// create a node for this mesh
 		Point approx_pos = (*(m.vertex_begin())).position();
@@ -203,24 +203,24 @@ struct CollisionDetector {
 	void check_collisions() {
 		// Iterate over all edges in the graph and find intersections
 		for(auto it = object_graph_.edge_begin(); 
-				it != object_graph_.edge; ++it) {
+				it != object_graph_.edge_end(); ++it) {
 			// Get the two meshes that are a part of this edge
-			Edge e = (*it);
+			auto e = (*it);
 			auto m1 = e.node1().value().mesh;
 			auto m2 = e.node2().value().mesh;
 			// Build spatial search objects
-			space_searcher s1 = space_searcher(m1.node_begin(), 
-											m1.node_end(),
+			space_searcher s1 = space_searcher(m1.vertex_begin(), 
+											m1.vertex_end(),
 											NodeToPoint());
-			space_searcher s2 = space_searcher(m2.node_begin(), 
-											m2.node_end(),
+			space_searcher s2 = space_searcher(m2.vertex_begin(), 
+											m2.vertex_end(),
 											NodeToPoint());
 			// Find the bounding boxes corresponding to spaces
 			BoundingBox bb1 = s1.bounding_box();
 			BoundingBox bb2 = s2.bounding_box();
 			// Find the collisions
-			find_collisions(s1.begin(bb1), s1.end(bb1), m2);
-			find_collisions(s2.begin(bb2), s2.end(bb2), m1);
+			find_collisions(s1.begin(bb2), s1.end(bb2), m2);
+			find_collisions(s2.begin(bb1), s2.end(bb1), m1);
 		}
 	}
 
@@ -238,9 +238,9 @@ struct CollisionDetector {
 					it2 != m.triangles_end(); ++it2) {
 					Triangle t = (*it2);
 					// Find the three points that make up triangle
-					Point t1 = t.vertex(1);
-					Point t2 = t.vertex(2);
-					Point t3 = t.vertex(3);
+					Point t1 = t.vertex(1).position();
+					Point t2 = t.vertex(2).position();
+					Point t3 = t.vertex(3).position();
 
 					// Determine intersection point
 					Point p = plane_line_intersect(t1, t2, t3, p0, p1);

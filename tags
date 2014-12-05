@@ -200,6 +200,7 @@ Collection	mtl_test.cpp	/^struct Collection<IdentityMatrix> {$/;"	s	namespace:mt
 Collection	poisson.cpp	/^struct Collection<GraphSymmetricMatrix> {$/;"	s	namespace:mtl	file:
 Collection	shared/vrodriguez-cs207/mtl_test.cpp	/^struct Collection<IdentityMatrix> {$/;"	s	namespace:mtl	file:
 Collection	shared/vrodriguez-cs207/poisson.cpp	/^struct Collection<GraphSymmetricMatrix> {$/;"	s	namespace:mtl	file:
+Collision	CollisionDetector.hpp	/^		Collision(Node n) : n(n), t() {}$/;"	f	struct:CollisionDetector::Collision
 Collision	CollisionDetector.hpp	/^		Collision(Node n, Triangle t) : n(n), t(t) {}$/;"	f	struct:CollisionDetector::Collision
 Collision	CollisionDetector.hpp	/^	struct Collision {$/;"	s	struct:CollisionDetector
 CollisionDetector	CollisionDetector.hpp	/^struct CollisionDetector {$/;"	s
@@ -222,7 +223,6 @@ CommutativeRingWithIdentity	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_
 CommutativeSemiGroup	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/old_concepts.hpp	/^  : CommutativeSemiGroup<Operation, Element>, $/;"	m	namespace:math
 CompareEdgeLengths	shared/vrodriguez-cs207/shallow_water.cpp	/^struct CompareEdgeLengths {$/;"	s	file:
 CompareNodeValues	morton_files/morton_test.cpp	/^struct CompareNodeValues {$/;"	s	file:
-CompareNodeValues	morton_test.cpp	/^struct CompareNodeValues {$/;"	s	file:
 CompareNodeValues	shared/vrodriguez-cs207/contour.cpp	/^struct CompareNodeValues {$/;"	s	file:
 CompareNodeValues	shared/vrodriguez-cs207/shortest_path.cpp	/^struct CompareNodeValues {$/;"	s	file:
 CompareWaterHeights	shared/vrodriguez-cs207/shallow_water.cpp	/^struct CompareWaterHeights {$/;"	s	file:
@@ -451,7 +451,7 @@ Inversion	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/algebraic_
 IsRemoved	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/imf_algorithms.hpp	/^	IsRemoved(const StatusVector& status) : m_status(status) { }$/;"	f	struct:itl::pc::IsRemoved
 IsRemoved	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/imf_algorithms.hpp	/^struct IsRemoved {$/;"	s	namespace:itl::pc
 IteratableSubMatrix	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/concept/matrix.hpp	/^    struct IteratableSubMatrix$/;"	s	namespace:mtl
-Iterator	SpaceSearcher.hpp	/^    Iterator() : s_(nullptr), bb_(), code_(-1), loc_(-1) {$/;"	f	class:SpaceSearcher::Iterator
+Iterator	SpaceSearcher.hpp	/^    Iterator() : s_(nullptr), bb_(), code_(-1), loc_(0) {$/;"	f	class:SpaceSearcher::Iterator
 Iterator	SpaceSearcher.hpp	/^    Iterator(const SpaceSearcher* s, BoundingBox bb, code_type code, size_type loc)$/;"	f	class:SpaceSearcher::Iterator
 Iterator	SpaceSearcher.hpp	/^  class Iterator : private totally_ordered<Iterator> {$/;"	c	class:SpaceSearcher
 Iterator	morton_files/SpaceSearcher.hpp	/^    Iterator() : s_(nullptr), bb_(), code_(-1), loc_(-1) {$/;"	f	class:SpaceSearcher::Iterator
@@ -1069,6 +1069,7 @@ NodePosition	shallow_water.cpp	/^struct NodePosition {$/;"	s	file:
 NodePosition	shared/vrodriguez-cs207/poisson.cpp	/^  NodePosition(mtl::dense_vector<double>& sol) : sol(sol) {$/;"	f	struct:NodePosition
 NodePosition	shared/vrodriguez-cs207/poisson.cpp	/^struct NodePosition {$/;"	s	file:
 NodePosition	shared/vrodriguez-cs207/shallow_water.cpp	/^struct NodePosition {$/;"	s	file:
+NodeToPoint	CollisionDetector.hpp	/^struct NodeToPoint {$/;"	s
 NodeToPoint	morton_files/morton_test.cpp	/^struct NodeToPoint {$/;"	s	file:
 NodeToPoint	morton_test.cpp	/^struct NodeToPoint {$/;"	s	file:
 NodeToPoint	shared/vrodriguez-cs207/morton_test.cpp	/^struct NodeToPoint {$/;"	s	file:
@@ -1222,7 +1223,7 @@ SpaceSearcher	morton_files/SpaceSearcher.hpp	/^class SpaceSearcher {$/;"	c
 SpaceSearcher	shared/vrodriguez-cs207/SpaceSearcher.hpp	/^  SpaceSearcher(TIter t_begin, TIter t_end, T2Point t2p)$/;"	f	class:SpaceSearcher
 SpaceSearcher	shared/vrodriguez-cs207/SpaceSearcher.hpp	/^class SpaceSearcher {$/;"	c
 SpaceSearcherType	morton_files/morton_test.cpp	/^typedef SpaceSearcher<Node> SpaceSearcherType;$/;"	t	file:
-SpaceSearcherType	morton_test.cpp	/^typedef SpaceSearcher<Node> SpaceSearcherType;$/;"	t	file:
+SpaceSearcherType	morton_test.cpp	/^typedef SpaceSearcher<Node, NodeToPoint> SpaceSearcherType;$/;"	t	file:
 SpaceSearcherType	shared/vrodriguez-cs207/morton_test.cpp	/^typedef SpaceSearcher<Node, NodeToPoint> SpaceSearcherType;$/;"	t	file:
 Sphere	mass_spring.cpp	/^struct Sphere : public Rule {$/;"	s	file:
 SphereConstraint	shared/vrodriguez-cs207/mass_spring.cpp	/^struct SphereConstraint {$/;"	s	file:
@@ -1835,6 +1836,7 @@ basic_iteration	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic
 basic_iteration	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iteration.hpp	/^    basic_iteration(const Vector& r0, int max_iter_, Real t, Real a = Real(0))$/;"	f	class:itl::basic_iteration
 basic_iteration	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iteration.hpp	/^class basic_iteration$/;"	c	namespace:itl
 bb_	SpaceSearcher.hpp	/^    BoundingBox bb_;$/;"	m	class:SpaceSearcher::Iterator
+bb_	SpaceSearcher.hpp	/^  BoundingBox bb_;$/;"	m	class:SpaceSearcher
 bb_	morton_files/SpaceSearcher.hpp	/^    BoundingBox bb_;$/;"	m	class:SpaceSearcher::Iterator
 bb_	shared/vrodriguez-cs207/SpaceSearcher.hpp	/^    BoundingBox bb_;$/;"	m	class:SpaceSearcher::Iterator
 bb_	shared/vrodriguez-cs207/SpaceSearcher.hpp	/^  BoundingBox bb_;$/;"	m	class:SpaceSearcher
@@ -1938,6 +1940,7 @@ bound_test	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/base_case_
 bound_test_static	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/base_case_test.hpp	/^struct bound_test_static$/;"	s	namespace:mtl::recursion
 boundary_value	shared/vrodriguez-cs207/poisson.cpp	/^  double boundary_value;$/;"	m	struct:NodeData	file:
 bounding_box	MortonCoder.hpp	/^  BoundingBox bounding_box() const {$/;"	f	class:MortonCoder
+bounding_box	SpaceSearcher.hpp	/^  BoundingBox bounding_box() {$/;"	f	class:SpaceSearcher
 bounding_box	morton_files/MortonCoder.hpp	/^  BoundingBox bounding_box() const {$/;"	f	class:MortonCoder
 bounding_box	shared/vrodriguez-cs207/MortonCoder.hpp	/^  BoundingBox bounding_box() const {$/;"	f	class:MortonCoder
 bounding_box	shared/vrodriguez-cs207/SpaceSearcher.hpp	/^  BoundingBox bounding_box() {$/;"	f	class:SpaceSearcher
@@ -4169,7 +4172,6 @@ init_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/assign_m
 init_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/assign_mode.hpp	/^    static const bool init_to_zero= false;$/;"	m	struct:mtl::assign::times_sum
 init_to_zero	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/assign_mode.hpp	/^    static const bool init_to_zero= true;$/;"	m	struct:mtl::assign::assign_sum
 initialize	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^	    void initialize()$/;"	f	class:mtl::mat::umfpack::solver
-initialize	SpaceSearcher.hpp	/^  void initialize(TIter t_begin, TIter t_end, T2Point t2p) {$/;"	f	class:SpaceSearcher
 initialize	morton_files/SpaceSearcher.hpp	/^  void initialize(TIter t_begin, TIter t_end, T2Point t2p) {$/;"	f	class:SpaceSearcher
 initialize	shared/vrodriguez-cs207/mass_spring.cpp	/^  void initialize(GraphType& graph) {$/;"	f	struct:FixedNodeConstraint
 initialize_mesh	shallow_water.cpp	/^void initialize_mesh(MeshType& mesh, INIT initializer) {$/;"	f
@@ -6354,6 +6356,7 @@ operator ()	CS207/SDLViewer.hpp	/^  Color operator()(const NODE&) {$/;"	f	struct
 operator ()	CS207/SDLViewer.hpp	/^  Color operator()(const NODE&) {$/;"	f	struct:CS207::RedColor
 operator ()	CS207/SDLViewer.hpp	/^  Point operator()(const NODE& n) {$/;"	f	struct:CS207::PoissonPosition
 operator ()	CS207/SDLViewer.hpp	/^  Point operator()(const NODE& node) {$/;"	f	struct:CS207::DefaultPosition
+operator ()	CollisionDetector.hpp	/^  Point operator()(const NODE& n) {$/;"	f	struct:NodeToPoint
 operator ()	Examples/expr_template.cpp	/^  const double& operator()(unsigned i, unsigned j) const {$/;"	f	struct:Matrix
 operator ()	Examples/expr_template.cpp	/^  double operator()(unsigned i, unsigned j) const {$/;"	f	struct:MatAdd
 operator ()	Examples/expr_template.cpp	/^  double operator()(unsigned i, unsigned j) const {$/;"	f	struct:MatExpr
@@ -6690,7 +6693,6 @@ operator ()	mass_spring.cpp	/^	Point operator()(Node n, double t) const {$/;"	f	
 operator ()	mass_spring.cpp	/^	void operator()(const GraphType& g, double t) const {$/;"	f	struct:Constraint
 operator ()	morton_files/morton_test.cpp	/^   bool operator()(const NODE& node1, const NODE& node2) const {$/;"	f	struct:CompareNodeValues
 operator ()	morton_files/morton_test.cpp	/^  Point operator()(const NODE& n) {$/;"	f	struct:NodeToPoint
-operator ()	morton_test.cpp	/^   bool operator()(const NODE& node1, const NODE& node2) const {$/;"	f	struct:CompareNodeValues
 operator ()	morton_test.cpp	/^  Point operator()(const NODE& n) {$/;"	f	struct:NodeToPoint
 operator ()	shallow_water.cpp	/^	Point operator()(Vertex& v) const {$/;"	f	struct:VertexPosition
 operator ()	shallow_water.cpp	/^	QVar operator()(Point p) { return QVar(1 + 0.75*step(p.x), 0, 0); }$/;"	f	struct:DamInitializer
@@ -8835,6 +8837,7 @@ south_east	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/matrix_rec
 south_east	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/matrix_recursator.hpp	/^recursator<Matrix> inline south_east(const recursator<Matrix>& rec)$/;"	f	namespace:mtl::mat
 south_west	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/matrix_recursator.hpp	/^    self south_west() const$/;"	f	struct:mtl::mat::recursator
 south_west	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/matrix_recursator.hpp	/^recursator<Matrix> inline south_west(const recursator<Matrix>& rec)$/;"	f	namespace:mtl::mat
+space_searcher	CollisionDetector.hpp	/^	typedef SpaceSearcher<Node, NodeToPoint> space_searcher;$/;"	t	struct:CollisionDetector
 spare	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/compressed2D.hpp	/^    map_type                            spare;$/;"	m	struct:mtl::mat::compressed2D_inserter
 sparse	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^struct sparse : virtual universe {};$/;"	s	namespace:mtl::tag
 sparse	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^struct sparse {};$/;"	s	namespace:mtl
@@ -9073,6 +9076,7 @@ symmetry	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/type_parameter
 symp_euler_step	mass_spring.cpp	/^double symp_euler_step(G& g, double t, double dt, F force) {$/;"	f
 symp_euler_step	shared/vrodriguez-cs207/mass_spring.cpp	/^double symp_euler_step(G& g, double t, double dt, F force, C& constraints) {$/;"	f
 t	CollisionDetector.hpp	/^		Triangle t;$/;"	m	struct:CollisionDetector::Collision
+t2p_	SpaceSearcher.hpp	/^  T2Point t2p_;$/;"	m	class:SpaceSearcher
 t2p_	shared/vrodriguez-cs207/SpaceSearcher.hpp	/^  T2Point t2p_;$/;"	m	class:SpaceSearcher
 tag	CollisionDetector.hpp	/^		const Tag& tag;$/;"	m	struct:CollisionDetector::Object
 tag	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/mtl_fwd.hpp	/^    namespace tag {$/;"	n	namespace:mtl
@@ -9087,6 +9091,7 @@ take_next_uid	Graph.hpp	/^	size_type take_next_uid() {$/;"	f	class:Graph
 terminate	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_iteration.hpp	/^    int terminate(const T& r) { finished(r); return error; }$/;"	f	class:itl::basic_iteration
 test	mass_spring.cpp	/^	int test;$/;"	m	struct:EdgeData	file:
 test_add_remove	test_collision.cpp	/^void test_add_remove() {$/;"	f
+test_check_collisions	test_collision.cpp	/^void test_check_collisions() {$/;"	f
 test_geometry	test_collision.cpp	/^void test_geometry() {$/;"	f
 test_is_colliding	test_collision.cpp	/^void test_is_colliding() {$/;"	f
 test_is_inside_triangle	test_collision.cpp	/^void test_is_inside_triangle() {$/;"	f
