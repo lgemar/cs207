@@ -243,20 +243,27 @@ struct CollisionDetector {
 					Point t3 = t.vertex(3).position();
 
 					// Determine intersection point
-					Point p = plane_line_intersect(t1, t2, t3, p0, p1);
+					Point p;
+					if( is_plane_line_intersect(t1, t2, t3, p0, p1)) {
+						p = plane_line_intersect(t1, t2, t3, 
+														p0, p1);
 
-					// Check if intersection points same direction as
-					// the outgoing ray
-					bool check1 = dot(p-p0, p1-p0) > 0;
+						// Check if intersection points same direction
+						// as the outgoing ray
+						bool check1 = dot(p-p0, p1-p0) > 0;
 
-					// Check if intersection point is inside of
-					// the triangle being checked against
-					bool check2 = is_inside_triangle(t1, t2, t3, p);
+						// Check if intersection point is inside of
+						// the triangle being checked against
+						bool check2 = is_inside_triangle(t1, t2, t3, p);
 
-					// Increase the intersection num_intersections is the two
-					// check are true
-					if( check1 && check2 ) {
-						++num_intersections;
+						db("check 1:", check1);
+						db("check 2:", check2);
+
+						// Increase the num_intersections is the two
+						// check are true
+						if( check1 && check2 ) {
+							++num_intersections;
+						}
 					}
 			}
 
@@ -267,6 +274,7 @@ struct CollisionDetector {
 				++num_collisions;
 			}
 		}
+		return num_collisions;
 	}
 
 	/** returns iterator to beginning of our found collisions

@@ -86,6 +86,12 @@ bool on_same_side(Point a, Point b, Point p0, Point p1) {
 	return dot(cross1, cross2) >= 0;
 }
 
+
+/* Return the area of the triangle formed by t1, t2, t3 */
+double triangle_area(Point t1, Point t2, Point t3) {
+	return 0.5 * norm(cross(t3 - t1, t3 - t2));
+}
+
 /** Compute the intersection of a plane and a line
  * @pre p0 and p1 must form a valid line, p0 != p1 &&
  * 	dot(p0, p1) != 0
@@ -111,6 +117,23 @@ Point plane_line_intersect(Point t1, Point t2, Point t3,
 	// t at the point of intersection; then compute the intersect
 	t = (dot(n, t1) - dot(p0, n)) / (dot(n, p1 - p0));
 	return p0 + t * (p1 - p0);
+}
+
+/** Determines whether plane and line will intersect
+ * @returns a bool if there is an intersection between line and plane
+ */
+bool is_plane_line_intersect(Point v1, Point v2, Point v3, Point a, Point b) {
+	// Make sure that a and b form a valid line
+	if( equal(a, b) || equal(dot(a, b), 0) )
+		return false;
+	// Make sure that v1, v2, v3 form a valid plane
+	else if( equal(triangle_area(v1, v2, v3), 0) )
+		return false;
+	// Make sure that line is not parallel to the plane
+	else if( equal(dot(plane_normal(v1, v2, v3), a-b), 0) )
+		return false;
+	else 
+		return true;
 }
 
 /** Compute the normal to the plane defined by the three
@@ -142,11 +165,6 @@ bool is_on_line(Point a, Point b, Point p) {
 	v2 = p - a;
 	crpr = cross(v1, v2);
 	return equal(crpr, Point(0, 0, 0));
-}
-
-/* Return the area of the triangle formed by t1, t2, t3 */
-double triangle_area(Point t1, Point t2, Point t3) {
-	return 0.5 * norm(cross(t3 - t1, t3 - t2));
 }
 
 /* Returns true if the two doubles are within epsilon */
