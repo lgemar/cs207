@@ -13,6 +13,14 @@ void test_is_colliding() {
 	db("Here will be some triangle-line segment tests");
 }
 
+bool prob_match(double p1, double p2) {
+	double d = std::abs(p1/p2 - 1.0);
+	db("d",d);
+	if (d > .1)
+		dbr("Probabilities did not match!");
+	return d < .1;
+}
+
 void test_plane_line_intersect() {
 	// Seed the random number generator
 	srand(time(NULL));
@@ -64,11 +72,12 @@ void test_is_inside_triangle() {
 		--i;
 	}
 	// Print out the hit rate and the hit probability
-	db("Hit rate and hit probabilities");
 	hit_rate = (double) hits / num_points;
 	hit_prob = triangle_area(t1, t2, t3) / (sz * sz);
 	db("Hit rate:", hit_rate);
 	db("Hit prob:", hit_prob);
+	assert(prob_match(hit_rate, hit_prob));
+	dbg("Probabilities match!");
 }
 
 void test_on_same_side() {
@@ -98,6 +107,8 @@ void test_on_same_side() {
 	hit_prob = 0.5;
 	db("Hit rate:", hit_rate);
 	db("Hit prob:", hit_prob);
+	assert(prob_match(hit_rate, hit_prob));
+	dbg("Probabilities match!");
 }
 
 void test_plane_normal() {
@@ -184,60 +195,58 @@ void test_find_collisions() {
 	srand(time(NULL));
 	// Header 
 	db("<===== Testing find collisions =====>");
-	typedef Mesh<char, char, char> MeshType;
-	typedef CollisionDetector<MeshType> collider;
-	MeshType m1;
-	typedef typename MeshType::node_type Node;
-	// Create a tetrahedral mesh in 3D space
-	std::vector<Node> nodes1;
-	int sz = 4;
+	for (int j=0; j < 20; ++j) {
+		typedef Mesh<char, char, char> MeshType;
+		typedef CollisionDetector<MeshType> collider;
+		MeshType m1;
+		typedef typename MeshType::node_type Node;
+		// Create a tetrahedral mesh in 3D space
+		std::vector<Node> nodes1;
+		int sz = 4;
 
-	int scale = 10;
+		int scale = 10;
 
-	while(sz) {
-		Point p1 = Point(rand() % scale, rand() % scale, rand() % scale );
+		while(sz) {
+			Point p1 = Point(rand() % scale, rand() % scale, rand() % scale );
 
-		Node n1 = m1.add_node(p1);
-		nodes1.push_back(n1);
-		--sz;
+			Node n1 = m1.add_node(p1);
+			nodes1.push_back(n1);
+			--sz;
+		}
+		// Create closed tetraheral meshe for m1
+		m1.add_triangle(nodes1[0], nodes1[1], nodes1[2]);
+		m1.add_triangle(nodes1[0], nodes1[1], nodes1[3]);
+		m1.add_triangle(nodes1[0], nodes1[2], nodes1[3]);
+		m1.add_triangle(nodes1[1], nodes1[2], nodes1[3]);
+
+		// finding volume and prob
+		double tet_volume = tet_area(nodes1[0], nodes1[1], nodes1[2], nodes1[3]);
+		double total_volume = scale*scale*scale;
+		double hit_prob = tet_volume / total_volume;
+
+		///////////////////////////////////////////////////////////////
+		// Initialize an empty collider and use find_collisions function
+		//////////////////////////////////////////////////////////////
+		int num_points = 100000;
+		int hits;
+		MeshType m2;
+		// Initialize a mesh with a bunch of vertices and no triangles
+		int i = num_points;
+		while( i ) {
+			Point p = Point(rand() % scale, rand() % scale, rand() % scale);
+			m2.add_node(p);
+			--i;
+		}
+		collider c;
+		hits = c.find_collisions(m2.vertex_begin(), m2.vertex_end(), m1);
+		// Print out the hit rate and the hit probability
+		double hit_rate = (double) hits / num_points;
+
+		db("hit rate:", hit_rate);
+		db("hit prob:", hit_prob);
+		assert(prob_match(hit_rate, hit_prob));
+		dbg("Probabilities match!");
 	}
-	// Create closed tetraheral meshe for m1
-	m1.add_triangle(nodes1[0], nodes1[1], nodes1[2]);
-	m1.add_triangle(nodes1[0], nodes1[1], nodes1[3]);
-	m1.add_triangle(nodes1[0], nodes1[2], nodes1[3]);
-	m1.add_triangle(nodes1[1], nodes1[2], nodes1[3]);
-
-	// finding volume and prob
-	double tet_volume = tet_area(nodes1[0], nodes1[1], nodes1[2], nodes1[3]);
-	double total_volume = scale*scale*scale;
-	double hit_prob = tet_volume / total_volume;
-	db("tet volume:", tet_volume);
-	db("p1:", nodes1[0].position());
-	db("p2:", nodes1[1].position());
-	db("p3:", nodes1[2].position());
-	db("p4:", nodes1[3].position());
-
-	///////////////////////////////////////////////////////////////
-	// Initialize an empty collider and use find_collisions function
-	//////////////////////////////////////////////////////////////
-	int num_points = 100000;
-	int hits;
-	MeshType m2;
-	// Initialize a mesh with a bunch of vertices and no triangles
-	int i = num_points;
-	while( i ) {
-		Point p = Point(rand() % scale, rand() % scale, rand() % scale);
-		m2.add_node(p);
-		--i;
-	}
-	collider c;
-	hits = c.find_collisions(m2.vertex_begin(), m2.vertex_end(), m1);
-	// Print out the hit rate and the hit probability
-	db("Hit rate and hit probabilities");
-	double hit_rate = (double) hits / num_points;
-
-	db("hit rate:", hit_rate);
-	db("hit prob:", hit_prob);
 }
 
 void test_tags() {
