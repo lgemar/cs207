@@ -200,6 +200,7 @@ struct CollisionDetector {
 	 * @pre @a first and @a last must define a valid iterator range
 	 */
 	void check_collisions() {
+		collisions_.clear();
 		// Iterate over all edges in the graph and find intersections
 		for(auto it = object_graph_.edge_begin(); 
 				it != object_graph_.edge_end(); ++it) {

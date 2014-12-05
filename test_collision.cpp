@@ -58,7 +58,7 @@ void test_is_inside_triangle() {
 	double hit_rate, hit_prob;
 	int sz = 100;
 	int hits = 0;
-	int num_points = 10000;
+	int num_points = 100000;
 	// Define a random triangle on the 10x10 grid on the x-y plane
 	t1 = Point(rand() % sz, rand() % sz, 0);
 	t2 = Point(rand() % sz, rand() % sz, 0);
@@ -336,8 +336,10 @@ void test_check_collisions() {
 	std::vector<Node> nodes1;
 	std::vector<Node> nodes2;
 	int sz = 4;
+	int scale = 5;
 	while(sz) {
-		Point p1 = Point(rand() % 10, rand() % 10, rand() % 10 );
+		Point p1 = Point(rand() % scale, rand() % scale, rand() % scale );
+		p1 = p1 / 10;
 		Point p2 = 2 * p1;
 		Node n1 = m1.add_node(p1);
 		Node n2 = m2.add_node(p2);
@@ -396,17 +398,17 @@ void test_check_collisions() {
 
 int main () {
 
-	//test_geometry();
+	test_geometry();
 	db("");
-	//test_add_remove();
+	test_add_remove();
 	db("");
 	test_tags();
 	db("");
 	test_add_remove();
 	db("");
-	//test_check_collisions();
-	db("");
 	test_find_collisions();
+	db("");
+	test_check_collisions();
 
 
 	return 0;

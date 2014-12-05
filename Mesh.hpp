@@ -156,6 +156,7 @@ public:
 		public:
 			Vertex() {};
 			const Point& position() const {return v_.position();}
+			Point& position() {return v_.position();}
 			idx_type index() const { v_.index();}
 			bool operator==(const Vertex& other) const {return v_ == other.v_;}
 			bool operator<(const Vertex& other) const { return v_ < other.v_;}
