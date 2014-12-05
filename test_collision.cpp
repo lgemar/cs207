@@ -1,4 +1,6 @@
 #include "CollisionDetector.hpp"
+#include "CS207/SDLViewer.hpp"
+#include "CS207/Util.hpp"
 
 // function prototypes
 void test_is_colliding();
@@ -186,98 +188,169 @@ void test_add_remove() {
 
 void test_tags() {
 	db("======> Testing tags <=============");
-		db("creating collider");
-		typedef Mesh<char, char, char> MeshType;
-		typedef CollisionDetector<MeshType> collider;
-		typedef collider::Tag Tag;
-		collider c = collider();
+	db("creating collider");
+	typedef Mesh<char, char, char> MeshType;
+	typedef CollisionDetector<MeshType> collider;
+	typedef collider::Tag Tag;
+	collider c = collider();
 
-		db("creating a few meshes");
-		MeshType m0;
-		MeshType m1;
-		MeshType m2;
-		MeshType m3;
-		MeshType m4;
-		MeshType m5;
-		MeshType m6;
-		MeshType m7;
-		MeshType m8;
+	db("creating a few meshes");
+	MeshType m0;
+	MeshType m1;
+	MeshType m2;
+	MeshType m3;
+	MeshType m4;
+	MeshType m5;
+	MeshType m6;
+	MeshType m7;
+	MeshType m8;
 
-		db("adding a node to each");
-		m0.add_node(Point());
-		m1.add_node(Point());
-		m2.add_node(Point());
-		m3.add_node(Point());
-		m4.add_node(Point());
-		m5.add_node(Point());
-		m6.add_node(Point());
-		m7.add_node(Point());
-		m8.add_node(Point());
+	db("adding a node to each");
+	m0.add_node(Point());
+	m1.add_node(Point());
+	m2.add_node(Point());
+	m3.add_node(Point());
+	m4.add_node(Point());
+	m5.add_node(Point());
+	m6.add_node(Point());
+	m7.add_node(Point());
+	m8.add_node(Point());
 
-		db("creating some tags");
-		Tag t0 = Tag(); // default tag
-		Tag t1 = c.getNoneTag(); // checks against nothing
-		Tag t2 = c.getOtherTag(); // checks against not self
-		Tag t3 = c.getSelfTag(); // checks against self
-		Tag t4 = c.get_tag(true); // only on t5
-		Tag t5 = c.get_tag(true); // only on t4
+	db("creating some tags");
+	Tag t0 = Tag(); // default tag
+	Tag t1 = c.getNoneTag(); // checks against nothing
+	Tag t2 = c.getOtherTag(); // checks against not self
+	Tag t3 = c.getSelfTag(); // checks against self
+	Tag t4 = c.get_tag(true); // only on t5
+	Tag t5 = c.get_tag(true); // only on t4
 
-		t4.add(t5);
-		t4.add(t2);
-		t4.add(t3);
-		t5.add(t4);
-		t5.add(t0);
-		t5.add(t1);
+	t4.add(t5);
+	t4.add(t2);
+	t4.add(t3);
+	t5.add(t4);
+	t5.add(t0);
+	t5.add(t1);
 
-		db("printing tags");
-		db("t0 id:", t0.id_);
-		db("t1 id:", t1.id_);
-		db("t2 id:", t2.id_);
-		db("t3 id:", t3.id_);
-		db("t4 id:", t4.id_);
-		db("t5 id:", t5.id_);
-		db("");
+	db("printing tags");
+	db("t0 id:", t0.id_);
+	db("t1 id:", t1.id_);
+	db("t2 id:", t2.id_);
+	db("t3 id:", t3.id_);
+	db("t4 id:", t4.id_);
+	db("t5 id:", t5.id_);
+	db("");
 
-		db("printing tags");
-		db("t0 w:", t0.white_);
-		db("t1 w:", t1.white_);
-		db("t2 w:", t2.white_);
-		db("t3 w:", t3.white_);
-		db("t4 w:", t4.white_);
-		db("t5 w:", t5.white_);
+	db("printing tags");
+	db("t0 w:", t0.white_);
+	db("t1 w:", t1.white_);
+	db("t2 w:", t2.white_);
+	db("t3 w:", t3.white_);
+	db("t4 w:", t4.white_);
+	db("t5 w:", t5.white_);
 
-		db("printing lists");
-		db_vec("t0 l:", t0.list_);
-		db_vec("t1 l:", t1.list_);
-		db_vec("t2 l:", t2.list_);
-		db_vec("t3 l:", t3.list_);
-		db_vec("t4 l:", t4.list_);
-		db_vec("t5 l:", t5.list_);
+	db("printing lists");
+	db_vec("t0 l:", t0.list_);
+	db_vec("t1 l:", t1.list_);
+	db_vec("t2 l:", t2.list_);
+	db_vec("t3 l:", t3.list_);
+	db_vec("t4 l:", t4.list_);
+	db_vec("t5 l:", t5.list_);
 
-		db("adding objects");
-		c.add_object(m0); // connect to all
-		c.add_object(m1,t0); // connect to all
-		c.add_object(m2,t1); // connects to nothing
-		c.add_object(m3,t4); // checks against not t2
-		c.add_object(m4,t5); // checks against not t2
-		c.add_object(m5,t4); // checks against only t3
-		c.add_object(m6,t5); // checks against only t3
-		c.add_object(m7,t4); // checks against only t5
-		c.add_object(m8,t5); // checks aginst only t4
+	db("adding objects");
+	c.add_object(m0); // connect to all
+	c.add_object(m1,t0); // connect to all
+	c.add_object(m2,t1); // connects to nothing
+	c.add_object(m3,t4); // checks against not t2
+	c.add_object(m4,t5); // checks against not t2
+	c.add_object(m5,t4); // checks against only t3
+	c.add_object(m6,t5); // checks against only t3
+	c.add_object(m7,t4); // checks against only t5
+	c.add_object(m8,t5); // checks aginst only t4
 
-		db("printing lists");
-		db_vec("t0 l:", t0.list_);
-		db_vec("t1 l:", t1.list_);
-		db_vec("t2 l:", t2.list_);
-		db_vec("t3 l:", t3.list_);
-		db_vec("t4 l:", t4.list_);
-		db_vec("t5 l:", t5.list_);
+	db("printing lists");
+	db_vec("t0 l:", t0.list_);
+	db_vec("t1 l:", t1.list_);
+	db_vec("t2 l:", t2.list_);
+	db_vec("t3 l:", t3.list_);
+	db_vec("t4 l:", t4.list_);
+	db_vec("t5 l:", t5.list_);
 
-		db("printing graph");
-		c.print_graph();
-		db("look at test_collision:228 for reference");
-		dbg("No errors!");
+	db("printing graph");
+	c.print_graph();
+	db("look at test_collision:228 for reference");
+	dbg("No errors!");
 }
+
+void test_check_collisions() {
+	srand(time(NULL));
+	db("<===== Testing collision checker =====>");
+	typedef Mesh<char, char, char> MeshType;
+	typedef CollisionDetector<MeshType> collider;
+	MeshType m1;
+	MeshType m2;
+	typedef typename MeshType::node_type Node;
+
+	// Create nodes that form two tetrahedrons
+	std::vector<Node> nodes1;
+	std::vector<Node> nodes2;
+	int sz = 4;
+	while(sz) {
+		Point p1 = Point(rand() % 10, rand() % 10, rand() % 10 );
+		Point p2 = 2 * p1;
+		Node n1 = m1.add_node(p1);
+		Node n2 = m2.add_node(p2);
+		nodes1.push_back(n1);
+		nodes2.push_back(n2);
+		--sz;
+	}
+
+	// Create closed tetraheral meshe for m1
+	m1.add_triangle(nodes1[0], nodes1[1], nodes1[2]);
+	m1.add_triangle(nodes1[0], nodes1[1], nodes1[3]);
+	m1.add_triangle(nodes1[0], nodes1[2], nodes1[3]);
+	m1.add_triangle(nodes1[1], nodes1[2], nodes1[3]);
+
+	// Create closed tetraheral meshe for m2
+	m2.add_triangle(nodes2[0], nodes2[1], nodes2[2]);
+	m2.add_triangle(nodes2[0], nodes2[1], nodes2[3]);
+	m2.add_triangle(nodes2[0], nodes2[2], nodes2[3]);
+	m2.add_triangle(nodes2[1], nodes2[2], nodes2[3]);
+
+
+	// Try adding the meshes and checking for collisions
+	collider c = collider();
+	c.add_object(m1);
+	c.add_object(m2);
+	c.check_collisions();
+
+	// Check to see if there were any collisions found
+	// Given the current state of code there should be no collisions
+	if(c.begin() == c.end() ) {
+		db("No collisions found");
+	}
+	else {
+		db("We found a collision!");
+	}
+
+	// Launch the SDLViewer
+	CS207::SDLViewer viewer;
+	viewer.launch();
+
+	// Add the vertices of the mesh to the viewer
+	auto vertex_map = viewer.empty_vertex_map(m1);
+	viewer.add_nodes(m1.vertex_begin(), m1.vertex_end(),
+				   CS207::GreenColor(), NodeToPoint(), vertex_map);
+	viewer.add_edges(m1.edge_begin(), m1.edge_end(), vertex_map);
+
+	// Repeat for m2
+	viewer.add_nodes(m2.vertex_begin(), m2.vertex_end(),
+				   CS207::BlueColor(), NodeToPoint(), vertex_map);
+	viewer.add_edges(m2.edge_begin(), m2.edge_end(), vertex_map);
+
+	// Display viewer 
+	viewer.center_view();
+}
+
 
 int main () {
 
@@ -287,6 +360,9 @@ int main () {
 	//db("");
 	test_tags();
 	db("");
+	test_add_remove();
+	db("");
+	test_check_collisions();
 
 
 	return 0;
