@@ -67,8 +67,8 @@ void test_is_inside_triangle() {
 	db("Hit rate and hit probabilities");
 	hit_rate = (double) hits / num_points;
 	hit_prob = triangle_area(t1, t2, t3) / (sz * sz);
-	std::cout << "Hit rate: " << hit_rate << std::endl;
-	std::cout << "Hit probability: " << hit_prob << std::endl;
+	db("Hit rate:", hit_rate);
+	db("Hit prob:", hit_prob);
 }
 
 void test_on_same_side() {
@@ -96,8 +96,8 @@ void test_on_same_side() {
 	db("Hit rate and hit probabilities");
 	hit_rate = (double) hits / num_points;
 	hit_prob = 0.5;
-	std::cout << "Hit rate: " << hit_rate << std::endl;
-	std::cout << "Hit probability: " << hit_prob << std::endl;
+	db("Hit rate:", hit_rate);
+	db("Hit prob:", hit_prob);
 }
 
 void test_plane_normal() {
@@ -181,6 +181,7 @@ void test_add_remove() {
 }
 
 void test_find_collisions() {
+	srand(time(NULL));
 	// Header 
 	db("<===== Testing find collisions =====>");
 	typedef Mesh<char, char, char> MeshType;
@@ -188,7 +189,6 @@ void test_find_collisions() {
 	MeshType m1;
 	typedef typename MeshType::node_type Node;
 	// Create a tetrahedral mesh in 3D space
-	int vol = 10;
 	std::vector<Node> nodes1;
 	int sz = 4;
 
@@ -211,6 +211,11 @@ void test_find_collisions() {
 	double tet_volume = tet_area(nodes1[0], nodes1[1], nodes1[2], nodes1[3]);
 	double total_volume = scale*scale*scale;
 	double hit_prob = tet_volume / total_volume;
+	db("tet volume:", tet_volume);
+	db("p1:", nodes1[0].position());
+	db("p2:", nodes1[1].position());
+	db("p3:", nodes1[2].position());
+	db("p4:", nodes1[3].position());
 
 	///////////////////////////////////////////////////////////////
 	// Initialize an empty collider and use find_collisions function
@@ -221,7 +226,7 @@ void test_find_collisions() {
 	// Initialize a mesh with a bunch of vertices and no triangles
 	int i = num_points;
 	while( i ) {
-		Point p = Point(rand() % scale, rand() % scale, scale);
+		Point p = Point(rand() % scale, rand() % scale, rand() % scale);
 		m2.add_node(p);
 		--i;
 	}
@@ -231,9 +236,8 @@ void test_find_collisions() {
 	db("Hit rate and hit probabilities");
 	double hit_rate = (double) hits / num_points;
 
-	std::cout << "Hit rate: " << hit_rate << std::endl;
-}
-
+	db("hit rate:", hit_rate);
+	db("hit prob:", hit_prob);
 }
 
 void test_tags() {

@@ -256,9 +256,6 @@ struct CollisionDetector {
 						// the triangle being checked against
 						bool check2 = is_inside_triangle(t1, t2, t3, p);
 
-						db("check 1:", check1);
-						db("check 2:", check2);
-
 						// Increase the num_intersections is the two
 						// check are true
 						if( check1 && check2 ) {
