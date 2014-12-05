@@ -164,6 +164,10 @@ struct CollisionDetector {
 			if (!tag2.white_ && tag_found)
 				continue;
 
+			// self loop
+			if (*it == n)
+				continue;
+
 			// no conflicts found, adding edge
 			object_graph_.add_edge(n, (*it));
 		}
@@ -173,10 +177,14 @@ struct CollisionDetector {
 	 *
 	 */
 	void remove_object(MeshType& m) {
+		db("in remove");
 		// finding node from mesh
 		object_node on = mesh2node[&m];
+		db("got node");
 		object_graph_.remove_node(on);
+		db("removed node");
 		mesh2node.erase(&m);
+		db("erased mesh");
 	}
 
 	/** Finds all collisions within the meshes defined by the range

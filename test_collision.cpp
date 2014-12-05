@@ -142,31 +142,43 @@ void test_geometry() {
 }
 
 void test_add_remove() {
+	db("creating collider");
 	typedef Mesh<char, char, char> MeshType;
 	typedef CollisionDetector<MeshType> collider;
 	typedef collider::Tag Tag;
 	collider c = collider();
 
-	// creating a few meshes
+	db("creating a few meshes");
 	MeshType m1;
 	MeshType m2;
 	MeshType m3;
 	MeshType m4;
 	MeshType m5;
 
-	// getting 2 tags
+	db("adding a node to each");
+	m1.add_node(Point());
+	m2.add_node(Point());
+	m3.add_node(Point());
+	m4.add_node(Point());
+	m5.add_node(Point());
+
+	db("creating some tags");
 	Tag t1 = Tag(); // default tag
 	Tag t2 = c.getNoneTag(); // checks against nothing
 	Tag t3 = c.getOtherTag(); // checks against not self
 
+	db("adding objects");
 	c.add_object(m1,t1);
 	c.add_object(m2,t1);
 	c.add_object(m3,t2);
 	c.add_object(m4,t3);
 	c.add_object(m5,t1);
 
+	db("removing objects");
 	c.remove_object(m4);
 	c.remove_object(m1);
+
+	dbg("No errors!");
 
 }
 
