@@ -30,13 +30,7 @@ void test_plane_line_intersect() {
 		a = Point(rand() % sz, rand() % sz, rand() % sz);
 		b = Point(rand() % sz, rand() % sz, rand() % sz);
 		// Make sure that a and b form a valid line
-		if( equal(a, b) || equal(dot(a, b), 0) )
-			continue;
-		// Make sure that v1, v2, v3 form a valid plane
-		if( equal(triangle_area(v1, v2, v3), 0) )
-			continue;
-		// Make sure that line is not parallel to the plane
-		if( equal(dot(plane_normal(v1, v2, v3), a-b), 0) )
+		if( !is_plane_line_intersect(v1, v2, v3, a, b) )
 			continue;
 		// Compute the intersection
 		intersect = plane_line_intersect(v1, v2, v3, a, b);
@@ -194,6 +188,7 @@ void test_find_collisions() {
 	MeshType m1;
 	typedef typename MeshType::node_type Node;
 	// Create a tetrahedral mesh in 3D space
+	int vol = 10;
 	std::vector<Node> nodes1;
 	int sz = 4;
 
@@ -201,6 +196,7 @@ void test_find_collisions() {
 
 	while(sz) {
 		Point p1 = Point(rand() % scale, rand() % scale, rand() % scale );
+
 		Node n1 = m1.add_node(p1);
 		nodes1.push_back(n1);
 		--sz;
@@ -219,7 +215,7 @@ void test_find_collisions() {
 	///////////////////////////////////////////////////////////////
 	// Initialize an empty collider and use find_collisions function
 	//////////////////////////////////////////////////////////////
-	int num_points = 10000;
+	int num_points = 100000;
 	int hits;
 	MeshType m2;
 	// Initialize a mesh with a bunch of vertices and no triangles
@@ -234,8 +230,9 @@ void test_find_collisions() {
 	// Print out the hit rate and the hit probability
 	db("Hit rate and hit probabilities");
 	double hit_rate = (double) hits / num_points;
+
 	std::cout << "Hit rate: " << hit_rate << std::endl;
-	std::cout << "Hit probability: " << hit_prob << std::endl;
+}
 
 }
 
