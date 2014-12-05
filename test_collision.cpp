@@ -186,9 +186,54 @@ void test_add_remove() {
 	dbg("No errors!");
 }
 
+void test_find_collisions() {
+	// Header 
+	db("<===== Testing find collisions =====>");
+	typedef Mesh<char, char, char> MeshType;
+	typedef CollisionDetector<MeshType> collider;
+	MeshType m1;
+	typedef typename MeshType::node_type Node;
+	// Create a tetrahedral mesh in 3D space
+	std::vector<Node> nodes1;
+	int sz = 4;
+	while(sz) {
+		Point p1 = Point(rand() % 10, rand() % 10, rand() % 10 );
+		Node n1 = m1.add_node(p1);
+		nodes1.push_back(n1);
+		--sz;
+	}
+	// Create closed tetraheral meshe for m1
+	m1.add_triangle(nodes1[0], nodes1[1], nodes1[2]);
+	m1.add_triangle(nodes1[0], nodes1[1], nodes1[3]);
+	m1.add_triangle(nodes1[0], nodes1[2], nodes1[3]);
+	m1.add_triangle(nodes1[1], nodes1[2], nodes1[3]);
+
+	///////////////////////////////////////////////////////////////
+	// Initialize an empty collider and use find_collisions function
+	//////////////////////////////////////////////////////////////
+	int num_points = 10000;
+	int hits;
+	int sz = 100;
+	MeshType m2;
+	// Initialize a mesh with a bunch of vertices and no triangles
+	int i = num_points;
+	while( i ) {
+		p = Point(rand() % sz, rand() % sz, sz);
+		m2.add_node(p);
+		--i;
+	}
+	hits = find_collisions(m2.node_begin(), m2.node_end(), m1);
+	// Print out the hit rate and the hit probability
+	db("Hit rate and hit probabilities");
+	hit_rate = (double) hits / num_points;
+	std::cout << "Hit rate: " << hit_rate << std::endl;
+	std::cout << "Hit probability: " << hit_prob << std::endl;
+
+}
+
 void test_check_collisions() {
 	srand(time(NULL));
-	db("<===== Testing collision checker =====>");
+	db("<===== Testing check collisions =====>");
 	typedef Mesh<char, char, char> MeshType;
 	typedef CollisionDetector<MeshType> collider;
 	MeshType m1;

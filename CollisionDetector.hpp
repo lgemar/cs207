@@ -226,9 +226,10 @@ struct CollisionDetector {
 
 	/** Add the collision information to the collisions array */
 	template<typename IT, typename MESH>
-	void find_collisions(IT first, IT last, MESH m) {
+	int find_collisions(IT first, IT last, MESH m) {
+		int num_collisions = 0;
 		for(IT it1 = first; it1 != last; ++it1) {
-			int collision_count = 0;
+			int num_intersections = 0;
 			Node n = (*it1);
 			
 			// Find the two points that define a line
@@ -253,17 +254,18 @@ struct CollisionDetector {
 					// the triangle being checked against
 					bool check2 = is_inside_triangle(t1, t2, t3, p);
 
-					// Increase the intersection collision_count is the two
+					// Increase the intersection num_intersections is the two
 					// check are true
 					if( check1 && check2 ) {
-						++collision_count;
+						++num_intersections;
 					}
 			}
 
 			// If the number of intersections is odd, add to collisions
-			if( collision_count % 2 != 0 ) {
+			if( num_intersections % 2 != 0 ) {
 				Collision c = Collision(n);
 				collisions_.push_back(c);
+				++num_collisions;
 			}
 		}
 	}
