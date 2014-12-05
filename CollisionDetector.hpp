@@ -26,6 +26,9 @@ struct CollisionDetector {
 	typedef class Graph<Object,int> object_graph;
 	typedef typename object_graph::Node object_node;
 
+	CollisionDetector() : next_tag_id_(1) {
+	}
+
 	/** 3D object that can be checked for collisions
 	 * @a mesh the closed mesh that defines the boundary of the object
 	 * @a tag the tag representing how we should check it
@@ -78,10 +81,12 @@ struct CollisionDetector {
 	 * All checking must be bidirectional.
 	 */
 	class Tag {
-	private:
-		friend struct CollisionDetector;
+	//private:
+	public:
+		//friend struct CollisionDetector;
 		int id_;
 		bool white_;
+		std::vector<size_t> list_;
 
 		/** private constructor for collision detector */
 		Tag(int id, bool white) : id_(id), white_(white) {}
@@ -89,7 +94,9 @@ struct CollisionDetector {
 	public:
 		/** create invalid tag */
 		Tag() : id_(0), white_(false) {}
-		std::vector<size_t> list_;
+		void add(Tag t) {
+			list_.push_back(t.id_);
+		}
 	};
 
 	/** tag has an empty blacklist, will check against everything */
@@ -124,7 +131,7 @@ struct CollisionDetector {
 	}
 
 	/** Adds an object to the world of objects */
-	void add_object(const MeshType& m, const Tag tag) {
+	void add_object(const MeshType& m, const Tag tag = Tag()) {
 
 		// create a node for this mesh
 		Point approx_pos = (*(m.vertex_begin())).position();
@@ -138,36 +145,50 @@ struct CollisionDetector {
 		for(auto it = object_graph_.node_begin(); 
 				 it != object_graph_.node_end(); ++it) {
 
-			// check if other tag in list
 			Tag tag2 = (*it).value().tag;
+
+			db("trying between:");
+			db(tag.id_, tag2.id_);
+			db("tag w:", tag.white_);
+			db("tag2 w:", tag2.white_);
+			db_vec("tag l:", tag.list_);
+			db_vec("tag2 l:", tag2.list_);
+
+			// check if other tag in list
 			auto optr = std::find(tag.list_.begin(), tag.list_.end(), tag2.id_);
 			bool tag_found = (optr != tag.list_.end());
 
 			// white listed and not found
-			if (tag.white_ && !tag_found	)
+			if (tag.white_ && !tag_found)
 				continue;
 
+			db("1");
 			// blacklisted and found
 			if (!tag.white_ && tag_found)
 				continue;
 
 
+			db("2");
 			// checking if it's in other tag's list
 			optr = std::find(tag2.list_.begin(), tag2.list_.end(), tag.id_);
-			tag_found = (optr != tag.list_.end());
+			tag_found = (optr != tag2.list_.end());
 
 			// white listed and not found
-			if (tag2.white_ && !tag_found	)
+			if (tag2.white_ && !tag_found)
 				continue;
 
+			db("3");
 			// blacklisted and found
 			if (!tag2.white_ && tag_found)
 				continue;
 
+			db("4");
 			// self loop
 			if (*it == n)
 				continue;
 
+			db("5");
+			db("success!");
 			// no conflicts found, adding edge
 			object_graph_.add_edge(n, (*it));
 		}
@@ -215,6 +236,10 @@ struct CollisionDetector {
 	 */
 	CollIter end() {
 		return collisions_.end();
+	}
+
+	void print_graph() const {
+		object_graph_.print_graph();
 	}
 
 	private: 
