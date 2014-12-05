@@ -33,8 +33,8 @@ struct CollisionDetector {
 	 * these are what we operate over
 	 */
 	struct Object {
-		MeshType& mesh;
-		Tag& tag;
+		const MeshType& mesh;
+		const Tag& tag;
 
 		// need this for some reason
 		const Object& operator=(const Object& o) {
@@ -42,10 +42,10 @@ struct CollisionDetector {
 		}
 
 		// default to all Tag
-		Object(MeshType& m) : mesh(m), tag(Tag()) {};
+		Object(const MeshType& m) : mesh(m), tag(Tag()) {};
 
 		// explicitly pass in a tag
-		Object(MeshType& m, Tag& t) : mesh(m), tag(t) {};
+		Object(const MeshType& m, const Tag& t) : mesh(m), tag(t) {};
 
 	};
 
@@ -124,7 +124,7 @@ struct CollisionDetector {
 	}
 
 	/** Adds an object to the world of objects */
-	void add_object(MeshType m, Tag tag) {
+	void add_object(const MeshType& m, const Tag tag) {
 
 		// create a node for this mesh
 		Point approx_pos = (*(m.vertex_begin())).position();
@@ -171,20 +171,20 @@ struct CollisionDetector {
 			// no conflicts found, adding edge
 			object_graph_.add_edge(n, (*it));
 		}
+
 	}
 
 	/** removes a mesh from our collision detection
 	 *
 	 */
-	void remove_object(MeshType& m) {
-		db("in remove");
+	void remove_object(const MeshType& m) {
 		// finding node from mesh
 		object_node on = mesh2node[&m];
-		db("got node");
 		object_graph_.remove_node(on);
-		db("removed node");
+
 		mesh2node.erase(&m);
-		db("erased mesh");
+
+
 	}
 
 	/** Finds all collisions within the meshes defined by the range
@@ -222,6 +222,6 @@ struct CollisionDetector {
 		std::vector<Collision> collisions_;
 		size_t next_tag_id_;
 		object_graph object_graph_;
-		std::unordered_map<MeshType*, object_node> mesh2node;
+		std::unordered_map<const MeshType*, object_node> mesh2node;
 
 };

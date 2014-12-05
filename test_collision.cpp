@@ -177,6 +177,9 @@ void test_add_remove() {
 	db("removing objects");
 	c.remove_object(m4);
 	c.remove_object(m1);
+	c.remove_object(m2);
+	c.remove_object(m3);
+	c.remove_object(m5);
 
 	dbg("No errors!");
 
