@@ -36,6 +36,9 @@ struct CollisionDetector {
 	typedef typename object_graph::Node object_node;
 	typedef SpaceSearcher<Node, NodeToPoint> space_searcher;
 
+	CollisionDetector() : next_tag_id_(1) {
+	}
+
 	/** 3D object that can be checked for collisions
 	 * @a mesh the closed mesh that defines the boundary of the object
 	 * @a tag the tag representing how we should check it
@@ -43,19 +46,11 @@ struct CollisionDetector {
 	 * these are what we operate over
 	 */
 	struct Object {
-		const MeshType& mesh;
-		const Tag& tag;
-
-		// need this for some reason
-		const Object& operator=(const Object& o) {
-			return o;
-		}
-
-		// default to all Tag
-		Object(const MeshType& m) : mesh(m), tag(Tag()) {};
+		MeshType* mesh;
+		Tag tag;
 
 		// explicitly pass in a tag
-		Object(const MeshType& m, const Tag& t) : mesh(m), tag(t) {};
+		Object(MeshType& m, Tag& t) : mesh(&m), tag(t) {};
 
 	};
 
@@ -90,10 +85,12 @@ struct CollisionDetector {
 	 * All checking must be bidirectional.
 	 */
 	class Tag {
-	private:
-		friend struct CollisionDetector;
+	//private:
+	public:
+		//friend struct CollisionDetector;
 		int id_;
 		bool white_;
+		std::vector<size_t> list_;
 
 		/** private constructor for collision detector */
 		Tag(int id, bool white) : id_(id), white_(white) {}
@@ -101,7 +98,9 @@ struct CollisionDetector {
 	public:
 		/** create invalid tag */
 		Tag() : id_(0), white_(false) {}
-		std::vector<size_t> list_;
+		void add(Tag t) {
+			list_.push_back(t.id_);
+		}
 	};
 
 	/** tag has an empty blacklist, will check against everything */
@@ -136,7 +135,7 @@ struct CollisionDetector {
 	}
 
 	/** Adds an object to the world of objects */
-	void add_object(const MeshType& m, const Tag tag=Tag()) {
+	void add_object(MeshType& m, Tag tag = Tag()) {
 
 		// create a node for this mesh
 		Point approx_pos = (*(m.vertex_begin())).position();
@@ -150,26 +149,26 @@ struct CollisionDetector {
 		for(auto it = object_graph_.node_begin(); 
 				 it != object_graph_.node_end(); ++it) {
 
-			// check if other tag in list
 			Tag tag2 = (*it).value().tag;
+
+			// check if other tag in list
 			auto optr = std::find(tag.list_.begin(), tag.list_.end(), tag2.id_);
 			bool tag_found = (optr != tag.list_.end());
 
 			// white listed and not found
-			if (tag.white_ && !tag_found	)
+			if (tag.white_ && !tag_found)
 				continue;
 
 			// blacklisted and found
 			if (!tag.white_ && tag_found)
 				continue;
 
-
 			// checking if it's in other tag's list
 			optr = std::find(tag2.list_.begin(), tag2.list_.end(), tag.id_);
-			tag_found = (optr != tag.list_.end());
+			tag_found = (optr != tag2.list_.end());
 
 			// white listed and not found
-			if (tag2.white_ && !tag_found	)
+			if (tag2.white_ && !tag_found)
 				continue;
 
 			// blacklisted and found
@@ -206,8 +205,8 @@ struct CollisionDetector {
 				it != object_graph_.edge_end(); ++it) {
 			// Get the two meshes that are a part of this edge
 			auto e = (*it);
-			auto m1 = e.node1().value().mesh;
-			auto m2 = e.node2().value().mesh;
+			auto m1 = *e.node1().value().mesh;
+			auto m2 = *e.node2().value().mesh;
 			// Build spatial search objects
 			space_searcher s1 = space_searcher(m1.vertex_begin(), 
 											m1.vertex_end(),
@@ -280,6 +279,10 @@ struct CollisionDetector {
 	 */
 	CollIter end() {
 		return collisions_.end();
+	}
+
+	void print_graph() const {
+		object_graph_.print_graph();
 	}
 
 	private: 

@@ -37,3 +37,10 @@ void db_map(const S s, const M m) {
 	for ( auto& x: m )
 	    std::cout << x.first << ": " << x.second.index() << std::endl;
 }
+template <typename S, typename V>
+void db_vec(const S s, const V v) {
+	db(s);
+	for ( auto& x: v)
+	    std::cout << x << ", ";
+	std::cout << std::endl;
+}

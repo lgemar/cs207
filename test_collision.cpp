@@ -144,6 +144,7 @@ void test_geometry() {
 }
 
 void test_add_remove() {
+	db("======> Testing Add Remove <=============");
 	db("creating collider");
 	typedef Mesh<char, char, char> MeshType;
 	typedef CollisionDetector<MeshType> collider;
@@ -164,17 +165,16 @@ void test_add_remove() {
 	m4.add_node(Point());
 	m5.add_node(Point());
 
-	db("creating some tags");
-	Tag t1 = Tag(); // default tag
-	Tag t2 = c.getNoneTag(); // checks against nothing
-	Tag t3 = c.getOtherTag(); // checks against not self
-
 	db("adding objects");
-	c.add_object(m1,t1);
-	c.add_object(m2,t1);
-	c.add_object(m3,t2);
-	c.add_object(m4,t3);
-	c.add_object(m5,t1);
+	c.add_object(m1);
+	c.add_object(m2);
+	c.add_object(m3);
+	c.add_object(m4);
+	c.add_object(m5);
+
+	db("drawing graph");
+	db("should see 5 fully connected nodes........");
+	c.print_graph();
 
 	db("removing objects");
 	c.remove_object(m4);
@@ -229,6 +229,79 @@ void test_find_collisions() {
 	std::cout << "Hit rate: " << hit_rate << std::endl;
 	std::cout << "Hit probability: " << hit_prob << std::endl;
 
+void test_tags() {
+	db("======> Testing tags <=============");
+	db("creating collider");
+	typedef Mesh<char, char, char> MeshType;
+	typedef CollisionDetector<MeshType> collider;
+	typedef collider::Tag Tag;
+	collider c = collider();
+
+	db("creating a few meshes");
+	MeshType m0;
+	MeshType m1;
+	MeshType m2;
+	MeshType m3;
+	MeshType m4;
+	MeshType m5;
+	MeshType m6;
+	MeshType m7;
+	MeshType m8;
+
+	db("adding a node to each");
+	m0.add_node(Point());
+	m1.add_node(Point());
+	m2.add_node(Point());
+	m3.add_node(Point());
+	m4.add_node(Point());
+	m5.add_node(Point());
+	m6.add_node(Point());
+	m7.add_node(Point());
+	m8.add_node(Point());
+
+	db("creating some tags");
+	Tag t0 = Tag(); // default tag
+	Tag t1 = c.getNoneTag(); // checks against nothing
+	Tag t2 = c.getOtherTag(); // checks against not self
+	Tag t3 = c.getSelfTag(); // checks against self
+	Tag t4 = c.get_tag(true); // only on t5
+	Tag t5 = c.get_tag(true); // only on t4
+
+	t4.add(t5);
+	t5.add(t4);
+
+
+	db("printing tags");
+	db("t0 w:", t0.white_);
+	db("t1 w:", t1.white_);
+	db("t2 w:", t2.white_);
+	db("t3 w:", t3.white_);
+	db("t4 w:", t4.white_);
+	db("t5 w:", t5.white_);
+
+	db("printing lists");
+	db_vec("t0 l:", t0.list_);
+	db_vec("t1 l:", t1.list_);
+	db_vec("t2 l:", t2.list_);
+	db_vec("t3 l:", t3.list_);
+	db_vec("t4 l:", t4.list_);
+	db_vec("t5 l:", t5.list_);
+
+	db("adding objects");
+	c.add_object(m0); // connect to all
+	c.add_object(m1,t0); // connect to all
+	c.add_object(m2,t1); // connects to nothing
+	c.add_object(m3,t2); // checks against not t2
+	c.add_object(m4,t2); // checks against not t2
+	c.add_object(m5,t3); // checks against only t3
+	c.add_object(m6,t3); // checks against only t3
+	c.add_object(m7,t4); // checks against only t5
+	c.add_object(m8,t5); // checks aginst only t4
+
+	db("printing graph");
+	c.print_graph();
+	db("look at test_collision:228 for reference");
+	dbg("No errors!");
 }
 
 void test_check_collisions() {
@@ -304,7 +377,11 @@ void test_check_collisions() {
 
 int main () {
 
-	test_geometry();
+	//test_geometry();
+	//db("");
+	//test_add_remove();
+	//db("");
+	test_tags();
 	db("");
 	test_add_remove();
 	db("");
