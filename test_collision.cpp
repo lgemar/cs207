@@ -181,6 +181,7 @@ void test_add_remove() {
 }
 
 void test_find_collisions() {
+	srand(time(NULL));
 	// Header 
 	db("<===== Testing find collisions =====>");
 	typedef Mesh<char, char, char> MeshType;
@@ -206,7 +207,7 @@ void test_find_collisions() {
 	///////////////////////////////////////////////////////////////
 	// Initialize an empty collider and use find_collisions function
 	//////////////////////////////////////////////////////////////
-	int num_points = 100000;
+	int num_points = 100;
 	int hits;
 	MeshType m2;
 	// Initialize a mesh with a bunch of vertices and no triangles

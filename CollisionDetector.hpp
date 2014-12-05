@@ -245,8 +245,7 @@ struct CollisionDetector {
 					// Determine intersection point
 					Point p;
 					if( is_plane_line_intersect(t1, t2, t3, p0, p1)) {
-						p = plane_line_intersect(t1, t2, t3, 
-														p0, p1);
+						p = plane_line_intersect(t1, t2, t3, p0, p1);
 
 						// Check if intersection points same direction
 						// as the outgoing ray
@@ -256,8 +255,10 @@ struct CollisionDetector {
 						// the triangle being checked against
 						bool check2 = is_inside_triangle(t1, t2, t3, p);
 
+						db("New point");
 						db("check 1:", check1);
 						db("check 2:", check2);
+						db("End new point");
 
 						// Increase the num_intersections is the two
 						// check are true
@@ -269,6 +270,7 @@ struct CollisionDetector {
 
 			// If the number of intersections is odd, add to collisions
 			if( num_intersections % 2 != 0 ) {
+				db("num_intersections", num_intersections);
 				Collision c = Collision(n);
 				collisions_.push_back(c);
 				++num_collisions;
