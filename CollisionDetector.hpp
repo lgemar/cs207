@@ -57,10 +57,11 @@ struct CollisionDetector {
 
 	};
 
-	/** struct to store collision information
-	 * @a n_ the node that is inside another mesh
-	 * @a t_ the triangle in the mesh that is closest to the node
-	 * 	(most likely guess for the collision)
+	/** Struct to store collision information
+	 * @brief After construction, @a mesh1 contains a pointer to the 
+	 *  mesh that has collided into another mesh and @a mesh2 contains
+	 * 	the mesh that has been run into. @a n1 containes the node in 
+	 * 	@a mesh1 that is now in the interior of @a mesh2.
 	 */
 	struct Collision {
 
@@ -201,8 +202,10 @@ struct CollisionDetector {
 	}
 
 	/** Finds all collisions within the meshes defined by the range
-	 * store them in our internal collisions array
-	 * @pre @a first and @a last must define a valid iterator range
+	 * store them in our internal collisions_ array
+	 * @post info about all the collisions between the meshes in the 
+	 * 	object graph is stored in collisions_ array and can be 
+	 * 	accessed in the range (*this).begin() and (*this).end()
 	 */
 	void check_collisions() {
 		collisions_.clear();
@@ -229,7 +232,17 @@ struct CollisionDetector {
 		}
 	}
 
-	/** Add the collision information to the collisions array */
+	/** Add the collision information to the collisions array 
+	 * @param[in] @a first is an iterator to the first node in @a m1
+	 * @param[in] @a last is an iterator to end of nodes in @a m2 
+	 * @param[in] @a m1 is the mesh containing nodes being checked for
+	 * 	being in the interior of m2
+	 * @param[in] @a m2 is the mesh in which points in @a m1 might lie
+	 * @returns the number of collisions
+	 * @post the collisions_ array is pushed back with all the info
+	 * 	about the collisions that happend between the points in m1 and
+	 * 	the interior of m2
+	 */
 	template<typename IT, typename MESH_PTR>
 	int find_collisions(IT first, IT last, MESH_PTR m1, MESH_PTR m2) {
 		int num_collisions = 0;
