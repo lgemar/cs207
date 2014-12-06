@@ -21,7 +21,7 @@ struct InCollision {
 // generate a mesh ball around the point
 void add_ball(MeshType& m, Point p, double r = .3) {
 
-	size_t slices = 4;
+	size_t slices = 6;
 	double dth = 2*3.14 / slices;
 	std::vector<Node> tops;
 	std::vector<Node> bots;
@@ -75,7 +75,7 @@ int main () {
 
 	// initialization
 	srand(time(NULL));
-	int N = 20;
+	int N = 5;
 
 	// create meshes
 	std::vector<MeshType> meshes;
@@ -107,7 +107,7 @@ int main () {
 	}
 	viewer.center_view();
 	// Display viewer
-	double dt = .01;
+	double dt = .003;
 	//move_mesh(meshes[0], Point(drand(2)-1,drand(2)-1,drand(2)-1), dt);
 
 	db("nodes:", meshes[0].num_nodes());
