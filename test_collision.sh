@@ -1,0 +1,1 @@
+make collision && ./collision
