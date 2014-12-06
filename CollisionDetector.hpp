@@ -227,13 +227,16 @@ struct CollisionDetector {
 	template<typename IT, typename MESH>
 	int find_collisions(IT first, IT last, MESH m) {
 		int num_collisions = 0;
+		int num_three_type_collisions = 0;
 		for(IT it1 = first; it1 != last; ++it1) {
 			int num_intersections = 0;
+			int num_triangles = 0;
 			Node n = (*it1);
 			
 			// Find the two points that define a line
 			Point p0 = n.position();
 			Point p1 = 2 * p0;
+			std::vector<Point> intersection_points;
 			for(auto it2 = m.triangles_begin(); 
 					it2 != m.triangles_end(); ++it2) {
 					Triangle t = (*it2);
@@ -245,6 +248,8 @@ struct CollisionDetector {
 					// Determine intersection point
 					Point p;
 					if( is_plane_line_intersect(t1, t2, t3, p0, p1)) {
+						// Find the intersection of the point and the
+						// plane
 						p = plane_line_intersect(t1, t2, t3, p0, p1);
 
 						// Check if intersection points same direction
@@ -255,28 +260,34 @@ struct CollisionDetector {
 						// the triangle being checked against
 						bool check2 = is_inside_triangle(t1, t2, t3, p);
 
-						db("New point");
-						db("check 1:", check1);
-						db("check 2:", check2);
-						db("End new point");
-
 						// Increase the num_intersections is the two
 						// check are true
 						if( check1 && check2 ) {
+							//db("Intersection point: ", p);
 							++num_intersections;
+							intersection_points.push_back(p);
 						}
 					}
+					++num_triangles;
 			}
 
 			// If the number of intersections is odd, add to collisions
 			if( num_intersections % 2 != 0 ) {
-				db("num_intersections", num_intersections);
+				if(num_intersections == 3) {
+					// db("num_triangles", num_triangles);
+					for(auto it = intersection_points.begin(); 
+						   it != intersection_points.end(); ++it) {
+						//db("intersection point", *it);
+					}
+					//db("number of intersections", num_intersections);
+					++num_three_type_collisions;
+				}
 				Collision c = Collision(n);
 				collisions_.push_back(c);
 				++num_collisions;
 			}
 		}
-		return num_collisions;
+		return num_collisions - num_three_type_collisions;
 	}
 
 	/** returns iterator to beginning of our found collisions

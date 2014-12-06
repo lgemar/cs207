@@ -67,8 +67,8 @@ void test_is_inside_triangle() {
 	db("Hit rate and hit probabilities");
 	hit_rate = (double) hits / num_points;
 	hit_prob = triangle_area(t1, t2, t3) / (sz * sz);
-	std::cout << "Hit rate: " << hit_rate << std::endl;
-	std::cout << "Hit probability: " << hit_prob << std::endl;
+	db("Hit rate:", hit_rate);
+	db("Hit prob:", hit_prob);
 }
 
 void test_on_same_side() {
@@ -96,8 +96,8 @@ void test_on_same_side() {
 	db("Hit rate and hit probabilities");
 	hit_rate = (double) hits / num_points;
 	hit_prob = 0.5;
-	std::cout << "Hit rate: " << hit_rate << std::endl;
-	std::cout << "Hit probability: " << hit_prob << std::endl;
+	db("Hit rate:", hit_rate);
+	db("Hit prob:", hit_prob);
 }
 
 void test_plane_normal() {
@@ -189,11 +189,14 @@ void test_find_collisions() {
 	MeshType m1;
 	typedef typename MeshType::node_type Node;
 	// Create a tetrahedral mesh in 3D space
-	int vol = 10;
 	std::vector<Node> nodes1;
 	int sz = 4;
+
+	int scale = 50;
+
 	while(sz) {
-		Point p1 = Point(rand() % vol, rand() % vol, rand() % vol );
+		Point p1 = Point(rand() % scale, rand() % scale, rand() % scale );
+
 		Node n1 = m1.add_node(p1);
 		nodes1.push_back(n1);
 		--sz;
@@ -204,25 +207,37 @@ void test_find_collisions() {
 	m1.add_triangle(nodes1[0], nodes1[2], nodes1[3]);
 	m1.add_triangle(nodes1[1], nodes1[2], nodes1[3]);
 
+	// finding volume and prob
+	double tet_volume = tet_area(nodes1[0], nodes1[1], nodes1[2], nodes1[3]);
+	double total_volume = scale*scale*scale;
+	double hit_prob = tet_volume / total_volume;
+	db("tet volume:", tet_volume);
+	db("p1:", nodes1[0].position());
+	db("p2:", nodes1[1].position());
+	db("p3:", nodes1[2].position());
+	db("p4:", nodes1[3].position());
+
 	///////////////////////////////////////////////////////////////
 	// Initialize an empty collider and use find_collisions function
 	//////////////////////////////////////////////////////////////
-	int num_points = 100;
+	int num_points = 1000000;
 	int hits;
 	MeshType m2;
 	// Initialize a mesh with a bunch of vertices and no triangles
 	int i = num_points;
 	while( i ) {
-		Point p = Point(rand() % vol, rand() % vol, rand() % vol);
+		Point p = Point(rand() % scale, rand() % scale, rand() % scale);
 		m2.add_node(p);
 		--i;
 	}
-	collider c = collider();	
+	collider c;
 	hits = c.find_collisions(m2.vertex_begin(), m2.vertex_end(), m1);
 	// Print out the hit rate and the hit probability
 	db("Hit rate and hit probabilities");
-	int hit_rate = (double) hits / num_points;
-	std::cout << "Hit rate: " << hit_rate << std::endl;
+	double hit_rate = (double) hits / num_points;
+
+	db("hit rate:", hit_rate);
+	db("hit prob:", hit_prob);
 }
 
 void test_tags() {
@@ -265,7 +280,6 @@ void test_tags() {
 
 	t4.add(t5);
 	t5.add(t4);
-
 
 	db("printing tags");
 	db("t0 w:", t0.white_);
@@ -373,16 +387,17 @@ void test_check_collisions() {
 
 int main () {
 
-	test_geometry();
+	//test_geometry();
 	db("");
-	test_add_remove();
+	//test_add_remove();
 	db("");
 	test_tags();
 	db("");
 	test_add_remove();
 	db("");
+	//test_check_collisions();
+	db("");
 	test_find_collisions();
-	test_check_collisions();
 
 
 	return 0;
