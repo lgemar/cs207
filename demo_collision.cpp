@@ -107,7 +107,7 @@ int main () {
 	}
 	viewer.center_view();
 	// Display viewer
-	double dt = .002;
+	double dt = .01;
 	//move_mesh(meshes[0], Point(drand(2)-1,drand(2)-1,drand(2)-1), dt);
 
 	db("nodes:", meshes[0].num_nodes());
@@ -118,10 +118,10 @@ int main () {
 
 		// moving
 		for (auto it = ++meshes.begin(); it != meshes.end(); ++it)
-			move_mesh(*it, Point(-2,drand(2)-1,drand(2)-1), dt);
+			move_mesh(*it, Point(-1,drand(2)-1,drand(2)-1), dt);
 
 		// moving other
-		move_mesh(*(++meshes.begin()), Point(4,0,0), dt);
+		move_mesh(*(++meshes.begin()), Point(2,0,0), dt);
 
 	    // check for collision
 	    c.check_collisions();

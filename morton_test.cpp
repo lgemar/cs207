@@ -1,6 +1,28 @@
 /**
- * @file shallow_water.cpp
- * Implementation of a shallow water system using Mesh
+ * @file morton_test.cpp
+ * Example of a spatial search using Morton codes.
+ *
+ * In this example, SpaceSearcher is used to iterate over the Nodes contained
+ * inside a small BoundingBox close to the center of a Graph. The performance
+ * of SpaceSearcher (Morton codes) is compared to that of a linear search.
+ * This example can be added to the Makefile and executed as usual:
+ *
+ * $ make morton_test
+ * $ ./morton_test data/large.*
+ *
+ * 37813 217974
+ * Morton search: Found 49 items in 1.3977e-05 seconds.
+ * Linear search: Found 49 items in 0.000195776 seconds.
+ * Speedup: 14.007
+ *
+ * The speedup depends to a large extent on the application, and generally
+ * becomes worse as the size of the BoundingBox increases. In other words,
+ * if the user needs to iterate over most of the items in a Graph or Mesh anyway,
+ * then a linear search may actually be more efficient in some cases. But for
+ * smaller BoundingBoxes, containing ~20% of the items or less, SpaceSearcher
+ * can provide a significant boost in performance. This makes SpaceSearcher
+ * an ideal tool for collision detection between small objects and for nearest-
+ * neighbor searches, among other possible applications.
  *
  * @brief Reads in two files specified on the command line.
  * First file: 3D point list (one per line) defined by three doubles
@@ -16,7 +38,6 @@
 
 #include "Point.hpp"
 #include "Graph.hpp"
-#include "MortonCoder.hpp"
 #include "SpaceSearcher.hpp"
 
 // Define Graph type

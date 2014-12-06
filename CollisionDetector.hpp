@@ -227,8 +227,9 @@ struct CollisionDetector {
 											m2->vertex_end(),
 											NodeToPoint());
 			// Find the bounding boxes corresponding to spaces
-			BoundingBox bb1 = s1.bounding_box();
-			BoundingBox bb2 = s2.bounding_box();
+			BoundingBox bb1 = s1.bounding_box_;
+			BoundingBox bb2 = s2.bounding_box_;
+
 			// Find the collisions
 			find_collisions(s1.begin(bb2), s1.end(bb2), m1, m2);
 			find_collisions(s2.begin(bb1), s2.end(bb1), m2, m1);

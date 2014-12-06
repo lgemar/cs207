@@ -11,7 +11,14 @@
 #include "MortonCoder.hpp"
 
 /** @class SpaceSearcher
- * @brief Class for making spatial searches that uses MortonCoder as backend.
+ * @brief Class for making spatial searches, which uses the MortonCoder
+ *        class as a backend.
+ *
+ * Given a range of data items (e.g., Nodes) and a mapping between these
+ * data items and Points, the SpaceSearcher class can be used to quickly
+ * iterate over data items which are contained inside any given BoundingBox.
+ *
+ * See "morton_test.cpp" for an usage example.
  */
 template <typename T, typename T2Point, int L = 5>
 class SpaceSearcher {
@@ -24,7 +31,9 @@ public:
   /** Type of indexes and sizes. */
   typedef unsigned size_type;
 
-  /** The number of levels in the MortonCoder. */
+  /** The number of levels in the MortonCoder. For simplicity, this is
+   * kept fixed with a value of 5, which corresponds to a grid with
+   * 2^5 cells in each dimension. */
   static constexpr int NumLevels = 5;
   /** Type of MortonCoder. */
   typedef MortonCoder<NumLevels> MortonCoderType;
@@ -40,17 +49,24 @@ public:
   // CONSTRUCTOR AND DESTRUCTOR //
   ////////////////////////////////
 
-  /** Constructor. */
+  /** @brief Constructor.
+   *
+   * For a range of data items of type @a T given by [@a t_begin, @a t_end)
+   * and a mapping @a t2p between data items and Points, initialize a
+   * framework for making spatial searches.
+   *
+   * @param[in] t_begin Iterator to first data item.
+   * @param[in] t_end   Iterator to one past the last data item.
+   * @param[in] t2p     A functor that maps data items to Points.
+   */
   template <typename TIter>
   SpaceSearcher(TIter t_begin, TIter t_end, T2Point t2p)
       : mc_(), c2t_(), t2p_(t2p) {
 
     // For performance checks
-#if 0
     CS207::Clock clock;
     clock.start();
-    std::cout << "\nConstructing SpaceSearcher..." << std::endl;
-#endif
+
     // Determine pmin and pmax, i.e., the minimum and maximum corners
     // for the bounding box.
     Point pmin = t2p_(*t_begin);
@@ -64,8 +80,8 @@ public:
     }
 
     // Create MortonCoder instance.
-	bb_ = BoundingBox(pmin, pmax);
-    mc_ = MortonCoderType(bb_);
+    bounding_box_ = BoundingBox(pmin, pmax);
+    mc_ = MortonCoderType(bounding_box_);
 
     // Map Morton codes to data items.
     c2t_.clear();
@@ -75,7 +91,8 @@ public:
       c2t_[mc_.code(p)].push_back(*it);
     }
 
-    // Sanity check
+    // Uncomment to print some info
+#if 0
     size_type item_count = 0;
     size_type max_items = 0;
     for (auto it = c2t_.begin(); it != c2t_.end(); ++it) {
@@ -84,8 +101,7 @@ public:
       if (items.size() > max_items)
         max_items = items.size();
     }
-#if 0
-    std::cout << "Time: " << clock.seconds() << " seconds." << std::endl;
+    std::cout << "Construction time: " << clock.seconds() << " seconds.\n";
     std::cout << "Total number of elements = " << item_count << std::endl;
     std::cout << "Total number of cells = " << mc_.end_code << std::endl;
     std::cout << "Max. number of elements per cell = " << max_items << std::endl;
@@ -101,7 +117,11 @@ public:
   //////////////
 
   /** @class SpaceSearcher::Iterator
-   * @brief Iterator class for data items. A forward iterator. */
+   * @brief Iterator class for data items. A forward iterator.
+   *
+   * Iterates over data items of type @a T contained inside a given
+   * BoundingBox.
+   */
   class Iterator : private totally_ordered<Iterator> {
    public:
     // These type definitions help us use STL's iterator_traits.
@@ -132,8 +152,13 @@ public:
      */
     Iterator& operator++() {
       assert(s_ != nullptr && !bb_.empty());
+
+      // Calculate Morton codes once:
+      code_type code_min = s_->mc_.code(bb_.min());
+      code_type code_max = s_->mc_.code(bb_.max());
+
       ++loc_;
-      while (code_ < s_->mc_.code(bb_.max())+1) {
+      while (code_ < code_max+1) {
         while (loc_ < s_->c2t_[code_].size()) {
           // Make sure that item really is inside of BoundingBox.
           if (bb_.contains(s_->t2p_(s_->c2t_[code_][loc_])))
@@ -141,23 +166,22 @@ public:
           ++loc_;
         }
         // Advance to next Morton cell that overlaps with BoundingBox.
-        code_ = s_->mc_.advance_to_box(code_+1, s_->mc_.code(bb_.min()),
-                                                s_->mc_.code(bb_.max()));
+        code_ = s_->mc_.advance_to_box(code_+1, code_min, code_max);
         loc_ = 0;
       }
 
       // If no more valid Morton codes, we return end().
-      code_ = s_->mc_.code(bb_.max())+1;
+      code_ = code_max+1;
       loc_ = 0;
       return *this;
     }
-    /** Method to compare two iterators. */
+    /** Method for comparing two iterators. */
     bool operator==(const Iterator& x) const {
-      return ((s_ == x.s_) &&
+      return ((code_ == x.code_) &&
+              (loc_ == x.loc_) &&
               (bb_.min() == x.bb_.min()) &&
               (bb_.max() == x.bb_.max()) &&
-              (code_ == x.code_) &&
-              (loc_ == x.loc_));
+              (s_ == x.s_));
     }
 
    private:
@@ -169,8 +193,8 @@ public:
     BoundingBox bb_;
     // Morton code of current item.
     code_type code_;
-    // Index of current item inside its Morton cell
-    // (note that different items may have the same Morton code).
+    // Index of current item inside its Morton cell (which can contain
+    // several items with the same Morton code).
     size_type loc_;
     /** Private constructor. */
     Iterator(const SpaceSearcher* s, BoundingBox bb, code_type code, size_type loc)
@@ -178,20 +202,18 @@ public:
       // Advance Iterator to valid position, if necessary.
       fix();
     }
-    /** Helper method to determine if this Iterator is valid.
-     *
-     * Note that we don't actually check that the point is contained inside
-     * the BoundingBox. This is handled by fix() and operator++().
-     */
+    /** Helper method to determine if this Iterator is valid. */
     bool is_valid() const {
       if (s_ == nullptr || bb_.empty())
         return false;
       if (code_ >= s_->mc_.code(bb_.max())+1)
         return false;
-      return loc_ < s_->c2t_[code_].size();
+      if (loc_ >= s_->c2t_[code_].size())
+        return false;
+      return bb_.contains(s_->t2p_(s_->c2t_[code_][loc_]));
     }
     /** Helper method to advance this Iterator until it reaches a valid
-     * position, or end().
+     * position or end().
      */
     void fix() {
       assert(s_ != nullptr && !bb_.empty());
@@ -203,16 +225,10 @@ public:
       }
       if (loc_ >= s_->c2t_[code_].size() ||
           !bb_.contains(s_->t2p_(s_->c2t_[code_][loc_]))) {
-        // Advance to next valid item (or end()).
         operator++();
       }
     }
   };
-
-  /** Method to graph the bounding box of this space */
-  BoundingBox bounding_box() {
-  	return bb_;
-  }
 
   /** Method to return an iterator pointing to the first item
    * in a given BoundingBox.
@@ -230,16 +246,13 @@ public:
     return Iterator(this, bb, mc_.code(bb.max())+1, 0);
   }
 
+  BoundingBox bounding_box_;
+
 private:
   // MortonCoder instance associated with this SpaceSearcher.
   MortonCoderType mc_;
-
-  // Bounding box associated with this spatial searcher
-  BoundingBox bb_;
-
-  // Structure that maps Morton codes to data items of type T.
+  // Mapping from Morton codes to lists of data items of type T.
   std::vector<std::vector<T>> c2t_;
-
   // Mapping from data items to points.
   T2Point t2p_;
 };
