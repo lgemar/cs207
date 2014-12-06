@@ -10,7 +10,7 @@ typedef collider::Tag Tag;
 // generate a mesh ball around the point
 void add_ball(MeshType& m, Point p, double r = .3) {
 
-	size_t slices = 6;
+	size_t slices = 10;
 	std::vector<Node> tops;
 	std::vector<Node> bots;
 
@@ -40,22 +40,6 @@ void add_ball(MeshType& m, Point p, double r = .3) {
 		m.add_triangle(tops[i], bots[i], tops[j]);
 		m.add_triangle(bots[i], tops[j], bots[j]);
 	}
-	/*
-	Node x1 = m.add_node(p + Point(r,0,0));
-	Node x2 = m.add_node(p + Point(-r,0,0));
-	Node y1 = m.add_node(p + Point(0,r,0));
-	Node y2 = m.add_node(p + Point(0,-r,0));
-	Node z1 = m.add_node(p + Point(0,0,r));
-	Node z2 = m.add_node(p + Point(0,0,-r));
-
-	m.add_triangle(z1, x1, y1);
-	m.add_triangle(z1, x1, y2);
-	m.add_triangle(z1, x2, y1);
-	m.add_triangle(z1, x2, y2);
-	m.add_triangle(z2, x1, y1);
-	m.add_triangle(z2, x1, y2);
-	m.add_triangle(z2, x2, y1);
-	m.add_triangle(z2, x2, y2);*/
 }
 
 // moves all points in a mesh
@@ -70,20 +54,27 @@ int main () {
 
 	// initialization
 	srand(time(NULL));
-	int N = 4;
+	int N = 3;
 
 	// create meshes
 	std::vector<MeshType> meshes;
-	for (int i = 0; i < N; ++i) {
+	for (int i = 0; i < N; ++i)
 		meshes.push_back(MeshType());
-		add_ball(meshes[i], Point(i,0,0));
-	}
+
+
 
 
 	// create checker
 	collider c;
-	for (int i = 0; i < N; ++i)
-		c.add_object(meshes[i]);
+	int pos = 0;
+	for (auto it = meshes.begin(); it != meshes.end(); ++it) {
+		add_ball(*it, Point(pos,0,0));
+		c.add_object(*it);
+		++pos;
+	}
+
+	// debug initial state
+	c.print_graph();
 
 	// Launch the SDLViewer
 	CS207::SDLViewer viewer;
@@ -108,14 +99,14 @@ int main () {
 
 	    // check for collision
 	    c.check_collisions();
-	    //size_t count = std::distance(c.begin(), c.end());
+	    size_t count = std::distance(c.begin(), c.end());
 
 	    // redraw
 	    for (int i = 0; i < N; ++i)
 	    	viewer.add_nodes(meshes[i].vertex_begin(), meshes[i].vertex_end(),
 					   CS207::GreenColor(), NodeToPoint(), vertex_map);
 
-	    //viewer.set_label(count);
+	    viewer.set_label(count);
 
 	  }
 	return 0;

@@ -239,6 +239,7 @@ struct CollisionDetector {
 					it2 != m.triangles_end(); ++it2) {
 					Triangle t = (*it2);
 					// Find the three points that make up triangle
+					db("got here");
 					Point t1 = t.vertex(1).position();
 					Point t2 = t.vertex(2).position();
 					Point t3 = t.vertex(3).position();
