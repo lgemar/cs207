@@ -238,7 +238,7 @@ void test_find_collisions() {
 			--i;
 		}
 		collider c;
-		hits = c.find_collisions(m2.vertex_begin(), m2.vertex_end(), m1);
+		hits = c.find_collisions(m2.vertex_begin(), m2.vertex_end(), &m2, &m1);
 		// Print out the hit rate and the hit probability
 		double hit_rate = (double) hits / num_points;
 
@@ -408,8 +408,6 @@ int main () {
 	db("");
 	test_find_collisions();
 	db("");
-	test_check_collisions();
-
 
 	return 0;
 }
