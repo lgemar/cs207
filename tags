@@ -103,6 +103,7 @@ BLOCK1_1	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/opteron/matr
 BanachSpace	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/vector_concepts.hpp	/^struct BanachSpace$/;"	s	namespace:math
 BinaryFunctor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/concept/std_concept.hpp	/^    struct BinaryFunctor$/;"	s	namespace:mtl
 BinaryStaticFunctor	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/concept/std_concept.hpp	/^    struct BinaryStaticFunctor$/;"	s	namespace:mtl
+BlueColor	CS207/SDLViewer.hpp	/^struct BlueColor {$/;"	s	namespace:CS207
 BoundingBox	BoundingBox.hpp	/^  BoundingBox()$/;"	f	class:BoundingBox
 BoundingBox	BoundingBox.hpp	/^  BoundingBox(PointIter first, PointIter last)$/;"	f	class:BoundingBox
 BoundingBox	BoundingBox.hpp	/^  BoundingBox(const point_type& p1, const point_type& p2)$/;"	f	class:BoundingBox
@@ -203,6 +204,7 @@ Collection	shared/vrodriguez-cs207/poisson.cpp	/^struct Collection<GraphSymmetri
 Collision	CollisionDetector.hpp	/^		Collision(Node n) : n(n), t() {}$/;"	f	struct:CollisionDetector::Collision
 Collision	CollisionDetector.hpp	/^		Collision(Node n, Triangle t) : n(n), t(t) {}$/;"	f	struct:CollisionDetector::Collision
 Collision	CollisionDetector.hpp	/^	struct Collision {$/;"	s	struct:CollisionDetector
+CollisionDetector	CollisionDetector.hpp	/^	CollisionDetector() : next_tag_id_(1) {$/;"	f	struct:CollisionDetector
 CollisionDetector	CollisionDetector.hpp	/^struct CollisionDetector {$/;"	s
 Color	CS207/Color.hpp	/^  Color() $/;"	f	struct:CS207::Color
 Color	CS207/Color.hpp	/^  Color(float r, float g, float b)$/;"	f	struct:CS207::Color
@@ -373,6 +375,7 @@ GraphType	test_edges.cpp	/^typedef Graph<int, int> GraphType;$/;"	t	file:
 GraphType	test_nodes.cpp	/^typedef Graph<int, int> GraphType;$/;"	t	file:
 GravityForce	mass_spring.cpp	/^struct GravityForce : public Stimulus {$/;"	s	file:
 GravityForce	shared/vrodriguez-cs207/mass_spring.cpp	/^struct GravityForce {$/;"	s	file:
+GreenColor	CS207/SDLViewer.hpp	/^struct GreenColor {$/;"	s	namespace:CS207
 Group	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/algebraic_concepts.hpp	/^      : Group<Operation, Element>, Commutative<Operation, Element>$/;"	m	namespace:algebra
 Group	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/algebraic_concepts.hpp	/^    struct Group$/;"	s	namespace:algebra
 Group	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/concepts.hpp	/^  : Group<Operation, Element>, Commutative<Operation, Element>$/;"	m	namespace:math
@@ -961,6 +964,7 @@ MatrixInserter	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/concept/matrix.h
 Mesh	Mesh.hpp	/^class Mesh {$/;"	c
 Mesh	shared/vrodriguez-cs207/Mesh.hpp	/^  Mesh() : graph_(), nodes_(), adj_(), triangles_() {$/;"	f	class:Mesh
 Mesh	shared/vrodriguez-cs207/Mesh.hpp	/^class Mesh {$/;"	c
+MeshType	demo_collision.cpp	/^typedef Mesh<char, char, char> MeshType;$/;"	t	file:
 MeshType	shallow_water.cpp	/^typedef Mesh<my_vertex_data, my_edge_data, my_triangle_data> MeshType;$/;"	t	file:
 MeshType	shared/vrodriguez-cs207/shallow_water.cpp	/^typedef Mesh<NodeData, EdgeData, TriData> MeshType;$/;"	t	file:
 MetaConstraint	shared/vrodriguez-cs207/mass_spring.cpp	/^class MetaConstraint {$/;"	c	file:
@@ -1035,6 +1039,7 @@ Node	Graph.hpp	/^    Node() {$/;"	f	class:Graph::Node
 Node	Graph.hpp	/^    Node(const Graph* graph, size_type uid)$/;"	f	class:Graph::Node
 Node	Graph.hpp	/^  class Node : private totally_ordered<Node> {$/;"	c	class:Graph
 Node	Mesh.hpp	/^	typedef Vertex Node;$/;"	t	class:Mesh
+Node	demo_collision.cpp	/^typedef typename MeshType::node_type Node;$/;"	t	file:
 Node	mass_spring.cpp	/^typedef typename GraphType::node_type Node;$/;"	t	file:
 Node	morton_files/morton_test.cpp	/^typedef typename GraphType::node_type Node;$/;"	t	file:
 Node	morton_test.cpp	/^typedef typename GraphType::node_type Node;$/;"	t	file:
@@ -1086,8 +1091,7 @@ Num_Cols	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/dimension.hpp	/
 Num_Rows	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/dimension.hpp	/^        static size_type const Num_Rows= Rows;$/;"	m	struct:mtl::fixed::dimensions
 Numeric	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^	    void                 *Symbolic, *Numeric;$/;"	m	class:mtl::mat::umfpack::solver
 Numeric	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/interface/umfpack_solve.hpp	/^	    void                *Symbolic, *Numeric;$/;"	m	class:mtl::mat::umfpack::solver
-Object	CollisionDetector.hpp	/^		Object(const MeshType& m) : mesh(m), tag(Tag()) {};$/;"	f	struct:CollisionDetector::Object
-Object	CollisionDetector.hpp	/^		Object(const MeshType& m, const Tag& t) : mesh(m), tag(t) {};$/;"	f	struct:CollisionDetector::Object
+Object	CollisionDetector.hpp	/^		Object(MeshType& m, Tag& t) : mesh(&m), tag(t) {};$/;"	f	struct:CollisionDetector::Object
 Object	CollisionDetector.hpp	/^	struct Object {$/;"	s	struct:CollisionDetector
 OperatorDivisionRing	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/concepts.hpp	/^  : OperatorDivisionRing<Element>,$/;"	m	namespace:math
 OperatorDivisionRing	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/new_concepts.hpp	/^  : OperatorDivisionRing<Element>,$/;"	m	namespace:math
@@ -1238,6 +1242,7 @@ TableTop	mass_spring.cpp	/^struct TableTop : public Rule {$/;"	s	file:
 Tag	CollisionDetector.hpp	/^		Tag() : id_(0), white_(false) {}$/;"	f	class:CollisionDetector::Tag
 Tag	CollisionDetector.hpp	/^		Tag(int id, bool white) : id_(id), white_(white) {}$/;"	f	class:CollisionDetector::Tag
 Tag	CollisionDetector.hpp	/^	class Tag {$/;"	c	struct:CollisionDetector
+Tag	demo_collision.cpp	/^typedef collider::Tag Tag;$/;"	t	file:
 Time	Examples/Metrics.hpp	/^typedef Unit<0, 0,  1, double>  Time;$/;"	t	namespace:Metrics
 Time	shared/vrodriguez-cs207/Examples/Metrics.hpp	/^typedef Unit<0, 0,  1, double>  Time;$/;"	t	namespace:Metrics
 Timer	Examples/openmp.cpp	/^  Timer(const std::string& s) : msg(s) {$/;"	f	struct:Timer
@@ -1344,12 +1349,14 @@ accumulate	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/accumulat
 active_events	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/papi.hpp	/^    int num_counters, event_set, active_events;$/;"	m	class:mtl::utility::papi_t
 adapt_crs_cvec_mult	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/mat_vec_mult.hpp	/^inline adapt_crs_cvec_mult(const compressed2D<MValue, MPara>& A, const VectorIn& v, VectorOut& w, Assign)$/;"	f	class:mtl::mat::mtl::traits::enable_if_scalar
 adaptor_operators	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/iterator_adaptor_detail.hpp	/^struct adaptor_operators$/;"	s	namespace:mtl::utilities::detail
+add	CollisionDetector.hpp	/^		void add(Tag t) {$/;"	f	class:CollisionDetector::Tag
 add	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/operators.hpp	/^struct add : public std::binary_function<Element, Element, Element>$/;"	s	namespace:math
 add	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/operators.hpp	/^struct add : public std::binary_function<Element, Element, result_type>$/;"	s	class:math::std
 add	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/operators.hpp	/^template <> struct add<char> : heterogeneous_add<char, char, int> {};$/;"	s	namespace:math
 add	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/operators.hpp	/^template <> struct add<short> : heterogeneous_add<short, short, int> {};$/;"	s	namespace:math
 add	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/operators.hpp	/^template <> struct add<unsigned char> : heterogeneous_add<unsigned char, unsigned char, unsigned int> {};$/;"	s	namespace:math
 add	MTL-4.0.9555-Linux/usr/include/boost/numeric/linear_algebra/operators.hpp	/^template <> struct add<unsigned short> : heterogeneous_add<unsigned short, unsigned short, unsigned int> {}; $/;"	s	namespace:math
+add_ball	demo_collision.cpp	/^void add_ball(MeshType& m, Point p, double r = .3) {$/;"	f
 add_const_to_all	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/add_const.hpp	/^struct add_const_to_all$/;"	s	namespace:mtl::traits
 add_const_to_data	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/add_const.hpp	/^struct add_const_to_data$/;"	s	namespace:mtl::traits
 add_const_to_root	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/add_const.hpp	/^struct add_const_to_root$/;"	s	namespace:mtl::traits
@@ -1367,7 +1374,7 @@ add_node	shared/vrodriguez-cs207/Graph.hpp	/^  Node add_node(const Point& positi
 add_node	shared/vrodriguez-cs207/Mesh.hpp	/^  node_type add_node(const Point& position,$/;"	f	class:Mesh
 add_nodes	CS207/SDLViewer.hpp	/^  void add_nodes(InputIterator first, InputIterator last,$/;"	f	class:CS207::SDLViewer
 add_nodes	shared/vrodriguez-cs207/CS207/SDLViewer.hpp	/^  void add_nodes(InputIterator first, InputIterator last,$/;"	f	class:CS207::SDLViewer
-add_object	CollisionDetector.hpp	/^	void add_object(const MeshType& m, const Tag tag) {$/;"	f	struct:CollisionDetector
+add_object	CollisionDetector.hpp	/^	void add_object(MeshType& m, Tag tag = Tag()) {$/;"	f	struct:CollisionDetector
 add_triangle	Mesh.hpp	/^	Triangle add_triangle(vert_node n1, vert_node n2, vert_node n3, UserTriData d = UserTriData()) {$/;"	f	class:Mesh
 add_triangle	shared/vrodriguez-cs207/Mesh.hpp	/^  Triangle add_triangle(const node_type& a, const node_type& b, const node_type& c) {$/;"	f	class:Mesh
 address_compare	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/pc/comparators.hpp	/^struct address_compare {$/;"	s	namespace:compare
@@ -2208,6 +2215,7 @@ collection	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/print.hpp	
 collection	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^struct collection : virtual universe {};$/;"	s	namespace:mtl::tag
 collection_t	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/dense_vector.hpp	/^	typedef mtl::vec::dense_vector<Value, Parameters>   collection_t;$/;"	t	struct:mtl::traits::range_generator
 collection_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/property_map_impl.hpp	/^    typedef Collection                      collection_type;$/;"	t	struct:mtl::detail::index_from_offset
+collider	demo_collision.cpp	/^typedef CollisionDetector<MeshType> collider;$/;"	t	file:
 collisions_	CollisionDetector.hpp	/^		std::vector<Collision> collisions_;$/;"	m	struct:CollisionDetector
 colors_	CS207/SDLViewer.hpp	/^  std::vector<Color> colors_;$/;"	m	class:CS207::SDLViewer
 colors_	shared/vrodriguez-cs207/CS207/SDLViewer.hpp	/^  std::vector<Color> colors_;$/;"	m	class:CS207::SDLViewer
@@ -2718,6 +2726,7 @@ db	shallow_water.cpp	/^void db(in s) {$/;"	f
 db	shallow_water.cpp	/^void db(in s, Point p) {$/;"	f
 db	shallow_water.cpp	/^void db(in s, in2 s2) {$/;"	f
 db_map	debug.hpp	/^void db_map(const S s, const M m) {$/;"	f
+db_vec	debug.hpp	/^void db_vec(const S s, const V v) {$/;"	f
 dbc	debug.hpp	/^void dbc(const S1 s1, int c) {$/;"	f
 dbg	debug.hpp	/^void dbg(const S1 s1) {$/;"	f
 dbr	debug.hpp	/^void dbr(const S1 s1) {$/;"	f
@@ -3503,7 +3512,7 @@ filter_iterator	shared/vrodriguez-cs207/subgraph.cpp	/^class filter_iterator$/;"
 filter_iterator	subgraph.cpp	/^  filter_iterator(const Pred& p, const It& first, const It& last)$/;"	f	class:filter_iterator
 filter_iterator	subgraph.cpp	/^class filter_iterator$/;"	c	file:
 final_place	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/compressed2D.hpp	/^void compressed2D_inserter<Elt, Parameters, Updater>::final_place()$/;"	f	class:mtl::mat::compressed2D_inserter
-find_collisions	CollisionDetector.hpp	/^	void find_collisions(IT first, IT last, MESH m) {$/;"	f	struct:CollisionDetector
+find_collisions	CollisionDetector.hpp	/^	int find_collisions(IT first, IT last, MESH_PTR m) {$/;"	f	struct:CollisionDetector
 find_dia	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/sparse_banded.hpp	/^    size_type find_dia(band_size_type dia) const$/;"	f	class:mtl::mat::sparse_banded
 find_kind	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/type_parameter_common.hpp	/^	struct find_kind$/;"	s	namespace:mtl::type_para
 find_kind	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/type_parameter_common.hpp	/^	struct find_kind<KindMap, as_size_type<Index> >$/;"	s	namespace:mtl::type_para
@@ -4323,6 +4332,7 @@ is_negative	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/is_negati
 is_negative	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/is_negative.hpp	/^inline is_negative(T) { return false; }$/;"	f	class:mtl::boost::enable_if
 is_on_line	CollisionGeometry.hpp	/^bool is_on_line(Point a, Point b, Point p) {$/;"	f
 is_on_plane	CollisionGeometry.hpp	/^bool is_on_plane(Point v1, Point v2, Point v3, Point p) {$/;"	f
+is_plane_line_intersect	CollisionGeometry.hpp	/^bool is_plane_line_intersect(Point v1, Point v2, Point v3, Point a, Point b) {$/;"	f
 is_power_of_2	MTL-4.0.9555-Linux/usr/include/boost/numeric/meta_math/is_power_of_2.hpp	/^struct is_power_of_2$/;"	s	namespace:meta_math
 is_power_of_2	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/utility.hpp	/^bool inline is_power_of_2(Integral x)$/;"	f	namespace:mtl::recursion
 is_prime	MTL-4.0.9555-Linux/usr/include/boost/numeric/meta_math/is_prime.hpp	/^struct is_prime$/;"	s	namespace:meta_math
@@ -4798,6 +4808,7 @@ main	MTL-4.0.9555-Linux/usr/share/mtl/tools/cmake/STATICASSERT_CHECK.cpp	/^int m
 main	MTL-4.0.9555-Linux/usr/share/mtl/tools/cmake/TEMPLATE_ALIAS_CHECK.cpp	/^int main()$/;"	f
 main	MTL-4.0.9555-Linux/usr/share/mtl/tools/cmake/VARIADIC_TEMPLATE_CHECK.cpp	/^int main()$/;"	f
 main	collision.cpp	/^int main () {$/;"	f
+main	demo_collision.cpp	/^int main () {$/;"	f
 main	mass_spring.cpp	/^int main(int argc, char** argv) {$/;"	f
 main	morton_files/morton_test.cpp	/^int main(int argc, char** argv)$/;"	f
 main	morton_test.cpp	/^int main(int argc, char** argv)$/;"	f
@@ -5308,7 +5319,7 @@ memory_base	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/vector/dense_vector
 memory_crtp	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/contiguous_memory_block.hpp	/^struct memory_crtp$/;"	s	namespace:mtl::detail
 memory_need	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/morton_dense.hpp	/^    size_type memory_need(size_type rows, size_type cols)$/;"	f	class:mtl::mat::morton_dense
 merge_complex_vector	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/merge_complex_vector.hpp	/^inline void merge_complex_vector(const VectorReal& r, const VectorImaginary& i, VectorComplex& c)$/;"	f	namespace:mtl::vec
-mesh	CollisionDetector.hpp	/^		const MeshType& mesh;$/;"	m	struct:CollisionDetector::Object
+mesh	CollisionDetector.hpp	/^		MeshType* mesh;$/;"	m	struct:CollisionDetector::Object
 mesh2node	CollisionDetector.hpp	/^		std::unordered_map<const MeshType*, object_node> mesh2node;$/;"	m	struct:CollisionDetector
 mesh_	Mesh.hpp	/^			const Mesh* mesh_;$/;"	m	class:Mesh::Edge
 mesh_	Mesh.hpp	/^			const Mesh* mesh_;$/;"	m	class:Mesh::Link
@@ -5408,6 +5419,7 @@ morton_view	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^s
 morton_z_mask	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/recursion/predefined_masks.hpp	/^			morton_z_mask= generate_mask<false, 0, row_major, 0>::value,$/;"	m	namespace:mtl::recursion
 move_assignment	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/contiguous_memory_block.hpp	/^    void move_assignment(self& other)$/;"	f	struct:mtl::detail::contiguous_memory_block
 move_construction	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/contiguous_memory_block.hpp	/^    void move_construction(self& other)$/;"	f	struct:mtl::detail::contiguous_memory_block
+move_mesh	demo_collision.cpp	/^void move_mesh(MeshType& m, Point v, double dt) {$/;"	f
 mp_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/masked_dilation_tables.hpp	/^    typedef T                          mp_type[n_bytes];$/;"	t	struct:mtl::dilated::masked_dilation_tables
 mref_type	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/morton_dense.hpp	/^	    typedef typename boost::mpl::if_c<is_const, const Matrix&, Matrix&>::type    mref_type; $/;"	t	struct:mtl::traits::detail::morton_dense_iterator_range_generator
 msg	Examples/openmp.cpp	/^  std::string msg;$/;"	m	struct:Timer	file:
@@ -6265,7 +6277,7 @@ nz	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/glas_tag.hpp	/^struc
 nz	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^	struct nz {};$/;"	s	namespace:mtl::tag::const_iter
 nz	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/tag.hpp	/^	struct nz {};$/;"	s	namespace:mtl::tag::iter
 nz_of	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/range_wrapper.hpp	/^inline nz_of(const T& x)$/;"	f	class:mtl::mtl::traits
-object_graph	CollisionDetector.hpp	/^	typedef class Graph<Object,int> object_graph;$/;"	t	struct:CollisionDetector	typeref:class:CollisionDetector::Graph
+object_graph	CollisionDetector.hpp	/^	typedef Graph<Object,int> object_graph;$/;"	t	struct:CollisionDetector
 object_graph_	CollisionDetector.hpp	/^		object_graph object_graph_;$/;"	m	struct:CollisionDetector
 object_node	CollisionDetector.hpp	/^	typedef typename object_graph::Node object_node;$/;"	t	struct:CollisionDetector
 odd_bits	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/dilated_int.hpp	/^struct odd_bits$/;"	s	namespace:mtl::dilated
@@ -6352,7 +6364,9 @@ operator &	shared/vrodriguez-cs207/BoundingBox.hpp	/^BoundingBox operator&(Bound
 operator &=	BoundingBox.hpp	/^  BoundingBox& operator&=(const BoundingBox& b) {$/;"	f	class:BoundingBox
 operator &=	shared/vrodriguez-cs207/BoundingBox.hpp	/^  BoundingBox& operator&=(const BoundingBox& b) {$/;"	f	class:BoundingBox
 operator ()	CS207/SDLViewer.hpp	/^	Color operator()(const NODE& n) {$/;"	f	struct:CS207::PoissonColor
+operator ()	CS207/SDLViewer.hpp	/^  Color operator()(const NODE&) {$/;"	f	struct:CS207::BlueColor
 operator ()	CS207/SDLViewer.hpp	/^  Color operator()(const NODE&) {$/;"	f	struct:CS207::DefaultColor
+operator ()	CS207/SDLViewer.hpp	/^  Color operator()(const NODE&) {$/;"	f	struct:CS207::GreenColor
 operator ()	CS207/SDLViewer.hpp	/^  Color operator()(const NODE&) {$/;"	f	struct:CS207::RedColor
 operator ()	CS207/SDLViewer.hpp	/^  Point operator()(const NODE& n) {$/;"	f	struct:CS207::PoissonPosition
 operator ()	CS207/SDLViewer.hpp	/^  Point operator()(const NODE& node) {$/;"	f	struct:CS207::DefaultPosition
@@ -7097,7 +7111,6 @@ operator <=	CS207/Util.hpp	/^  friend bool operator<=(const T& a, const T& b) { 
 operator <=	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/dilated_int.hpp	/^    bool operator<= (self const& x) const$/;"	f	struct:mtl::dilated::dilated_int
 operator <=	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/zipped_sort.hpp	/^    bool operator<=(const zip_it& other) const { check(other); return p <= other.p; }$/;"	f	struct:mtl::utility::zip_it
 operator <=	shared/vrodriguez-cs207/CS207/Util.hpp	/^  friend bool operator<=(const T& a, const T& b) { return !(b < a); }$/;"	f	struct:less_than_comparable
-operator =	CollisionDetector.hpp	/^		const Object& operator=(const Object& o) {$/;"	f	struct:CollisionDetector::Object
 operator =	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/contiguous_memory_block.hpp	/^    self& operator=(const contiguous_memory_block<Value2, OnStack2, Size2>& other)$/;"	f	struct:mtl::detail::contiguous_memory_block
 operator =	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/contiguous_memory_block.hpp	/^    self& operator=(const self& other)$/;"	f	struct:mtl::detail::contiguous_memory_block
 operator =	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/detail/contiguous_memory_block.hpp	/^    self& operator=(self other)$/;"	f	struct:mtl::detail::contiguous_memory_block
@@ -7488,6 +7501,7 @@ pos_type_aux	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/pos_type.h
 position	Graph.hpp	/^	Point& position() {$/;"	f	class:Graph::Node
 position	Graph.hpp	/^ 	  Point position;$/;"	m	struct:Graph::NodeData
 position	Graph.hpp	/^    const Point& position() const {$/;"	f	class:Graph::Node
+position	Mesh.hpp	/^			Point& position() {return v_.position();}$/;"	f	class:Mesh::Vertex
 position	Mesh.hpp	/^			const Point& position() const {return v_.position();}$/;"	f	class:Mesh::Vertex
 position	Mesh.hpp	/^		Point position() const {$/;"	f	class:Mesh::Triangle
 position	shared/vrodriguez-cs207/Graph.hpp	/^    Point& position() {$/;"	f	class:Graph::Node
@@ -7509,6 +7523,7 @@ print	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/compressed2D.hpp	/
 print	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/compressed2D.hpp	/^    void print(size_type i) const$/;"	f	struct:mtl::mat::compressed2D_inserter
 print	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/print.hpp	/^    print(Value const& value, std::ostream& out= std::cout, int width= 3, int precision= 2)$/;"	f	namespace:mtl::mat
 print	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/print.hpp	/^    print(Value const& value, std::ostream& out= std::cout, int width= 3, int precision= 2)$/;"	f	namespace:mtl::vec
+print_graph	CollisionDetector.hpp	/^	void print_graph() const {$/;"	f	struct:CollisionDetector
 print_graph	Graph.hpp	/^  void print_graph() const {$/;"	f	class:Graph
 print_internal	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/coordinate2D.hpp	/^    void print_internal() const { print(std::cout); }$/;"	f	class:mtl::mat::coordinate2D
 print_internal	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/coordinate2D.hpp	/^    void print_internal(OStream& os) const$/;"	f	class:mtl::mat::coordinate2D
@@ -7520,6 +7535,7 @@ print_size_max	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/print_
 print_size_max	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/print_size.hpp	/^    struct print_size_max$/;"	s	namespace:mtl
 print_stl_vector	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/matrix/coordinate2D.hpp	/^    void print_stl_vector(OStream& os, const Vector& v) const$/;"	f	class:mtl::mat::coordinate2D
 print_vector	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/print_vector.hpp	/^std::ostream& print_vector(Vector const& vector, std::ostream& out= std::cout, int width= 0, int precision= 0)$/;"	f	namespace:mtl::vec
+prob_match	test_collision.cpp	/^bool prob_match(double p1, double p2) {$/;"	f
 prod	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/eval.hpp	/^    matrix_type  prod;$/;"	m	struct:mtl::traits::eval
 product	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/product.hpp	/^	    inline product(const Vector& vector, tag::vector)$/;"	f	class:mtl::vec::impl::Collection
 product	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/operation/product.hpp	/^	inline product(const Value& value)$/;"	f	class:mtl::vec::Collection
@@ -9078,7 +9094,7 @@ symp_euler_step	shared/vrodriguez-cs207/mass_spring.cpp	/^double symp_euler_step
 t	CollisionDetector.hpp	/^		Triangle t;$/;"	m	struct:CollisionDetector::Collision
 t2p_	SpaceSearcher.hpp	/^  T2Point t2p_;$/;"	m	class:SpaceSearcher
 t2p_	shared/vrodriguez-cs207/SpaceSearcher.hpp	/^  T2Point t2p_;$/;"	m	class:SpaceSearcher
-tag	CollisionDetector.hpp	/^		const Tag& tag;$/;"	m	struct:CollisionDetector::Object
+tag	CollisionDetector.hpp	/^		Tag tag;$/;"	m	struct:CollisionDetector::Object
 tag	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/mtl_fwd.hpp	/^    namespace tag {$/;"	n	namespace:mtl
 tag	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/glas_tag.hpp	/^namespace glas { namespace tag {$/;"	n	namespace:glas
 tag	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/utility/range_generator.hpp	/^	typedef Tag                  tag;$/;"	t	struct:mtl::traits::range_generator
@@ -9092,6 +9108,7 @@ terminate	MTL-4.0.9555-Linux/usr/include/boost/numeric/itl/iteration/basic_itera
 test	mass_spring.cpp	/^	int test;$/;"	m	struct:EdgeData	file:
 test_add_remove	test_collision.cpp	/^void test_add_remove() {$/;"	f
 test_check_collisions	test_collision.cpp	/^void test_check_collisions() {$/;"	f
+test_find_collisions	test_collision.cpp	/^void test_find_collisions() {$/;"	f
 test_geometry	test_collision.cpp	/^void test_geometry() {$/;"	f
 test_is_colliding	test_collision.cpp	/^void test_is_colliding() {$/;"	f
 test_is_inside_triangle	test_collision.cpp	/^void test_is_inside_triangle() {$/;"	f
@@ -9100,6 +9117,9 @@ test_ostream	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/io/test_ostream.hp
 test_ostream	MTL-4.0.9555-Linux/usr/include/boost/numeric/mtl/io/test_ostream.hpp	/^struct test_ostream $/;"	s	namespace:mtl::io
 test_plane_line_intersect	test_collision.cpp	/^void test_plane_line_intersect() {$/;"	f
 test_plane_normal	test_collision.cpp	/^void test_plane_normal() {$/;"	f
+test_tags	test_collision.cpp	/^void test_tags() {$/;"	f
+tet_area	CollisionGeometry.hpp	/^double tet_area(N a, N b, N c, N d) {$/;"	f
+tet_area	CollisionGeometry.hpp	/^double tet_area(Point a, Point b, Point c, Point d) {$/;"	f
 text	Examples/proxy_example.cpp	/^    std::string text(){$/;"	f	class:SimpleSet::SimpleElement
 text	Examples/proxy_example.cpp	/^    std::string text;   \/\/ The text held by an element$/;"	m	struct:SimpleSet::internal_element	file:
 text	shared/vrodriguez-cs207/Examples/proxy_example.cpp	/^    std::string text(){$/;"	f	class:SimpleSet::SimpleElement

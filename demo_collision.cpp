@@ -4,8 +4,19 @@
 
 typedef Mesh<char, char, char> MeshType;
 typedef CollisionDetector<MeshType> collider;
+typedef typename collider::Collision collision;
 typedef typename MeshType::node_type Node;
 typedef collider::Tag Tag;
+
+// Functor for find function
+struct InCollision {
+	MeshType* m_;
+	InCollision(MeshType* m) : m_(m) {
+	}
+	bool operator()(collision c) {
+		return m_ == c.mesh1 || m_ == c.mesh2;
+	}
+};
 
 // generate a mesh ball around the point
 void add_ball(MeshType& m, Point p, double r = .3) {
@@ -68,8 +79,7 @@ int main () {
 	meshes.push_back(MeshType());
 	meshes.push_back(MeshType());
 
-
-	add_ball(meshes[0], Point(0,0,0), .2);
+	add_ball(meshes[0], Point(1,0,0), .2);
 	add_ball(meshes[1], Point(0,0,0), 1);
 
 
@@ -96,7 +106,6 @@ int main () {
 	viewer.center_view();
 	// Display viewer
 	double dt = .002;
-	move_mesh(meshes[0], Point(drand(2)-1,drand(2)-1,drand(2)-1), dt);
 	//move_mesh(meshes[0], Point(drand(2)-1,drand(2)-1,drand(2)-1), dt);
 
 	db("nodes:", meshes[0].num_nodes());
@@ -107,19 +116,32 @@ int main () {
 
 		// moving
 
+		move_mesh(meshes[0], Point(drand(1.5)-1,drand(2)-1,drand(2)-1), dt);
 
 	    // check for collision
 	    c.check_collisions();
 	    size_t count = std::distance(c.begin(), c.end());
 
 	    // redraw
-	    for (auto it = meshes.begin(); it != meshes.end(); ++it) {
-	    	viewer.add_nodes((*it).vertex_begin(), (*it).vertex_end(), CS207::GreenColor(), NodeToPoint(), vertex_map);
-	    }
 
+	    for (int i = 0; i < N; ++i) {
+			// If there is a collision display those meshes in red
+			if( std::find_if(
+			 	c.begin(),c.end(),InCollision(&meshes[i]))!= c.end()) {
+				viewer.add_nodes(meshes[i].vertex_begin(), 
+							meshes[i].vertex_end(),
+							CS207::RedColor(), NodeToPoint(), 
+							vertex_map);
+			}
+			else {
+				viewer.add_nodes(meshes[i].vertex_begin(), 
+							meshes[i].vertex_end(),
+							CS207::GreenColor(), NodeToPoint(), 
+							vertex_map);
+			}
+		}
 	    viewer.set_label(count);
-
-	  }
+	}
 	return 0;
 }
 

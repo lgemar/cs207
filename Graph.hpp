@@ -896,7 +896,22 @@ class Graph {
 	  size_type n_id = 0;
 	  while (adj_list_[n_id].size() == 0)
 		  ++n_id;
-	  return EdgeIterator(this, n_id, 0);
+
+
+		size_t n1_ind_ = 0;
+		size_t n2_ind_ = 0;
+		while (n1_ind_ < adj_list_.size() && !forward_edge(n1_ind_, n2_ind_)) {
+			++n2_ind_;
+			// do we need to go to the next list?
+			// be careful of nodes without any edges
+			while (n2_ind_ == adj_list_[n1_ind_].size() && n1_ind_ < adj_list_.size()) {
+				n2_ind_ = 0;
+				++n1_ind_;
+			}
+		}
+
+
+	  return EdgeIterator(this, n1_ind_, n2_ind_);
   }
 
   /** returns an iterator with num_edges 0 */

@@ -10,7 +10,7 @@
 
 // functions
 bool equal(Point, Point);
-bool equal(double, double, double epsilon=0.001);
+bool equal(double, double, double epsilon=0.005);
 Point plane_normal(Point, Point, Point);
 bool on_same_side(Point, Point, Point, Point);
 Point plane_line_intersect(Point, Point, Point, Point, Point);

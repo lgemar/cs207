@@ -32,7 +32,7 @@ struct CollisionDetector {
 	typedef typename MeshType::Node Node;
 	typedef typename MeshType::Edge Edge;
 	typedef typename std::vector<Collision>::iterator CollIter;
-	typedef class Graph<Object,int> object_graph;
+	typedef Graph<Object,int> object_graph;
 	typedef typename object_graph::Node object_node;
 	typedef SpaceSearcher<Node, NodeToPoint> space_searcher;
 
@@ -49,6 +49,9 @@ struct CollisionDetector {
 		MeshType* mesh;
 		Tag tag;
 
+		// Default constructor 
+		Object() {
+		}
 		// explicitly pass in a tag
 		Object(MeshType& m, Tag& t) : mesh(&m), tag(t) {};
 
@@ -61,11 +64,12 @@ struct CollisionDetector {
 	 */
 	struct Collision {
 
-		Node n;
-		Triangle t;
+		MeshType* mesh1;
+		MeshType* mesh2;
+		Node n1;
 
-		Collision(Node n, Triangle t) : n(n), t(t) {}
-		Collision(Node n) : n(n), t() {}
+		Collision(Node n, MeshType* m1, MeshType* m2) : mesh1(m1), mesh2(m2), n1(n) { 
+		}
 	};
 
 	/** Tag type to specify what gets checked for what
@@ -140,7 +144,8 @@ struct CollisionDetector {
 		// create a node for this mesh
 		Point approx_pos = (*(m.vertex_begin())).position();
 		Object o = Object(m, tag);
-		object_node n = object_graph_.add_node(approx_pos, o);
+		object_node n = object_graph_.add_node(approx_pos);
+		n.value() = o;
 
 		// saving link to this mesh in hash table
 		mesh2node[&m] = n;
@@ -201,42 +206,54 @@ struct CollisionDetector {
 	 */
 	void check_collisions() {
 		collisions_.clear();
+		bounding_boxes_.clear();
+
+		db("in check collisions");
+		db("obj nodes", object_graph_.num_nodes());
+		db("obj edges", object_graph_.num_edges());
 		// Iterate over all edges in the graph and find intersections
 		for(auto it = object_graph_.edge_begin(); 
 				it != object_graph_.edge_end(); ++it) {
 			// Get the two meshes that are a part of this edge
 			auto e = (*it);
-			auto m1 = *e.node1().value().mesh;
-			auto m2 = *e.node2().value().mesh;
+			auto m1 = e.node1().value().mesh;
+			auto m2 = e.node2().value().mesh;
+
+			db("checking edge");
+			db("m1 nodes", (*m1).num_nodes());
+			db("m2 nodes", (*m2).num_nodes());
 			// Build spatial search objects
-			space_searcher s1 = space_searcher(m1.vertex_begin(), 
-											m1.vertex_end(),
+			space_searcher s1 = space_searcher(m1->vertex_begin(), 
+											m1->vertex_end(),
 											NodeToPoint());
-			space_searcher s2 = space_searcher(m2.vertex_begin(), 
-											m2.vertex_end(),
+			space_searcher s2 = space_searcher(m2->vertex_begin(), 
+											m2->vertex_end(),
 											NodeToPoint());
 			// Find the bounding boxes corresponding to spaces
 			BoundingBox bb1 = s1.bounding_box();
 			BoundingBox bb2 = s2.bounding_box();
 			// Find the collisions
-			find_collisions(s1.begin(bb2), s1.end(bb2), m2);
-			find_collisions(s2.begin(bb1), s2.end(bb1), m1);
+			find_collisions(s1.begin(bb2), s1.end(bb2), m1, m2);
+			find_collisions(s2.begin(bb1), s2.end(bb1), m2, m1);
 		}
 	}
 
 	/** Add the collision information to the collisions array */
-	template<typename IT, typename MESH>
-	int find_collisions(IT first, IT last, MESH m) {
+	template<typename IT, typename MESH_PTR>
+	int find_collisions(IT first, IT last, MESH_PTR m1, MESH_PTR m2) {
 		int num_collisions = 0;
+		int num_three_type_collisions = 0;
 		for(IT it1 = first; it1 != last; ++it1) {
 			int num_intersections = 0;
+			int num_triangles = 0;
 			Node n = (*it1);
 			
 			// Find the two points that define a line
 			Point p0 = n.position();
 			Point p1 = 2 * p0;
-			for(auto it2 = m.triangles_begin(); 
-					it2 != m.triangles_end(); ++it2) {
+			std::vector<Point> intersection_points;
+			for(auto it2 = m2->triangles_begin(); 
+					it2 != m2->triangles_end(); ++it2) {
 					Triangle t = (*it2);
 					// Find the three points that make up triangle
 					Point t1 = t.vertex(1).position();
@@ -246,8 +263,9 @@ struct CollisionDetector {
 					// Determine intersection point
 					Point p;
 					if( is_plane_line_intersect(t1, t2, t3, p0, p1)) {
-						p = plane_line_intersect(t1, t2, t3, 
-														p0, p1);
+						// Find the intersection of the point and the
+						// plane
+						p = plane_line_intersect(t1, t2, t3, p0, p1);
 
 						// Check if intersection points same direction
 						// as the outgoing ray
@@ -260,19 +278,25 @@ struct CollisionDetector {
 						// Increase the num_intersections is the two
 						// check are true
 						if( check1 && check2 ) {
+							//db("Intersection point: ", p);
 							++num_intersections;
+							intersection_points.push_back(p);
 						}
 					}
+					++num_triangles;
 			}
 
 			// If the number of intersections is odd, add to collisions
 			if( num_intersections % 2 != 0 ) {
-				Collision c = Collision(n);
+				if(num_intersections == 3) {
+					++num_three_type_collisions;
+				}
+				Collision c = Collision(n, m1, m2);
 				collisions_.push_back(c);
 				++num_collisions;
 			}
 		}
-		return num_collisions;
+		return num_collisions - num_three_type_collisions;
 	}
 
 	/** returns iterator to beginning of our found collisions
