@@ -211,9 +211,6 @@ struct CollisionDetector {
 		collisions_.clear();
 		bounding_boxes_.clear();
 
-		db("in check collisions");
-		db("obj nodes", object_graph_.num_nodes());
-		db("obj edges", object_graph_.num_edges());
 		// Iterate over all edges in the graph and find intersections
 		for(auto it = object_graph_.edge_begin(); 
 				it != object_graph_.edge_end(); ++it) {
@@ -222,9 +219,6 @@ struct CollisionDetector {
 			auto m1 = e.node1().value().mesh;
 			auto m2 = e.node2().value().mesh;
 
-			db("checking edge");
-			db("m1 nodes", (*m1).num_nodes());
-			db("m2 nodes", (*m2).num_nodes());
 			// Build spatial search objects
 			space_searcher s1 = space_searcher(m1->vertex_begin(), 
 											m1->vertex_end(),

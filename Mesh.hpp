@@ -603,6 +603,14 @@ public:
 		return Link(this, get_link(t1, t2));
 	}
 
+	void print_vertex_graph() const {
+		vertex_graph_.print_graph();
+	}
+
+	void print_tri_graph() const {
+		triangle_graph_.print_graph();
+	}
+
 
 private:
 	friend class Triangle;

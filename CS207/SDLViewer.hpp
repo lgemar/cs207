@@ -480,8 +480,8 @@ class SDLViewer {
       return;
     }
 
-    window_width_ = 800;
-    window_height_ = 600;
+    window_width_ = 1200;
+    window_height_ = 900;
 
     int bits_per_pixel = 32;
 
@@ -511,10 +511,10 @@ class SDLViewer {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // OpenGL Fog for better depth perception
-    glEnable(GL_DEPTH_TEST);
+    /*glEnable(GL_DEPTH_TEST);
     glEnable(GL_FOG);
     glFogi(GL_FOG_MODE, GL_EXP);
-    glFogf(GL_FOG_DENSITY, 0.3);
+    glFogf(GL_FOG_DENSITY, 0.3);*/
   }
 
   /** Static event loop wrapper for thread creation
@@ -644,8 +644,8 @@ class SDLViewer {
       0167, 0044, 0153, 0155, 0074, 0135, 0137, 0144, 0177, 0175
     };
 
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_FOG);
+    //glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_FOG);
 
     // Set both relevant matrices for 2D display. The projection matrix is
     // orthographic; the model view matrix is the identity.
@@ -694,8 +694,8 @@ class SDLViewer {
     glPopMatrix();
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_FOG);
+    //glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_FOG);
     check_gl_error();
   }
 

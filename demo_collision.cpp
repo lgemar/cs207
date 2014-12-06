@@ -21,10 +21,13 @@ struct InCollision {
 // generate a mesh ball around the point
 void add_ball(MeshType& m, Point p, double r = .3) {
 
-	size_t slices = 10;
+	size_t slices = 4;
 	double dth = 2*3.14 / slices;
 	std::vector<Node> tops;
 	std::vector<Node> bots;
+
+	tops.reserve(100);
+	bots.reserve(100);
 
 	// creating points for geodesic dome
 	Node tip1 = m.add_node(p + Point(0,0,r));
@@ -72,20 +75,19 @@ int main () {
 
 	// initialization
 	srand(time(NULL));
-	int N = 3;
+	int N = 20;
 
 	// create meshes
 	std::vector<MeshType> meshes;
-	meshes.push_back(MeshType());
-	meshes.push_back(MeshType());
 
-	add_ball(meshes[0], Point(1,0,0), .2);
-	add_ball(meshes[1], Point(0,0,0), 1);
-
+	for (int i = 0; i < N; ++i)
+		meshes.push_back(MeshType());
 
 	// create checker
 	collider c;
+	double pos = 0;
 	for (auto it = meshes.begin(); it != meshes.end(); ++it) {
+		add_ball(*it, Point(pos++, 0, 0));
 		c.add_object(*it);
 	}
 
@@ -115,8 +117,11 @@ int main () {
 	for (double t = 0; t < 10; t += dt) {
 
 		// moving
+		for (auto it = ++meshes.begin(); it != meshes.end(); ++it)
+			move_mesh(*it, Point(-2,drand(2)-1,drand(2)-1), dt);
 
-		move_mesh(meshes[0], Point(drand(1.5)-1,drand(2)-1,drand(2)-1), dt);
+		// moving other
+		move_mesh(*(++meshes.begin()), Point(4,0,0), dt);
 
 	    // check for collision
 	    c.check_collisions();
@@ -125,19 +130,18 @@ int main () {
 	    // redraw
 
 	    for (int i = 0; i < N; ++i) {
-			// If there is a collision display those meshes in red
-			if( std::find_if(
-			 	c.begin(),c.end(),InCollision(&meshes[i]))!= c.end()) {
-				viewer.add_nodes(meshes[i].vertex_begin(), 
-							meshes[i].vertex_end(),
-							CS207::RedColor(), NodeToPoint(), 
-							vertex_map);
+			//If there is a collision display those meshes in red
+			if( std::find_if(c.begin(),c.end(),InCollision(&meshes[i]))!= c.end()) {
+				viewer.add_nodes(meshes[i].vertex_begin(),
+				meshes[i].vertex_end(),
+				CS207::RedColor(), NodeToPoint(),
+				vertex_map);
 			}
 			else {
 				viewer.add_nodes(meshes[i].vertex_begin(), 
-							meshes[i].vertex_end(),
-							CS207::GreenColor(), NodeToPoint(), 
-							vertex_map);
+					meshes[i].vertex_end(),
+					CS207::GreenColor(), NodeToPoint(),
+					vertex_map);
 			}
 		}
 	    viewer.set_label(count);
