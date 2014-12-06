@@ -38,7 +38,7 @@ DEPSFLAGS = -MD -MF $(DEPSFILE) -MP
 INCLUDES += -I. -I./MTL-4.0.9555-Linux/usr/include/
 
 # Define CXX compile flags
-CXXFLAGS += -O0 -g -funroll-loops -W -Wall -Wextra #-Wfatal-errors
+CXXFLAGS += -O3 -g -funroll-loops -W -Wall -Wextra #-Wfatal-errors
 
 # Define any directories containing libraries
 #   To include directories use -Lpath/to/files

@@ -64,11 +64,12 @@ struct CollisionDetector {
 	 */
 	struct Collision {
 
-		Node n;
-		Triangle t;
+		MeshType* mesh1;
+		MeshType* mesh2;
+		Node n1;
 
-		Collision(Node n, Triangle t) : n(n), t(t) {}
-		Collision(Node n) : n(n), t() {}
+		Collision(Node n, MeshType* m1, MeshType* m2) : mesh1(m1), mesh2(m2), n1(n) { 
+		}
 	};
 
 	/** Tag type to specify what gets checked for what
@@ -223,14 +224,14 @@ struct CollisionDetector {
 			BoundingBox bb1 = s1.bounding_box();
 			BoundingBox bb2 = s2.bounding_box();
 			// Find the collisions
-			find_collisions(s1.begin(bb2), s1.end(bb2), m2);
-			find_collisions(s2.begin(bb1), s2.end(bb1), m1);
+			find_collisions(s1.begin(bb2), s1.end(bb2), m1, m2);
+			find_collisions(s2.begin(bb1), s2.end(bb1), m2, m1);
 		}
 	}
 
 	/** Add the collision information to the collisions array */
 	template<typename IT, typename MESH_PTR>
-	int find_collisions(IT first, IT last, MESH_PTR m) {
+	int find_collisions(IT first, IT last, MESH_PTR m1, MESH_PTR m2) {
 		int num_collisions = 0;
 		int num_three_type_collisions = 0;
 		for(IT it1 = first; it1 != last; ++it1) {
@@ -242,10 +243,11 @@ struct CollisionDetector {
 			Point p0 = n.position();
 			Point p1 = 2 * p0;
 			std::vector<Point> intersection_points;
-			for(auto it2 = m->triangles_begin(); 
-					it2 != m->triangles_end(); ++it2) {
+			for(auto it2 = m2->triangles_begin(); 
+					it2 != m2->triangles_end(); ++it2) {
 					Triangle t = (*it2);
 					// Find the three points that make up triangle
+					// db("got here");
 					Point t1 = t.vertex(1).position();
 					Point t2 = t.vertex(2).position();
 					Point t3 = t.vertex(3).position();
@@ -279,15 +281,9 @@ struct CollisionDetector {
 			// If the number of intersections is odd, add to collisions
 			if( num_intersections % 2 != 0 ) {
 				if(num_intersections == 3) {
-					// db("num_triangles", num_triangles);
-					for(auto it = intersection_points.begin(); 
-						   it != intersection_points.end(); ++it) {
-						//db("intersection point", *it);
-					}
-					//db("number of intersections", num_intersections);
 					++num_three_type_collisions;
 				}
-				Collision c = Collision(n);
+				Collision c = Collision(n, m1, m2);
 				collisions_.push_back(c);
 				++num_collisions;
 			}
