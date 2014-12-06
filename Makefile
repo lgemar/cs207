@@ -17,6 +17,7 @@ EXEC += shallow_water
 EXEC += collision
 EXEC += test_collision
 EXEC += morton_test
+EXEC += demo_collision
 
 # Get the shell name to determine the OS
 UNAME := $(shell uname)
@@ -37,7 +38,7 @@ DEPSFLAGS = -MD -MF $(DEPSFILE) -MP
 INCLUDES += -I. -I./MTL-4.0.9555-Linux/usr/include/
 
 # Define CXX compile flags
-CXXFLAGS += -O3 -g -funroll-loops -W -Wall -Wextra #-Wfatal-errors
+CXXFLAGS += -O0 -g -funroll-loops -W -Wall -Wextra #-Wfatal-errors
 
 # Define any directories containing libraries
 #   To include directories use -Lpath/to/files

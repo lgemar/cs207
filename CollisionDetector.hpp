@@ -32,7 +32,7 @@ struct CollisionDetector {
 	typedef typename MeshType::Node Node;
 	typedef typename MeshType::Edge Edge;
 	typedef typename std::vector<Collision>::iterator CollIter;
-	typedef class Graph<Object,int> object_graph;
+	typedef Graph<Object,int> object_graph;
 	typedef typename object_graph::Node object_node;
 	typedef SpaceSearcher<Node, NodeToPoint> space_searcher;
 
@@ -49,6 +49,9 @@ struct CollisionDetector {
 		MeshType* mesh;
 		Tag tag;
 
+		// Default constructor 
+		Object() {
+		}
 		// explicitly pass in a tag
 		Object(MeshType& m, Tag& t) : mesh(&m), tag(t) {};
 
@@ -140,7 +143,8 @@ struct CollisionDetector {
 		// create a node for this mesh
 		Point approx_pos = (*(m.vertex_begin())).position();
 		Object o = Object(m, tag);
-		object_node n = object_graph_.add_node(approx_pos, o);
+		object_node n = object_graph_.add_node(approx_pos);
+		n.value() = o;
 
 		// saving link to this mesh in hash table
 		mesh2node[&m] = n;
@@ -200,19 +204,20 @@ struct CollisionDetector {
 	 * @pre @a first and @a last must define a valid iterator range
 	 */
 	void check_collisions() {
+		collisions_.clear();
 		// Iterate over all edges in the graph and find intersections
 		for(auto it = object_graph_.edge_begin(); 
 				it != object_graph_.edge_end(); ++it) {
 			// Get the two meshes that are a part of this edge
 			auto e = (*it);
-			auto m1 = *e.node1().value().mesh;
-			auto m2 = *e.node2().value().mesh;
+			auto m1 = e.node1().value().mesh;
+			auto m2 = e.node2().value().mesh;
 			// Build spatial search objects
-			space_searcher s1 = space_searcher(m1.vertex_begin(), 
-											m1.vertex_end(),
+			space_searcher s1 = space_searcher(m1->vertex_begin(), 
+											m1->vertex_end(),
 											NodeToPoint());
-			space_searcher s2 = space_searcher(m2.vertex_begin(), 
-											m2.vertex_end(),
+			space_searcher s2 = space_searcher(m2->vertex_begin(), 
+											m2->vertex_end(),
 											NodeToPoint());
 			// Find the bounding boxes corresponding to spaces
 			BoundingBox bb1 = s1.bounding_box();
@@ -224,8 +229,8 @@ struct CollisionDetector {
 	}
 
 	/** Add the collision information to the collisions array */
-	template<typename IT, typename MESH>
-	int find_collisions(IT first, IT last, MESH m) {
+	template<typename IT, typename MESH_PTR>
+	int find_collisions(IT first, IT last, MESH_PTR m) {
 		int num_collisions = 0;
 		int num_three_type_collisions = 0;
 		for(IT it1 = first; it1 != last; ++it1) {
@@ -237,8 +242,8 @@ struct CollisionDetector {
 			Point p0 = n.position();
 			Point p1 = 2 * p0;
 			std::vector<Point> intersection_points;
-			for(auto it2 = m.triangles_begin(); 
-					it2 != m.triangles_end(); ++it2) {
+			for(auto it2 = m->triangles_begin(); 
+					it2 != m->triangles_end(); ++it2) {
 					Triangle t = (*it2);
 					// Find the three points that make up triangle
 					Point t1 = t.vertex(1).position();

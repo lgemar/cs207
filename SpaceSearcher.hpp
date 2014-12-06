@@ -46,10 +46,11 @@ public:
       : mc_(), c2t_(), t2p_(t2p) {
 
     // For performance checks
+#if 0
     CS207::Clock clock;
     clock.start();
     std::cout << "\nConstructing SpaceSearcher..." << std::endl;
-
+#endif
     // Determine pmin and pmax, i.e., the minimum and maximum corners
     // for the bounding box.
     Point pmin = t2p_(*t_begin);
@@ -83,11 +84,13 @@ public:
       if (items.size() > max_items)
         max_items = items.size();
     }
+#if 0
     std::cout << "Time: " << clock.seconds() << " seconds." << std::endl;
     std::cout << "Total number of elements = " << item_count << std::endl;
     std::cout << "Total number of cells = " << mc_.end_code << std::endl;
     std::cout << "Max. number of elements per cell = " << max_items << std::endl;
     std::cout << std::endl;
+#endif
   }
 
   /** Default destructor */
