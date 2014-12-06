@@ -11,6 +11,7 @@ typedef collider::Tag Tag;
 void add_ball(MeshType& m, Point p, double r = .3) {
 
 	size_t slices = 10;
+	double dth = 2*3.14 / slices;
 	std::vector<Node> tops;
 	std::vector<Node> bots;
 
@@ -19,10 +20,12 @@ void add_ball(MeshType& m, Point p, double r = .3) {
 	Node tip2 = m.add_node(p + Point(0,0,-r));
 	double tz = .45*r;
 	double tr = .8*r;
-	for (double th = 0; th < 2 * 3.14; th += (2*3.14 / slices)) {
+	for (size_t i = 0; i < slices; ++i) {
+		double th = i*dth;
 		tops.push_back(m.add_node(p + Point(tr*cos(th), tr*sin(th), tz)));
 	}
-	for (double th = 3.14 / slices; th < 2 * 3.14; th += (2*3.14 / slices)) {
+	for (size_t i = 0; i < slices; ++i) {
+		double th = dth/2 + i*dth;
 		bots.push_back(m.add_node(p + Point(tr*cos(th), tr*sin(th), -tz)));
 	}
 
@@ -50,6 +53,10 @@ void move_mesh(MeshType& m, Point v, double dt) {
 	}
 }
 
+double drand(double lim) {
+	return (rand() % 10000) * lim / 10000;
+}
+
 int main () {
 
 	// initialization
@@ -58,19 +65,18 @@ int main () {
 
 	// create meshes
 	std::vector<MeshType> meshes;
-	for (int i = 0; i < N; ++i)
-		meshes.push_back(MeshType());
+	meshes.push_back(MeshType());
+	meshes.push_back(MeshType());
 
 
+	add_ball(meshes[0], Point(0,0,0), .2);
+	add_ball(meshes[1], Point(0,0,0), 1);
 
 
 	// create checker
 	collider c;
-	int pos = 0;
 	for (auto it = meshes.begin(); it != meshes.end(); ++it) {
-		add_ball(*it, Point(pos,0,0));
 		c.add_object(*it);
-		++pos;
 	}
 
 	// debug initial state
@@ -82,29 +88,34 @@ int main () {
 
 	// Add the vertices of the mesh to the viewer
 	auto vertex_map = viewer.empty_vertex_map(meshes[0]);
-	for (int i = 0; i < N; ++i) {
-		viewer.add_nodes(meshes[i].vertex_begin(), meshes[i].vertex_end(),
+	for (auto it = meshes.begin(); it != meshes.end(); ++it) {
+		viewer.add_nodes((*it).vertex_begin(), (*it).vertex_end(),
 				   CS207::GreenColor(), NodeToPoint(), vertex_map);
-		viewer.add_edges(meshes[i].edge_begin(), meshes[i].edge_end(), vertex_map);
+		viewer.add_edges((*it).edge_begin(), (*it).edge_end(), vertex_map);
 	}
-	// Display viewer
 	viewer.center_view();
-
+	// Display viewer
 	double dt = .002;
+	move_mesh(meshes[0], Point(drand(2)-1,drand(2)-1,drand(2)-1), dt);
+	//move_mesh(meshes[0], Point(drand(2)-1,drand(2)-1,drand(2)-1), dt);
+
+	db("nodes:", meshes[0].num_nodes());
+	db("edges:", meshes[0].num_edges());
+	db("tris:", meshes[0].num_triangles());
+
 	for (double t = 0; t < 10; t += dt) {
 
-		// update
-		for (int i = 1; i < N; ++i)
-			move_mesh(meshes[i], Point(-1,0,0), dt);
+		// moving
+
 
 	    // check for collision
 	    c.check_collisions();
 	    size_t count = std::distance(c.begin(), c.end());
 
 	    // redraw
-	    for (int i = 0; i < N; ++i)
-	    	viewer.add_nodes(meshes[i].vertex_begin(), meshes[i].vertex_end(),
-					   CS207::GreenColor(), NodeToPoint(), vertex_map);
+	    for (auto it = meshes.begin(); it != meshes.end(); ++it) {
+	    	viewer.add_nodes((*it).vertex_begin(), (*it).vertex_end(), CS207::GreenColor(), NodeToPoint(), vertex_map);
+	    }
 
 	    viewer.set_label(count);
 
